@@ -1,0 +1,517 @@
+\subsection{链式存储与运算实现}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{链式列表(Linked List)}
+        \begin{itemize}
+            \item 简称\textbf{链表}，用一组在内存中\alert{零散}分布的存储单元存
+                  储序列中的数据元素
+            \item 按链接关系分为\textbf{单向链表}\footnote{简称\textbf{单链
+                  表}}、\textbf{双向链表}与\textbf{循环链表}等
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 考察序列$s = (34, 23, 67, 43)$采用\alert{单链表}形式存储的过程
+        \end{itemize}
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{head}}
+                \bitbox[]{30}{} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\only<2->{\tikzmark{shf}}}
+                \bitbox[]{30}{} \\
+                \bitbox[]{3}{$s:$}
+                \bitbox{3}{}\bitbox{2}{\tikzmark{sha}}\bitbox[]{2}{\tikzmark{tha}}
+                \uncover<3->{\bitbox{3}{$34$}\bitbox{2}{\tikzmark{shb}}\bitbox[]{2}{\tikzmark{thb}}}
+                \uncover<4->{\bitbox{3}{$23$}\bitbox{2}{\tikzmark{shc}}\bitbox[]{2}{\tikzmark{thc}}}
+                \uncover<5->{\bitbox{3}{$67$}\bitbox{2}{\tikzmark{shd}}\bitbox[]{2}{\tikzmark{thd}}}
+                \uncover<6->{\bitbox{3}{$43$}\bitbox{2}{\tikzmark{she}}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \only<3->{
+                    \draw[->] ($({pic cs:{sha}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tha}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{sha}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \only<4->{
+                    \draw[->] ($({pic cs:{shb}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{thb}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{shb}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \only<5->{
+                    \draw[->] ($({pic cs:{shc}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{thc}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{shc}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \only<6->{
+                    \draw[->] ($({pic cs:{shd}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{thd}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{shd}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \only<7->{
+                    \draw ($({pic cs:{she}})+(-0.22,-0.3)$) -- ($({pic cs:{she}})+(0.23,0.23)$);
+                }
+                \only<2->{
+                    \draw[->] ($({pic cs:{shf}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{shf}})+(0,-0.3)$);
+                }
+            \end{tikzpicture}
+            \caption{单链表的存储过程演示}
+            \label{fig:demo_linked_list_construction}
+        \end{figure}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{alertblock}{思考}
+        \begin{itemize}
+            \item 用何种属性描述单链表？
+            \item 如何为单链表分配内存？
+            \item 如何获取任意元素的存储地址？
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{单链表的类型说明}
+            \begin{itemize}
+                \item 以\alert{结点}为基本单位
+                \item 为结点\alert{动态}分配内存
+                \item 结点中包含下一个结点\alert{地址}
+                \item 单链表只需记录\alert{首结点}即可
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}{c}            
+            typedef int DataType; // 元素类型
+
+            typedef struct LinkedNode {
+                DataType data; // 数据元素
+                struct LinkedNode *next; // 下一个结点
+            } LinkedNode;
+
+            typedef struct {
+                LinkedNode *head; // 首结点
+            } LinkedList;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{单链表结点的初始化}
+            \begin{itemize}
+                \item 为结点\alert{动态}分配内存
+                \item 更新结点中各种数据
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}{c}
+            LinkedNode *create_linked_node(DataType d) {
+                LinkedNode *n = malloc(sizeof(LinkedNode));
+                if (n) {
+                    n->data = d;
+                    n->next = NULL;
+                }
+                return n;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{单链表的初始化}
+            \begin{itemize}
+                \item 为单链表\alert{动态}分配内存
+                \item 以默认值\footnotemark{}初始化首结点
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}{c}
+            LinkedList *create_linked_list() {
+                LinkedList *s = malloc(sizeof(LinkedList));
+                if (s) {
+                    s->head = create_linked_node(0);
+                }
+                return s;
+            }
+        \end{minted}
+    }
+    
+    \footnotetext{与\mintinline[fontsize=\smaller]{c}{DataType}有关，此处暂时为
+        \mintinline[fontsize=\smaller]{c}{0}}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{求单链表的长度}
+            \begin{itemize}
+                \item 从首结点开始遍历至尾结点
+                \item 记录已遍历的结点数
+                \item 计数时不包括首结点
+            \end{itemize}
+        \end{block}
+        \uncover<2>{
+            \begin{alertblock}{说明}
+                \begin{itemize}
+                    \item $T(n) = O(n)$
+                    \item 注意与顺序表比较
+                \end{itemize}
+            \end{alertblock}
+        }
+    }{
+        \begin{minted}{c}
+            int get_linked_list_length(LinkedList *s) {
+                int length = -1; // 计数不包括首结点
+                for (LinkedNode *p = s->head; p != NULL;
+                        p = p->next, ++length)
+                    ; // 空语句
+                return length;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{在单链表中\alert{按序号}查找指定元素}
+            \begin{itemize}
+                \item 从首结点遍历指定次数即可
+                \item 注意边界条件
+            \end{itemize}
+        \end{block}
+        \only<2->{
+            \begin{block}{在单链表中\alert{按值}查找指定元素}
+                \begin{itemize}
+                    \item 从首结点遍历至找到匹配值的结点
+                    \item 遍历范围不应包括首结点
+                \end{itemize}
+            \end{block}
+        }
+        \only<3>{
+            \begin{alertblock}{说明}
+                \begin{itemize}
+                    \item 二者均有：$T(n) = O(n)$
+                    \item 注意与顺序表比较
+                \end{itemize}
+            \end{alertblock}
+        }
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            LinkedNode *search_linked_by_index(
+                    LinkedList *s, int k) {
+                LinkedNode *p = s->head;
+                for (int i = 0; p != NULL && i < k;
+                        ++i, p = p->next)
+                    ; // 空语句
+                return p;
+            }
+        \end{minted}
+        \pause
+        \begin{minted}[highlightlines={}]{c}
+            LinkedNode *search_linked_by_data(
+                    LinkedList *s, DataType d) {
+                LinkedNode *p = s->head->next;
+                for (; p != NULL && p->data != d; p = p->next)
+                    ; // 空语句
+                return p;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{在单链表中指定序号的结点\alert{后}插入元素}
+            \begin{itemize}
+                \item 按序号查找出目标结点
+                \item 处理可能的非法查询结果
+                \item 按指定值创建新结点
+                \item 在目标结点后插入新结点
+            \end{itemize}
+        \end{block}
+        \uncover<2>{
+            \begin{alertblock}{说明}
+                \begin{itemize}
+                    \item 注意高亮代码的执行顺序
+                    \item 插入本身：$T(n) = O(1)$
+                    \item 连同查找：$T(n) = O(n)$
+                    \item 注意与顺序表比较
+                \end{itemize}
+            \end{alertblock}
+        }
+    }{
+        \begin{minted}[highlightlines={4, 5}]{c}
+            LinkedNode *attach_after_node(
+                    LinkedNode *p, LinkedNode *n) {
+                assert(p && n);
+                n->next = p->next;
+                p->next = n;
+                return n;
+            }
+        \end{minted}
+
+        \begin{minted}[highlightlines={}]{c}
+            bool insert_after_linked_by_index(
+                    LinkedList *s, int k, DataType d) {
+                LinkedNode *p = search_linked_by_index(s, k);
+                if (!p) {
+                    printf("Wrong insert index!\n");
+                    return false;
+                }
+                LinkedNode *n = create_linked_node(d);
+                return n && attach_after_node(p, n);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 在单链表形式的序列$s = (34, 23, 67, 43)$中第$2$个结点$23$后插
+                  入$54$
+        \end{itemize}
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{19}{}
+                \uncover<5->{\bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{n}}} \\
+                \bitbox[]{19}{}
+                \uncover<5->{\bitbox[]{3}{\tikzmark{sih}}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{head}}
+                \bitbox[]{11}{}\bitbox[]{2}{\tikzmark{tif}}
+                \uncover<5->{\bitbox{3}{$54$}\bitbox{2}{\tikzmark{sig}}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\tikzmark{sif}}
+                \bitbox[]{30}{} \\
+                \bitbox[]{3}{$s:$}
+                \bitbox{3}{}\bitbox{2}{\tikzmark{sia}}\bitbox[]{2}{\tikzmark{tia}}
+                \bitbox{3}{$34$}\bitbox{2}{\tikzmark{sib}}\bitbox[]{2}{\tikzmark{tib}}
+                \bitbox{3}{$23$}\bitbox{2}{\tikzmark{sic}}\bitbox[]{2}{\tikzmark{tic}}
+                \bitbox{3}{$67$}\bitbox{2}{\tikzmark{sid}}\bitbox[]{2}{\tikzmark{tid}}
+                \bitbox{3}{$43$}\bitbox{2}{\tikzmark{sie}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\only<2>{\tikzmark{sii}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<3>{\tikzmark{sii}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<4->{\tikzmark{sii}}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\only<2|handout:0>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<3|handout:0>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<4->{\mintinline[fontsize=\smaller]{c}{p}}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($({pic cs:{sia}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tia}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sia}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sib}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tib}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sib}})+(0,-0.03)$) circle [radius=0.05];
+                \only<1-6|handout:0>{
+                    \draw[->] ($({pic cs:{sic}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tic}})+(0.26,-0.03)$);
+                }
+                \fill ($({pic cs:{sic}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sid}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tid}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sid}})+(0,-0.03)$) circle [radius=0.05];
+                \draw ($({pic cs:{sie}})+(-0.22,-0.3)$) -- ($({pic cs:{sie}})+(0.23,0.23)$);
+                \draw[->] ($({pic cs:{sif}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                    cs:{sif}})+(0,-0.3)$);
+                \only<5->{
+                    \draw[->] ($({pic cs:{sih}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{sih}})+(0,-0.3)$);
+                }
+                \only<6->{
+                    \draw[->] ($({pic cs:{sig}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tic}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{sig}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \only<7->{
+                    \draw[->] ($({pic cs:{sic}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tif}})+(0.26,-0.03)$);
+                }
+                \only<2->{
+                    \draw[->] ($({pic cs:{sii}})+(0,-0.35)$) to [out=90,in=-90] ($({pic
+                        cs:{sii}})+(0,0.25)$);
+                }
+            \end{tikzpicture}
+            \caption{在单链表结点后插入新结点的过程演示}
+            \label{fig:demo_insert_after_linked_node}
+        \end{figure}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{alertblock}{思考}
+        \begin{itemize}
+            \item 如何在单链表中指定序号的结点\alert{前}插入元素？
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{在单链表中\alert{删除}指定序号的结点}
+            \begin{itemize}
+                \item 按序号查找出目标结点的\alert{直接前驱}
+                \item 处理可能的非法查询结果
+                \item 更新结点的顺序关系
+                \item 删除目标结点
+            \end{itemize}
+        \end{block}
+        \uncover<2>{
+            \begin{alertblock}{说明}
+                \begin{itemize}
+                    \item 注意高亮代码的执行顺序
+                    \item 删除本身：$T(n) = O(1)$
+                    \item 连同查找：$T(n) = O(n)$
+                    \item 注意与顺序表比较
+                \end{itemize}
+            \end{alertblock}
+        }
+    }{
+        \begin{minted}[highlightlines={3,4}]{c}
+            LinkedNode *detach_after_node(LinkedNode *q) {
+                assert(q && q->next);
+                LinkedNode *p = q->next;
+                q->next = p->next;
+                return p;
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool remove_linked_by_index(
+                    LinkedList *s, int k, DataType *d) {
+                LinkedNode *q = search_linked_by_index(s, k - 1);
+                if (!q || !q->next) {
+                    printf("Wrong remove index!\n");
+                    return false;
+                }
+                LinkedNode *p = detach_after_node(q);
+                if (d) { *d = p->data; }
+                free(p);
+                return true;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 在单链表形式的序列$s = (34, 23, 67, 43)$中删除第$2$个结点$23$
+        \end{itemize}
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{head}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\tikzmark{sjf}}
+                \bitbox[]{30}{} \\
+                \bitbox[]{3}{$s:$}
+                \bitbox{3}{}\bitbox{2}{\tikzmark{sja}}\bitbox[]{2}{\tikzmark{tja}}
+                \bitbox{3}{$34$}\bitbox{2}{\tikzmark{sjb}}\bitbox[]{2}{\tikzmark{tjb}}
+                \uncover<1-5|handout:0>{\bitbox{3}{$23$}\bitbox{2}{\tikzmark{sjc}}}\bitbox[]{2}{\tikzmark{tjc}}
+                \bitbox{3}{$67$}\bitbox{2}{\tikzmark{sjd}}\bitbox[]{2}{\tikzmark{tjd}}
+                \bitbox{3}{$43$}\bitbox{2}{\tikzmark{sje}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\only<2>{\tikzmark{sji}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<3->{\tikzmark{sji}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<4->{\tikzmark{sjj}}} \\
+                \bitbox[]{3}{}
+                \bitbox[]{3}{\only<2|handout:0>{\mintinline[fontsize=\smaller]{c}{q}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<3->{\mintinline[fontsize=\smaller]{c}{q}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<4->{\mintinline[fontsize=\smaller]{c}{p}}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($({pic cs:{sja}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tja}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sja}})+(0,-0.03)$) circle [radius=0.05];
+                \only<1-4|handout:0>{
+                    \draw[->] ($({pic cs:{sjb}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tjb}})+(0.26,-0.03)$);
+                }
+                \fill ($({pic cs:{sjb}})+(0,-0.03)$) circle [radius=0.05];
+                \only<1-5|handout:0>{
+                    \draw[->] ($({pic cs:{sjc}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tjc}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{sjc}})+(0,-0.03)$) circle [radius=0.05];
+                }
+                \draw[->] ($({pic cs:{sjd}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tjd}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sjd}})+(0,-0.03)$) circle [radius=0.05];
+                \draw ($({pic cs:{sje}})+(-0.22,-0.3)$) -- ($({pic cs:{sje}})+(0.23,0.23)$);
+                \draw[->] ($({pic cs:{sjf}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                    cs:{sjf}})+(0,-0.3)$);
+                \only<5->{
+                    \draw[->] ($({pic cs:{sjb}})+(0,-0.03)$) to [out=60,in=120] ($({pic
+                        cs:{tjc}})+(0.26,-0.03)$);
+                }
+                \only<2->{
+                    \draw[->] ($({pic cs:{sji}})+(0,-0.35)$) to [out=90,in=-90] ($({pic
+                        cs:{sji}})+(0,0.25)$);
+                }
+                \only<4-6|handout:0>{
+                    \draw[->] ($({pic cs:{sjj}})+(0,-0.35)$) to [out=90,in=-90] ($({pic
+                        cs:{sjj}})+(0,0.25)$);
+                }
+            \end{tikzpicture}
+            \caption{删除单链表结点过程演示}
+            \label{fig:demo_remove_linked_node}
+        \end{figure}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{链表的优势}
+        \begin{itemize}
+            \item 容量可变：无需提前确定容量，可自动扩充
+            \item 增删便捷：插入删除元素只影响局部，$T(n) = O(1)$\footnote{仅限
+                  插入删除操作本身，不包括查找}
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{链表的不足}
+        \begin{itemize}
+            \item 略占空间：每个结点均需额外存储下一结点的位置信息
+            \item 访问不便：查找指定元素须从首结点开始遍历，$T(n) = O(n)$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{序列存储结构的选择}
+        \begin{itemize}
+            \item 存储：当存储规模事先难以估计时，宜选用链表
+            \item 运算：当查找操作为主时，宜选用顺序表
+            \item 实现：当需实现简单时，宜选用顺序表
+        \end{itemize}
+    \end{alertblock}
+\end{frame}

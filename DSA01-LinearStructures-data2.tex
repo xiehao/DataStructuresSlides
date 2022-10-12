@@ -1,0 +1,154 @@
+\section{线性结构}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{线性结构(Linear Structure)}
+        \begin{itemize}
+            \item 又名\textbf{线性表}、\textbf{序列(sequence)}，指具有\alert{相
+                  同}数据类型的$n$个\footnote{$n\in\mathbb{Z}\cap[0,+\infty)$}数
+                  据元素的\alert{有限}序列
+            \item 其\textbf{长度(length)}指序列中数据元素的个数
+            \item 非空序列指至少含有一个元素的序列，可记作
+                \[
+                    s = (a_{1}, a_{2}, \cdots, a_{k}, \cdots, a_{n}),
+                \]
+                其中
+                \begin{itemize}
+                    \item $a_{k}$表示数据元素\footnote{可表示\alert{任意}数据类
+                          型，如无特别说明则采用简单数据类型}
+                    \item 下标$k \in \mathbb{Z} \cap [1, n]$表示该元素在序列中的
+                          位置\textbf{序号(index)}或\textbf{秩(rank)}
+                \end{itemize}
+            \item 特别地，空序列可记作
+                \[
+                    s = ()
+                \]
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{例：幼儿园小朋友排队放学}
+        \begin{itemize}
+            \item 每个班均只有\alert{有限}多个小朋友
+            \item 在每个班队伍中一般不允许有不属于该班小朋友的存在
+            \item 为点名方便，所有小朋友均须\alert{按顺序}排队
+            \begin{itemize}
+                \item 排头小朋友前面与排尾小朋友后面均没有其他小朋友
+                \item 其余每个小朋友的前后均有且只有一个其他小朋友
+            \end{itemize}
+        \end{itemize}
+    \end{exampleblock}
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+            list item/.style={draw=gray, circle, thick} %
+        ]
+            \node [list item] (item1) at (-3.5,0) {$a_{1}$}; %
+            \node [list item] (item2) at (-2,0) {$a_{2}$}; %
+            \node [list item] (itemk) at (0.5,0) {$a_{k}$}; %
+            \node [list item] (itemn) at (3,0) {$a_{n}$}; %
+            \draw  (item1) -- (item2); %
+            \draw[dashed] (item2) -- (itemk); %
+            \draw[dashed] (itemk) -- (itemn); %
+        \end{tikzpicture}
+        % \caption{}
+        \label{fig:demo_linear_structure_kids}
+    \end{figure}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{序列的特点}
+        \begin{itemize}
+            \item \textbf{有穷性}：序列中数据元素的个数是\alert{有限}的
+            \item \textbf{一致性}：序列中所有数据元素\alert{类型}均须\alert{相
+                  同}
+            \item \textbf{顺序性}：序列中所有元素均按\alert{顺序}排列
+            \begin{itemize}
+                \item 首元素无\textbf{前驱(predecessor)}，尾元素无\textbf{后继
+                      (successor)}
+                \item 其余元素均分别有且只有一个\textbf{直接(immediate)前驱}与
+                      \textbf{直接后继}
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+            list item/.style={draw=gray, circle, thick} %
+        ]
+            \node [list item] (item1) at (-3.5,0) {$a_{1}$}; %
+            \node [list item] (item2) at (-2,0) {$a_{2}$}; %
+            \node [list item] (itemk) at (0.5,0) {$a_{k}$}; %
+            \node [list item] (itemn) at (3,0) {$a_{n}$}; %
+            \draw  (item1) -- (item2); %
+            \draw[dashed] (item2) -- (itemk); %
+            \draw[dashed] (itemk) -- (itemn); %
+        \end{tikzpicture}
+        % \caption{}
+        \label{fig:demo_linear_structure_kids_2}
+    \end{figure}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{序列的抽象数据类型}
+        \begin{minted}[linenos=false,escapeinside=@@]{c}
+            ADT Sequence {
+            数据:
+                数据对象: @$\mathcal{D} = \{a_{k} | a_{k}\in\text{数据元素集合}, k\in\mathbb{Z}\cap[1,n]\}$@
+                逻辑关系: @$\mathcal{R} = \{\langle{}a_{k-1},a_{k}\rangle | k\in\mathbb{Z}\cap[2,n]\}$@
+            操作:
+                create_sequence()
+                    构造并初始化一个空序列@$s$@
+                get_sequence_length(s)
+                    获取并返回序列@$s$@中所含元素个数
+                get_sequence_element(s, k)
+                    获取并返回序列@$s$@中的第@$k$@个元素
+                search_sequence_element(s, x)
+                    查找序列@$s$@中值为@$x$@的元素, 返回其首次出现的序号或地址
+                insert_sequence_element(s, k, x)
+                    在序列@$s$@的第@$k$@个位置插入值为@$x$@的新元素, 后续元素序号与总元素个数均加1
+                remove_sequence_element(s, k)
+                    删除序列@$s$@的第@$k$@个元素, 后续元素序号与总元素个数均减1
+            }
+        \end{minted}
+    \end{block}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{一些说明}
+        \begin{itemize}
+            \item 线性结构的基本操作由实际应用而定
+            \item 复杂操作可通过基本操作的组合而实现
+            \item 针对不同应用，其操作接口可能略有差异
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{序列的存储结构}
+        \begin{itemize}
+            \item 顺序存储结构：\textbf{顺序列表}
+            \begin{itemize}
+                \item 元素按地址相邻存储在内存的一片\alert{连续}地址空间中
+                \item 长度\alert{固定}，可由\textbf{内置数组}的简单封装实现
+                \item 若欲实现变长结构，须采用进一步策略封装成\textbf{动态数组}
+                      或\textbf{向量}
+            \end{itemize}
+            \item 链式存储结构：\textbf{链式列表}
+            \begin{itemize}
+                \item 元素在内存中一般彼此\alert{不相邻}，仅按前驱后继关系通过
+                      \textbf{指针}相连
+                \item 长度\alert{可变}，可由自定义\textbf{结构体}实现，较灵活
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\input{DSA01-LinearStructures-data2.1.tex}
+\input{DSA01-LinearStructures-data2.2.tex}

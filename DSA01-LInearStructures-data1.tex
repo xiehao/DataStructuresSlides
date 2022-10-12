@@ -1,0 +1,172 @@
+\section{引例}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{引例：一元多项式的表示与计算}
+        \begin{itemize}
+            \item 考察一元$n$次多项式
+                \[
+                    f(x) = a_{0} + a_{1}x + \cdots + a_{n-1}x^{n-1} + a_{n}x^{n}
+                \]
+            \item 如何表示$f(x)$？
+            \begin{itemize}
+                \item 多项式的阶数$n$
+                \item 各项系数$a_{k}$与指数$k$，其中$k\in\mathbb{Z}\cap[0,n]$
+            \end{itemize}
+            \item 如何对$f(x)$与$g(x)$两个多项式做基本运算？
+            \begin{itemize}
+                \item $f(x) \pm g(x)$
+                \item $f(x) \cdot g(x)$
+            \end{itemize}
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{解决方案甲：利用顺序存储结构直接表示}
+        \begin{itemize}
+            \item 利用数组\alert{元素}与\alert{下标}分别表示多项式中对应各项的\alert{系数}与\alert{指数}
+            \item 即：令数组元素\mintinline{c}{a[k]}表示$x^{k}$前的系数$a_{k}$
+            \item 简单四则运算只需在数组对应元素之间运算即可
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 多项式$f(x) = 1 - 3x^{2} + 4x^{6}$与$g(x) = x + 5x^{2} -
+                  7x^{4}$可分别由数组\mintinline{c}{a[]}与\mintinline{c}{b[]}表
+                  示
+                \pause
+                \begin{figure}
+                    \centering
+                    \begin{bytefield}{1}
+                        \bitbox[]{2}{}\bitboxes[]{3}{{\tiny$0$}{\tiny$1$}{\tiny$2$}{\tiny$3$}{\tiny$4$}{\tiny$5$}{\tiny$6$}{\tiny$\dots$}} \\
+                        \bitbox[]{2}{\raggedleft\mintinline{c}{a}$\;\,$}\bitboxes{3}{{$1$}{$0$}{$-3$}{$0$}{$0$}{$0$}{$4$}{$\dots$}} \\
+                        \bitbox[]{2}{\raggedleft\mintinline{c}{b}$\;\,$}\bitboxes{3}{{$0$}{$1$}{$5$}{$0$}{$-7$}{$0$}{$0$}{$\dots$}}
+                    \end{bytefield}
+                    \caption{解决方案甲示例演示}
+                    \label{fig:demo_solution_a}
+                \end{figure}
+                \vspace{-2ex}
+                \pause
+            \item \alert{思考}：如何处理系数过于稀疏的情况？如：$f(x) = 1 - 3x^{100} + 2x^{1,000,000}$
+        \end{itemize}
+    \end{exampleblock}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{解决方案乙：利用顺序存储结构只表示非零项}
+        \begin{itemize}
+            \item 利用数组元素表示由各\alert{非零项}的系数与指数组成的二元组$(a_{k},k)$
+            \item 数组元素按非零项指数大小顺序排列
+            \item 在运算时只需逐个比较每项的指数即可
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 多项式$f(x) = 9x^{12} + 15x^{8} + 3x^{2}$与$g(x) = 26x^{19} - 4x^{8} -
+                  13x^{6} + 82$相加可表示为
+                  \pause
+                  \begin{figure}
+                      \centering
+                      \begin{bytefield}{1}
+                          \bitbox[]{4}{}\bitboxes[]{5}{{\tiny$0$}{\tiny$1$}{\tiny$2$}{\tiny$3$}{\tiny$4$}{\tiny$5$}{\tiny$\dots$}} \\
+                          \bitbox[]{4}{\raggedleft$f(x)\;\,$}\bitboxes{5}{{$(9,12)$}{$(15,8)$}{$(3,2)$}{$\dots$}} \\
+                          \bitbox[]{4}{\raggedleft$g(x)\;\,$}\bitboxes{5}{{$(26,19)$}{$(-4,8)$}{$(-13,6)$}{$(82,0)$}{$\dots$}} \\
+                          \bitbox[]{4}{\raggedleft$f + g\;\,$}\bitboxes{5}{{\only<4->{$(26,19)$}}{\only<5->{$(9,12)$}}{\only<6->{$(11,8)$}}{\only<7->{$(-13,6)$}}{\only<8->{$(3,2)$}}{\only<9->{$(82,0)$}}{\only<10->{$\dots$}}}
+                      \end{bytefield}
+                      \caption{解决方案乙示例演示过程}
+                      \label{fig:demo_solution_b}
+                  \end{figure}
+                  \vspace{-2ex}
+            \item<11> 于是，$f(x) + g(x) = 26x^{19} + 9x^{12} + 11x^{8} - 13x^{6} +
+                  3x^{2} + 82$
+        \end{itemize}
+    \end{exampleblock}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{解决方案丙：利用链式存储结构只表示非零项}
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{1}
+                \bitbox{10}{\mintinline{c}{coefficient}}\bitbox{8}{\mintinline{c}{exponent}}\bitbox{6}{\mintinline{c}{next}}
+            \end{bytefield}
+            \caption{单链表结点结构}
+            \label{fig:demo_node_structure}
+        \end{figure}
+        \vspace{-4ex}
+        \begin{itemize}
+            \item 利用链表结点表示各非零项的\alert{系数}、\alert{指数}与
+                  \alert{下一个}结点的地址
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 多项式$f(x) = 9x^{12} + 15x^{8} + 3x^{2}$与$g(x) = 26x^{19} - 4x^{8} -
+            13x^{6} + 82$可分别表示为
+        \end{itemize}
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{4}{$f(x)$：}\bitbox{2}{\tikzmark{saa}}\bitbox[]{2}{\tikzmark{taa}}
+                \bitboxes{3}{{$9$}{$12$}}\bitbox{2}{\tikzmark{sab}}\bitbox[]{2}{\tikzmark{tab}}
+                \bitboxes{3}{{$15$}{$8$}}\bitbox{2}{\tikzmark{sac}}\bitbox[]{2}{\tikzmark{tac}}
+                \bitboxes{3}{{$3$}{$2$}}\bitbox{2}{\tikzmark{sad}}\bitbox[]{2}{\tikzmark{tad}} \\
+                \\
+                \bitbox[]{4}{$g(x)$：}\bitbox{2}{\tikzmark{sae}}\bitbox[]{2}{\tikzmark{tae}}
+                \bitboxes{3}{{$26$}{$19$}}\bitbox{2}{\tikzmark{saf}}\bitbox[]{2}{\tikzmark{taf}}
+                \bitboxes{3}{{$-4$}{$8$}}\bitbox{2}{\tikzmark{sag}}\bitbox[]{2}{\tikzmark{tag}}
+                \bitboxes{3}{{$-13$}{$6$}}\bitbox{2}{\tikzmark{sah}}\bitbox[]{2}{\tikzmark{tah}}
+                \bitboxes{3}{{$82$}{$0$}}\bitbox{2}{\tikzmark{sai}}\bitbox[]{2}{\tikzmark{tai}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($({pic cs:{saa}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{taa}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{saa}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sab}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tab}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sab}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sac}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tac}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sac}})+(0,-0.03)$) circle [radius=0.05];
+                % \draw[->] ($({pic cs:{sad}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                %     cs:{tad}})+(0.26,-0.03)$);
+                % \fill ($({pic cs:{sad}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sae}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tae}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sae}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{saf}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{taf}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{saf}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sag}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tag}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sag}})+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($({pic cs:{sah}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                    cs:{tah}})+(0.26,-0.03)$);
+                \fill ($({pic cs:{sah}})+(0,-0.03)$) circle [radius=0.05];
+                \draw ($({pic cs:{sad}})+(-0.22,-0.3)$) -- ($({pic cs:{sad}})+(0.23,0.23)$);
+                \draw ($({pic cs:{sai}})+(-0.22,-0.3)$) -- ($({pic cs:{sai}})+(0.23,0.23)$);
+            \end{tikzpicture}
+            \caption{解决方案丙示例结构}
+            \label{fig:demo_solution_c}
+        \end{figure}
+    \end{exampleblock}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{一点启示}
+        \begin{itemize}
+            \item 同一问题有不同的表示方案
+            \item 共性：\alert{线性结构}的组织与管理
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
