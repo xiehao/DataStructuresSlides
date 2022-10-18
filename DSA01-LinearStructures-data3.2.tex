@@ -1,0 +1,558 @@
+\subsection{队列}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.6]{
+        \begin{block}{队列(Queue)}
+            \begin{itemize}
+                \item 另一种操作\alert{受限}的序列
+                \item \alert{仅}允许在一端插入且在另一端删除元素
+                \item 可插入的一端为\textbf{队尾(rear)}，另一端为\textbf{队首(front)}
+                \item \textbf{先进先出(First In First Out, FIFO)}
+            \end{itemize}
+        \end{block}
+        \uncover<2>{
+            \begin{exampleblock}{日常生活中的队列}
+                \begin{itemize}
+                    \item 排队的人（不允许插队）
+                    \item 羽毛球桶
+                    \item $\dots$
+                \end{itemize}
+            \end{exampleblock}
+        }
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{6}
+                \stackbox{3.5}{6}{$\vdots$\\\vspace*{1ex}$\downarrow$} \\
+                \begin{leftwordgroup}{$n$}
+                    \begin{rightwordgroup}{\mintinline[fontsize=\smaller]{c}{队尾}}
+                        \stackbox{1.5}{6}{$a_{n}$}
+                    \end{rightwordgroup} \\
+                    \stackbox{2.5}{6}{$\vdots$\vspace{1.5ex}} \\
+                    \stackbox{1.5}{6}{$a_{2}$} \\
+                    \begin{rightwordgroup}{\mintinline[fontsize=\smaller]{c}{队首}}
+                        \stackbox{1.5}{6}{$a_{1}$}
+                    \end{rightwordgroup}
+                \end{leftwordgroup} \\
+                \stackbox{3.5}{6}{$\downarrow$\vspace*{1ex}\\$\vdots$}
+            \end{bytefield}
+            \caption{队列的示意图}
+            \label{fig:demo_queue}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{队列的抽象数据类型}
+        \begin{minted}[linenos=false,escapeinside=@@]{c}
+            ADT Queue {
+            数据:
+                数据对象: @$\mathcal{D} = \{a_{k} | a_{k}\in\text{数据元素集合}, k\in\mathbb{Z}\cap[1,n]\}$@
+                逻辑关系: @$\mathcal{R} = \{\langle{}a_{k-1},a_{k}\rangle | k\in\mathbb{Z}\cap[2,n]\}$@
+            操作:
+                create_queue()
+                    构造并初始化一个空队列@$s$@
+                is_empty_queue()
+                    判断队列是否为空
+                in_queue(s, x)
+                    若队列@$s$@存在, 则在其队尾插入值为@$x$@的新元素
+                out_queue(s)
+                    若队列@$s$@存在且非空, 则记录并删除其队首元素
+            }
+        \end{minted}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{顺序队列（版本甲）}
+            \begin{itemize}
+                \item 可采用已有序列结构的封装
+                \item 序列第一个元素为\alert{队首}
+                \item 序列最后一个元素为\alert{队尾}
+                \item 入队时可直接在末尾插入新元素
+                \item 出队时可删除第一个元素
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                SequenceList *_;
+            } SequenceQueue;
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool push_sequence_queue(
+                    SequenceQueue *s, DataType d) {
+                return s && insert_sequence_list(
+                        s->_, s->_->last + 1, d);
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_sequence_queue(
+                    SequenceQueue *s, DataType *d) {
+                return s && remove_sequence_list(s->_, 0, d);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{时间复杂度}
+        \begin{itemize}
+            \item 入队操作：无需移动任何元素，$O(1)$
+            \item 出队操作：需移动所有元素，\alert{$O(n)$，如何改进？}
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{alertblock}{思路}
+        \begin{itemize}
+            \item \alert{与其移动元素，不如移动队首，正如队尾一样}
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{顺序队列（版本乙）}
+            \begin{itemize}
+                \item 总体同版本甲
+                \item 新增队首序号成员
+                \item 出队时仅需增加队首序号
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                SequenceList *_;
+                int front;
+            } SequenceQueue;
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_sequence_queue(
+                    SequenceQueue *s, DataType *d) {
+                if (!s) {
+                    return false;
+                }
+                if (d) {
+                    *d = s->_->data[front];
+                }
+                return ++front;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{假上溢现象}
+        \begin{itemize}
+            \item 队首前尚有可用空间，但队尾已至序列尽头
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{bytefield}{2}
+            \bitboxes[]{3}{{}{}{\mintinline[fontsize=\smaller]{c}{front}}} \\
+            \bitboxes[]{3}{{}{}{\tikzmark{ska}}} \\
+            \bitbox[]{3}{$s:$}
+            \bitboxes{3}{{\only<5->{$54$}}{}{$34$}{\only<2->{$23$}}{\only<3->{$67$}}{\only<4->{$43$}}} \\
+            \bitboxes[]{3}{{}{\only<5>{\tikzmark{skb}}}{}{\only<1>{\tikzmark{skb}}}{\only<2>{\tikzmark{skb}}}{\only<3>{\tikzmark{skb}}}{\only<4>{\tikzmark{skb}}}} \\
+            \bitboxes[]{3}{{}{\only<5>{\mintinline[fontsize=\smaller]{c}{rear}}}{}{\only<1>{\mintinline[fontsize=\smaller]{c}{rear}}}{\only<2>{\mintinline[fontsize=\smaller]{c}{rear}}}{\only<3>{\mintinline[fontsize=\smaller]{c}{rear}}}{\only<4>{\mintinline[fontsize=\smaller]{c}{rear}}}}
+        \end{bytefield}
+        \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                list item/.style={draw=gray, rounded corners, thick} %
+            ]
+            \draw[->] ($({pic cs:{ska}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                cs:{ska}})+(0,-0.3)$);
+            \draw[<-] ($({pic cs:{skb}})+(0,0.25)$) to [out=-90,in=90] ($({pic
+                cs:{skb}})+(0,-0.35)$);
+        \end{tikzpicture}
+        \caption{队列的假上溢现象及其解决思路}
+        \label{fig:queue_fake_overflow}
+    \end{figure}
+    \pause
+    \uncover<5>{
+        \begin{alertblock}{思路}
+            \begin{itemize}
+                \item \alert{采用\textbf{循环队列}，假上溢时可将队尾移至内置数组
+                          首元素，以充分利用空间}
+            \end{itemize}
+        \end{alertblock}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{新问题：如何判断队列已空或已满？}
+        \vspace*{2ex}
+        \bicolumns[0.5]{
+            \begin{figure}
+                \centering
+                \begin{bytefield}{2}
+                    \bitboxes[]{3}{{}{}{\mintinline[fontsize=\smaller]{c}{front}}} \\
+                    \bitboxes[]{3}{{}{}{\tikzmark{skc}}} \\
+                    \bitbox[]{3}{$s:$}
+                    \bitboxes{3}{{}{}{}{}{}} \\
+                    \bitboxes[]{3}{{}{}{\tikzmark{skd}}} \\
+                    \bitboxes[]{3}{{}{}{\mintinline[fontsize=\smaller]{c}{rear}}}
+                \end{bytefield}
+                \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                        list item/.style={draw=gray, rounded corners, thick} %
+                    ]
+                    \draw[->] ($({pic cs:{skc}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{skc}})+(0,-0.3)$);
+                    \draw[<-] ($({pic cs:{skd}})+(0,0.25)$) to [out=-90,in=90] ($({pic
+                        cs:{skd}})+(0,-0.35)$);
+                \end{tikzpicture}
+                \caption{队列已空}
+                \label{fig:queue_empty}
+            \end{figure}
+        }{
+            \begin{figure}
+                \centering
+                \begin{bytefield}{2}
+                    \bitboxes[]{3}{{}{}{\mintinline[fontsize=\smaller]{c}{front}}} \\
+                    \bitboxes[]{3}{{}{}{\tikzmark{ske}}} \\
+                    \bitbox[]{3}{$s:$}
+                    \bitboxes{3}{{$54$}{$34$}{$23$}{$67$}{$43$}} \\
+                    \bitboxes[]{3}{{}{}{\tikzmark{skf}}} \\
+                    \bitboxes[]{3}{{}{}{\mintinline[fontsize=\smaller]{c}{rear}}}
+                \end{bytefield}
+                \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                        list item/.style={draw=gray, rounded corners, thick} %
+                    ]
+                    \draw[->] ($({pic cs:{ske}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{ske}})+(0,-0.3)$);
+                    \draw[<-] ($({pic cs:{skf}})+(0,0.25)$) to [out=-90,in=90] ($({pic
+                        cs:{skf}})+(0,-0.35)$);
+                \end{tikzpicture}
+                \caption{队列已满}
+                \label{fig:queue_full}
+            \end{figure}
+        }
+    \end{block}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{思路甲：设立标志位\mintinline[fontsize=\smaller]{c}{flag}辅助判断}
+        \begin{itemize}
+            \item 除检查队首与队尾是否重合外，尚需判断标志位（可约定：0为队空，1
+                  为队满）
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{思路乙：在队首处空出一个元素}
+        \begin{itemize}
+            \item 队空时队首队尾重合，队满时二者不重合
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{思路丙：新增\mintinline[fontsize=\smaller]{c}{size}成员记录队列长度}
+        \begin{itemize}
+            \item 队空时长度为0，队满时长度为容量
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{顺序队列（版本丙）}
+            \begin{itemize}
+                \item 总体同版本乙
+                \item 新增队列长度成员
+                \item 因出入较大，故已不借用序列结构
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                DataType data[CAPACITY];
+                int front; // 队首
+                int rear; // 队尾
+                int size; // 队列长度
+            } SequenceQueue;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{顺序队列的初始化}
+            \begin{itemize}
+                \item 为队列分配空间
+                \item 将队首与队尾均置于末尾
+                \item 将队列长度置0
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            SequenceQueue *create_sequence_queue() {
+                SequenceQueue *s = malloc(sizeof(SequenceQueue));
+                if (s) {
+                    s->front = s->rear = CAPACITY - 1;
+                    s->size = 0;
+                }
+                return s;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{入队}
+            \begin{itemize}
+                \item 确保队列未满
+                \item 队尾后移
+                      \begin{itemize}
+                          \item 若已至绝境则从头再来
+                      \end{itemize}
+                \item 加入新元素
+                \item 更新队列长度
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool push_sequence_queue(
+                    SequenceQueue *s, DataType d) {
+                if (full_sequence_queue(s)) {
+                    return false;
+                }
+                s->rear = (s->rear + 1) % CAPACITY;
+                s->data[s->rear] = d;
+                return ++s->size;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{出队}
+            \begin{itemize}
+                \item 确保队列非空
+                \item 队首后移\footnotemark
+                      \begin{itemize}
+                          \item 若已至绝境则从头再来
+                      \end{itemize}
+                \item 记录已删除元素
+                \item 更新队列长度
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_sequence_queue(
+                    SequenceQueue *s, DataType *d) {
+                if (empty_sequence_queue(s)) {
+                    return false;
+                }
+                s->front = (s->front + 1) % CAPACITY;
+                if (d) {
+                    *d = s->data[s->front];
+                }
+                --s->size;
+                return true;
+            }
+        \end{minted}
+    }
+
+    \footnotetext{注：队首一般指向首元素\alert{前一个}位置}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{链式队列}
+            \begin{itemize}
+                \item 可采用已有链表结构的封装
+                \item 新增队首与队尾指针
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                LinkedList *_;
+                LinkedNode *front; // 队首
+                LinkedNode *rear; // 队尾
+            } LinkedQueue;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{链式队列}
+        \vspace*{2ex}
+        \bicolumns[0.3]{
+            \begin{figure}
+                \centering
+                \begin{bytefield}{2}
+                    \bitboxes[]{3}{{}{\mintinline[fontsize=\smaller]{c}{front}}} \\
+                    \bitboxes[]{3}{{}{\tikzmark{smf}}} \\
+                    \bitbox[]{3}{$s:$}
+                    \bitbox{3}{}\bitbox{2}{\tikzmark{sma}} \\
+                    \bitbox[]{3}{}
+                    \bitbox[]{3}{\tikzmark{smg}} \\
+                    \bitbox[]{3}{}
+                    \bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{rear}}
+                \end{bytefield}
+                \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                        list item/.style={draw=gray, rounded corners, thick} %
+                    ]
+                    \draw ($({pic cs:{sma}})+(-0.22,-0.3)$) -- ($({pic cs:{sma}})+(0.23,0.23)$);
+                    \draw[->] ($({pic cs:{smf}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{smf}})+(0,-0.3)$);
+                    \draw[<-] ($({pic cs:{smg}})+(0,0.25)$) to [out=-90,in=90] ($({pic
+                        cs:{smg}})+(0,-0.35)$);
+                \end{tikzpicture}
+                \caption{空链式队列}
+                \label{fig:demo_empty_linked_queue}
+            \end{figure}
+        }{
+            \begin{figure}
+                \centering
+                \begin{bytefield}{2}
+                    \bitboxes[]{3}{{}{\mintinline[fontsize=\smaller]{c}{front}}} \\
+                    \bitboxes[]{3}{{}{\tikzmark{slf}}} \\
+                    \bitbox[]{3}{$s:$}
+                    \bitbox{3}{}\bitbox{2}{\tikzmark{sla}}\bitbox[]{2}{\tikzmark{tla}}
+                    \bitbox{3}{$34$}\bitbox{2}{\tikzmark{slb}}\bitbox[]{2}{\tikzmark{tlb}}
+                    \bitbox{3}{$23$}\bitbox{2}{\tikzmark{slc}}\bitbox[]{2}{\tikzmark{tlc}}
+                    \bitbox{3}{$43$}\bitbox{2}{\tikzmark{sld}} \\
+                    \bitbox[]{24}{}
+                    \bitbox[]{3}{\tikzmark{slg}} \\
+                    \bitbox[]{24}{}
+                    \bitbox[]{3}{\mintinline[fontsize=\smaller]{c}{rear}}
+                \end{bytefield}
+                \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                        list item/.style={draw=gray, rounded corners, thick} %
+                    ]
+                    \draw[->] ($({pic cs:{sla}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tla}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{sla}})+(0,-0.03)$) circle [radius=0.05];
+                    \draw[->] ($({pic cs:{slb}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tlb}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{slb}})+(0,-0.03)$) circle [radius=0.05];
+                    \draw[->] ($({pic cs:{slc}})+(0,-0.03)$) to [out=0,in=180] ($({pic
+                        cs:{tlc}})+(0.26,-0.03)$);
+                    \fill ($({pic cs:{slc}})+(0,-0.03)$) circle [radius=0.05];
+                    \draw ($({pic cs:{sld}})+(-0.22,-0.3)$) -- ($({pic cs:{sld}})+(0.23,0.23)$);
+                    \draw[->] ($({pic cs:{slf}})+(0,0.3)$) to [out=-90,in=90] ($({pic
+                        cs:{slf}})+(0,-0.3)$);
+                    \draw[<-] ($({pic cs:{slg}})+(0,0.25)$) to [out=-90,in=90] ($({pic
+                        cs:{slg}})+(0,-0.35)$);
+                \end{tikzpicture}
+                \caption{非空链式队列}
+                \label{fig:demo_non_empty_linked_queue}
+            \end{figure}
+        }
+    \end{exampleblock}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{链式队列的初始化}
+            \begin{itemize}
+                \item 调用链表初始化方法
+                \item 将队首与队尾均指向首结点
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            LinkedQueue *create_linked_queue() {
+                LinkedQueue *s = malloc(sizeof(LinkedQueue));
+                if (s) {
+                    s->_ = create_linked_list();
+                    s->front = s->rear = s->_->head;
+                }
+                return s;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{链式队列的判空}
+            \begin{itemize}
+                \item 队首与队尾是否重合
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool empty_linked_queue(LinkedQueue *s) {
+                return !s || s->front == s->rear;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{入队}
+            \begin{itemize}
+                \item 创建新结点
+                \item 在链表末端插入新结点\footnotemark
+                \item 队尾指针后移
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool push_linked_queue(
+                    LinkedQueue *s, DataType d) {
+                if (!s) {
+                    return false;
+                }
+                LinkedNode *n = create_linked_node(d);
+                return n && (s->rear =
+                    attach_after_node(s->rear, n));
+            }
+        \end{minted}
+    }
+
+    \footnotetext{注：此时已有队尾指针记录队尾结点，故无需每次查找之}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{出队}
+            \begin{itemize}
+                \item 记录链表第一结点的值
+                \item 删除该首结点
+                \item 当队列空时队尾指针前移
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_linked_queue(
+                    LinkedQueue *s, DataType *d) {
+                if (empty_linked_queue(s)) {
+                    return false;
+                }
+                LinkedNode *p = detach_after_node(s->front);
+                if (d) {
+                    *d = p->data;
+                }
+                free(p);
+                if (empty_linked_queue(s)) {
+                    s->rear = s->front;
+                }
+                return true;
+            }
+        \end{minted}
+    }
+\end{fragile}

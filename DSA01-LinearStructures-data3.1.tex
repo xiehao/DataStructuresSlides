@@ -1,0 +1,240 @@
+\subsection{栈}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.6]{
+        \begin{block}{栈(Stack)}
+            \begin{itemize}
+                \item 一种操作\alert{受限}的序列
+                \item \alert{仅}允许在一端插入删除元素
+                \item 可操作一端为\textbf{栈顶(top)}，另一端为\textbf{栈底(bottom)}
+                \item \textbf{后进先出(Last In First Out, LIFO)}
+            \end{itemize}
+        \end{block}
+        \uncover<2>{
+            \begin{exampleblock}{日常生活中的栈}
+                \begin{itemize}
+                    \item 一摞碗、碟、凳子等
+                    \item 糖葫芦、牛羊肉串等
+                    \item 子弹夹
+                    \item $\dots$
+                \end{itemize}
+            \end{exampleblock}
+        }
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{6}
+                \stackbox{4.5}{6}{$\vdots$\\\vspace*{1ex}$\uparrow\downarrow$} \\
+                \begin{leftwordgroup}{$n$}
+                    \begin{rightwordgroup}{\mintinline[fontsize=\smaller]{c}{栈顶}}
+                        \stackbox{1.5}{6}{$a_{n}$}
+                    \end{rightwordgroup} \\
+                    \stackbox{2.5}{6}{$\vdots$\vspace{1.5ex}} \\
+                    \stackbox{1.5}{6}{$a_{2}$} \\
+                    \begin{rightwordgroup}{\mintinline[fontsize=\smaller]{c}{栈底}}
+                        \stackbox{1.5}{6}{$a_{1}$}
+                    \end{rightwordgroup}
+                \end{leftwordgroup}
+            \end{bytefield}
+            \caption{栈的示意图}
+            \label{fig:demo_stack}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{栈的抽象数据类型}
+        \begin{minted}[linenos=false,escapeinside=@@]{c}
+            ADT Stack {
+            数据:
+                数据对象: @$\mathcal{D} = \{a_{k} | a_{k}\in\text{数据元素集合}, k\in\mathbb{Z}\cap[1,n]\}$@
+                逻辑关系: @$\mathcal{R} = \{\langle{}a_{k-1},a_{k}\rangle | k\in\mathbb{Z}\cap[2,n]\}$@
+            操作:
+                create_stack()
+                    构造并初始化一个空栈@$s$@
+                is_empty_stack()
+                    判断栈是否为空
+                push_stack(s, x)
+                    若栈@$s$@存在且未满, 则在其栈顶插入值为@$x$@的新元素
+                pop_stack(s)
+                    若栈@$s$@存在且非空, 则删除其栈顶元素
+                top_stack(s)
+                    若栈@$s$@存在且非空, 则返回其栈顶元素
+            }
+        \end{minted}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{栈的类型说明}
+            \begin{itemize}
+                \item 可利用已有结构的再封装
+                \item \alert{顺序栈}可采用序列
+                \item \alert{链式栈}可采用链表
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                SequenceList *_;
+            } SequenceStack;
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            typedef struct {
+                LinkedList *_;
+            } LinkedStack;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{栈的初始化}
+            \begin{itemize}
+                \item 可利用序列/链表已有的初始化方法
+                \item 注意空指针的处理
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            SequenceStack *create_sequence_stack() {
+                SequenceStack *s = malloc(sizeof(SequenceStack));
+                if (s) {
+                    s->_ = create_sequence_list();
+                }
+                return s;
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            LinkedStack *create_linked_stack() {
+                LinkedStack *s = malloc(sizeof(LinkedStack));
+                if (s) {
+                    s->_ = create_linked_list();
+                }
+                return s;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{判断栈是否为空}
+            \begin{itemize}
+                \item 顺序栈可利用序列已有的判空方法
+                \item 链式栈需检测首结点的下一个结点
+                \item 此处利用了短路求值原则，下同
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool empty_sequence_stack(SequenceStack *s) {
+                return !s || empty_sequence_list(s->_);
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool empty_linked_stack(LinkedStack *s) {
+                return !s || !s->_->head->next;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{入栈}
+            \begin{itemize}
+                \item 将新元素\alert{压入}栈中
+                \item 指将新元素放入栈顶并更新栈顶
+                \item 顺序栈栈顶序号为\mintinline[fontsize=\smaller]{c}{last}
+                \item 链式栈栈顶为首结点的直接后继
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool push_sequence_stack(
+                    SequenceStack *s, DataType d) {
+                return s && insert_sequence_list(
+                        s->_, s->_->last + 1, d);
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool push_linked_stack(
+                    LinkedStack *s, DataType d) {
+                return s && insert_after_linked_by_index(
+                        s->_, 0, d);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{出栈}
+            \begin{itemize}
+                \item 将栈顶元素从栈中\alert{弹出}
+                \item 指将栈顶元素取出并更新栈顶
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_sequence_stack(
+                    SequenceStack *s, DataType *p) {
+                return s && remove_sequence_list(
+                        s->_, s->_->last, p);
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool pop_linked_stack(
+                    LinkedStack *s, DataType *p) {
+                return s && remove_linked_by_index(
+                        s->_, 1, p);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{取栈顶元素}
+            \begin{itemize}
+                \item 将栈顶元素\alert{复制}一份
+                \item 不改变栈
+                \item 首先判断栈是否为空
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={}]{c}
+            bool top_sequence_stack(
+                    SequenceStack *s, DataType *p) {
+                if (empty_sequence_stack(s) || !p) {
+                    return false;
+                }
+                *p = s->_->data[s->_->last];
+                return true;
+            }
+        \end{minted}
+        \begin{minted}[highlightlines={}]{c}
+            bool top_linked_stack(
+                    LinkedStack *s, DataType *p) {
+                if (empty_linked_stack(s) || !p) {
+                    return false;
+                }
+                *p = s->_->head->next->data;
+                return true;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\input{supplements/DSA01-3.1-recursion.tex}
+% \input{supplements/DSA01-3.1-maze.tex}

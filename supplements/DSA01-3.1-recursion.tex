@@ -1,0 +1,135 @@
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{栈与递归}
+        \begin{itemize}
+            \item \textbf{递归(recursion)}：函数直接或间接调用自身的过程
+            \item 递归\textbf{要素}：终止条件与递归体
+            \item 递归\textbf{实现}：在\alert{栈}中记录每次调用的有用信息
+        \end{itemize}
+    \end{exampleblock}
+    \pause
+    \begin{exampleblock}{例：求阶乘}
+        \vspace{2ex}
+        \bicolumns[0.5]{
+            \vspace*{1.5ex}
+            \[
+                n!=\begin{cases}
+                    1            & n=0 \\
+                    n\cdot(n-1)! & n>0
+                \end{cases}
+            \]
+        }{
+            \begin{minted}{c}
+                int factorial(int n) {
+                    return 0 == n ? 1 : n * factorial(n - 1);
+                }
+            \end{minted}
+        }
+    \end{exampleblock}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \stackbox{3}{12}{\only<5>{
+                        \mintinline[fontsize=\smaller]{console}{factorial()} \\
+                        \mintinline[fontsize=\smaller]{console}{return address = 1002} \\
+                        \mintinline[fontsize=\smaller]{console}{n = 0, ...}
+                    }
+                } \\
+                \stackbox{3}{12}{\only<4-6>{
+                        \mintinline[fontsize=\smaller]{console}{factorial()} \\
+                        \mintinline[fontsize=\smaller]{console}{return address = 1002} \\
+                        \mintinline[fontsize=\smaller]{console}{n = 1, ...}
+                    }
+                } \\
+                \stackbox{3}{12}{\only<3-7>{
+                        \mintinline[fontsize=\smaller]{console}{factorial()} \\
+                        \mintinline[fontsize=\smaller]{console}{return address = 2003} \\
+                        \mintinline[fontsize=\smaller]{console}{n = 2, ...}
+                    }
+                } \\
+                \stackbox{2}{12}{\only<2-8>{
+                        \mintinline[fontsize=\smaller]{console}{main()}\\
+                        \mintinline[fontsize=\smaller]{console}{n = 2, ...}
+                    }
+                }
+            \end{bytefield}
+            \caption{函数调用栈：\only<2-5>{递进调用}\only<6-9>{回归求值}}
+            \label{fig:function_call_stack}
+        \end{figure}
+    }{
+        \begin{minted}[firstnumber=1001,highlightlines={1002}]{c}
+            int factorial(int n) {
+                return 0 == n ? 1 : n * factorial(n - 1);
+            }
+        \end{minted}
+        \begin{minted}[firstnumber=2001,highlightlines={2003}]{c}
+            int main(void) {
+                int n = 2;
+                int f = factorial(n);
+                return 0;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{递归应用：汉诺塔(Hanoi)问题}
+        \begin{itemize}
+            \item 相传世界之初有钻石宝塔甲，其上有$64$金碟，由大到小依次向上摆放
+            \item 附近另有二空塔：乙、丙，与甲类似
+            \item 婆罗门牧师试图将甲塔金碟移至丙塔，但需借乙塔中转
+            \item 每次只移最上一碟，且不可将大碟置于小碟之上
+            \item 牧师完成之日便是世界末日
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{exampleblock}{递归解题思路}
+            \begin{enumerate}
+                \item 若剩余碟数$n=0$，则结束
+                \item 否则执行：
+                      \begin{itemize}
+                          \item 将$n-1$碟从甲借丙移至乙
+                          \item 将甲中剩余一碟从甲移至丙
+                          \item 将$n-1$碟从乙借甲移至丙
+                      \end{itemize}
+            \end{enumerate}
+        \end{exampleblock}
+    }{
+        \begin{minted}{c}
+            void move(char a, char b) {
+                printf("%c -> %c\n", a, b);
+            }
+        \end{minted}
+        \begin{minted}{c}
+            void hanoi(int n, char a, char b, char c) {
+                if (!n) {
+                    return; // 递归出口
+                }
+                hanoi(n - 1, a, c, b);
+                move(a, c);
+                hanoi(n - 1, b, a, c);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{alertblock}{注意}
+        \begin{itemize}
+            \item 递归可在抽象层面帮助快速理清思路
+            \item 递归需借助栈结构存储额外信息，故效率较迭代/循环\alert{低}
+            \item 在实现中，栈容量有限，故过多层递归极易\alert{爆栈}
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
