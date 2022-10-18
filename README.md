@@ -4,5 +4,12 @@ Some slides for the course *Data Structures and Algorithms*, involving the follo
 
 - Introduction
 - Linear Structures
-- ...
+    - Sequence List
+    - Linked List
+    - Stack
+    - Queue
+- Semi-Linear Structures
+    - ...
+- Non-Linear Structures
+    - ...
 
