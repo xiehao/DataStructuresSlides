@@ -1,0 +1,29 @@
+\documentclass[algorithm,pgfplots,colortheme=light,handout]{cuzbeamer}
+
+\usepackage{pgfpages}
+\pgfpagesuselayout{4 on 1}[a4paper, border shrink=5mm, landscape]
+\usepackage{pgf-pie}
+\usetikzlibrary{mindmap, arrows.meta, calc, quotes, tikzmark}
+
+\usepackage[bitheight=3ex,bitwidth=auto]{bytefield}
+\bytefieldsetup{boxformatting={\centering\ttfamily\footnotesize}}
+
+\newcommand{\stackbox}[3]{
+    \bytefieldsetup{bitheight=#1\baselineskip}
+    \bitbox{#2}{#3}
+}
+
+\newlength{\maxheight}
+\setlength{\maxheight}{\heightof{W}}
+\newcommand{\baselinealign}[1]{%
+\centering
+\raisebox{0pt}[\maxheight][0pt]{#1}%
+}
+
+\usepackage{relsize}
+
+\begin{document}
+\input{initialization.tex}
+\maketitle
+\input{DSA01-LinearStructures-data.tex}
+\end{document}
