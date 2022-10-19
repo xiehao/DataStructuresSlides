@@ -9,6 +9,8 @@ Some slides for the course *Data Structures and Algorithms*, involving the follo
     - Stack
     - Queue
 - Semi-Linear Structures
+    - Tree
+    - Binary Tree
     - ...
 - Non-Linear Structures
     - ...
