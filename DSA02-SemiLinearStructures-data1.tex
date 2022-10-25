@@ -1,0 +1,376 @@
+\section{基本术语}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{树(tree)与森林(forest)}
+        \begin{itemize}
+            \item \textbf{半线性(semi-linear)}结构一般指\textbf{树}
+            \item 树由$n$个\footnote{$n\in\mathbb{Z}\cap[0,+\infty)$}\textbf{顶
+                  点(vertex)}\footnote{又名\textbf{结点(node)}}与连接于其间的若
+                  干条\textbf{边(edge)}组成
+            \item \alert{空树}既无结点亦无边
+            \item \alert{非空树}应满足如下条件
+                \begin{itemize}
+                    \item 有且仅有$1$个特定结点为\textbf{根(root)}结点
+                    \item 除根结点外的其余结点被分为$d$个
+                        \footnote{$d\in\mathbb{Z}\cap[0,+\infty)$}\alert{互不相交}
+                        的\textbf{子树(subtree)}
+                    \item 子树与根之间由边相连，但不形成\textbf{环(ring)}
+                \end{itemize} 
+            \item 子树亦为树，满足上述性质（递归定义）
+            \item $m$棵\footnote{$m\in\mathbb{Z}\cap[0,+\infty)$}互不相交的树的
+                  集合为\textbf{森林}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.15\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick} %
+                ]
+                \node [terminal] (item1) at (0,0) {根};
+            \end{tikzpicture}
+            \caption{根树}
+            \label{fig:tree_root_only}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.2\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick} %
+                ]
+                \node [terminal] (item1) at (0,0) {根};
+                \node [terminal] (item2) at (-0.5,-1) {$\cdot$};
+                \node [terminal] (item3) at (-1,-2) {$\cdot$};
+                \node [terminal] (item4) at (-1.5,-3) {$\cdot$};
+                \draw (item1) -- (item2) -- (item3) -- (item4);
+            \end{tikzpicture}
+            \caption{左斜树}
+            \label{fig:tree_left_slop}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick} %
+                ]
+                \node [terminal] (item1) at (0,0) {根};
+                \node [terminal] (item2) at (-0.5,-1) {$\cdot$};
+                \node [terminal] (item3) at (0.5,-1) {$\cdot$};
+                \node [terminal] (item4) at (-1,-2) {$\cdot$};
+                \node [terminal] (item5) at (0,-2) {$\cdot$};
+                \node [terminal] (item6) at (1,-2) {$\cdot$};
+                \node [terminal] (item7) at (-1.5,-3) {$\cdot$};
+                \node [terminal] (item8) at (-0.5,-3) {$\cdot$};
+                \node [terminal] (item9) at (0.5,-3) {$\cdot$};
+                \draw (item1) -- (item2);
+                \draw (item1) -- (item3);
+                \draw (item2) -- (item4);
+                \draw (item2) -- (item5);
+                \draw (item2) -- (item6);
+                \draw (item4) -- (item7);
+                \draw (item4) -- (item8);
+                \draw (item6) -- (item9);
+            \end{tikzpicture}
+            \caption{普通树}
+            \label{fig:tree_common}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick} %
+                ]
+                \node [terminal] (item1) at (0,0) {根};
+                \node [terminal] (item2) at (-0.5,-1) {$\cdot$};
+                \node [terminal] (item3) at (0.5,-1) {$\cdot$};
+                \node [terminal] (item4) at (-1,-2) {$\cdot$};
+                \node [terminal] (item5) at (0,-2) {$\cdot$};
+                \node [terminal] (item6) at (1,-2) {$\cdot$};
+                \node [terminal] (item7) at (-1.5,-3) {$\cdot$};
+                \node [terminal] (item8) at (-0.5,-3) {$\cdot$};
+                \node [terminal] (item9) at (0.5,-3) {$\cdot$};
+                \node [terminal] (item10) at (1.5,-3) {$\cdot$};
+                \draw (item1) -- (item2);
+                \draw (item1) -- (item3);
+                \draw (item2) -- (item4);
+                \draw (item2) -- (item5);
+                \draw (item2) -- (item6);
+                \draw (item4) -- (item7);
+                \draw (item4) -- (item8);
+                \draw (item5) -- (item8);
+                \draw (item5) -- (item9);
+                \draw (item6) -- (item9);
+            \end{tikzpicture}
+            \caption{非树}
+            \label{fig:nontree}
+        \end{subfigure}
+        \caption{几种树与非树}
+        \label{fig:demo_trees_non_trees}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    % \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[
+            small mindmap,
+            every node/.style={
+                concept,
+                },
+            concept color=black!30!black!70,
+            text width=4em,
+            grow cyclic,
+            align=flush center,
+            level 1 concept/.append style={
+                level distance=8em,
+                font=\small,
+                sibling angle=60,
+                },
+            level 2 concept/.append style={
+                level distance=6em,
+                font=\footnotesize,
+                sibling angle=45
+                },
+        ]
+            \node[
+                root concept,
+                font=\large
+                ]{现代C++}[clockwise from=0]
+            child[
+                concept color={purple!30!black!70},
+                level distance=12em,
+                ]{node{过程式}[clockwise from=155]
+                child{node{注释}}
+                child{node{变量}}
+                child{node{表达式}}
+                child{node{引用}}
+                child{node{函数}}
+                child{node{程序\\结构}}
+            }
+            child[
+                concept color=green!30!black!70,
+                level distance=10em,
+                ]{node{面向对象}[clockwise from=40]
+                child{node{抽象\\与封装}}
+                child{node{继承\\与多态}}
+                child{node{运算符\\重载}}
+                child{node{模板}[clockwise from=-30]}
+            }
+            child[
+                concept color=red!30!black!70,
+                level distance=10em,
+                ]{node{函数式}[clockwise from=20]
+                child{node{闭包}}
+                child{node{纯函数}}
+                child{node{惰性\\求值}}
+                child{node{范围\\与单子}}
+                child{node{元编程}}
+            }
+            child[
+                concept color=blue!30!black!70,
+                level distance=12em,
+                ]{node{其他杂项}[clockwise from=-60]
+                child{node{模块}}
+                child{node{类型\\推断}}
+                child{node{异常}}
+                child{node{移动\\语义}}
+                child{node{智能\\指针}}
+                child{node{正则\\表达式}}
+                child{node{并发}}
+            };
+        \end{tikzpicture}
+        \caption{思维导图亦为树}
+        \label{fig:mindmap_is_tree}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{树的特点}
+        \begin{itemize}
+            \item 根结点无前驱，其余结点有且仅有$1$个直接前驱
+            \item 所有结点均可有$n$个\footnote{$n\in\mathbb{Z}\cap[0,+\infty)$}
+                  直接后继
+            \item 前驱类似线性，后继则不同，故称半线性
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{度(degree)}
+            \begin{itemize}
+                \item 结点的\textbf{度}指其子树个数
+                \item 树的\textbf{度}指其最大结点度
+                \item \textbf{叶(leaf)}结点度为$0$，亦称\textbf{终端}结点
+                \item 其余结点为\textbf{分支}结点
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$2$}
+                    child {node [terminal] {$3$}
+                        child {node [terminal] {$2$}
+                            child {node [terminal] {\alert{$0$}}}
+                            child {node [terminal] {\alert{$0$}}}
+                        }
+                        child {node [terminal] {\alert{$0$}}}
+                        child {node [terminal] {$1$}
+                            child {node [terminal] {\alert{$0$}}}
+                        }
+                    }
+                    child {node [terminal] {\alert{$0$}}};
+            \end{tikzpicture}
+            \caption{结点的度}
+            \label{fig:degree_of_node}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.55]{
+        \begin{block}{结点亲缘关系}
+            \begin{itemize}
+                \item 结点的子树根为该结点的\textbf{子(child)}结点
+                      \[
+                            b=child(a),\quad{}c=child(a)
+                      \]
+                \item 该结点为子树根的\textbf{父(parent)}结点
+                      \[
+                            a=parent(b),\quad{}a=parent(c)
+                      \]
+                \item 同一结点的所有子结点互为\textbf{兄弟(sibling)}
+                      \[
+                            b=sibling(c),\quad{}c=sibling(b)
+                      \]
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick} %
+                ]
+                \node [terminal] {$a$}
+                    child {node [terminal] {$b$}}
+                    child {node [terminal] {$c$}};
+            \end{tikzpicture}
+            \caption{结点间的关系\footnotemark}
+            \label{fig:relationship_of_node}
+        \end{figure}
+    }
+
+    \footnotetext{$a$为$b$或$c$的父结点，$b$或$c$为$a$的子结点，$b$与$c$互为兄弟}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{路径(path)、深度(depth)与高度(height)}
+            \begin{itemize}
+                \item 若结点序列$\{n_{i}\}_{i=0}^{k}$满足：
+                      \[
+                            n_{i}=parent(n_{i+1}),\quad{}i=0,1,\cdots,k-1
+                      \]
+                      则称之为自$n_{0}$至$n_{k}$的一条\textbf{路径}
+                      \begin{itemize}
+                        \item 所过\alert{边数}为路径\textbf{长度(length)}
+                        \item 若存在自$n_{a}$至$n_{b}$的路径，则该路径\alert{唯
+                              一}，且$n_{a}$为$n_{b}$的\textbf{祖先
+                              (ancestor)}，$n_{b}$为$n_{a}$的\textbf{子孙
+                              (descendant)}
+                      \end{itemize}
+                \item 结点\textbf{深度}\footnotemark{}为根至其的路径长度
+                \item 结点\textbf{高度}为其最大子孙深度\footnotemark
+                    \begin{itemize}
+                        \item 树的高度为其根的高度
+                    \end{itemize}
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    radius=2pt, scale=0.9,
+                ]
+                % \draw [help lines] (0,0) grid (5,6);
+                \coordinate (ca) at (5.5,5.5);
+                \coordinate (cb) at (5.5,3);
+                \coordinate (cc) at (5.5,0.5);
+                \coordinate (cd) at (-0.5,0);
+                \coordinate (ce) at (-0.5,5.5);
+                \coordinate (cr) at (2.5,5.5); % root
+                \coordinate (cn) at (3.5,3); % n
+                \coordinate (csa) at (3,2);
+                \coordinate (csb) at (4,1.5);
+                \coordinate (cta) at (2,4);
+                \coordinate (ctb) at (1,3);
+                \coordinate (ctc) at (1.5,2);
+                \coordinate (ctd) at (0.5,0.5);
+                \node [terminal] (root) at (cr) {根};
+                \node [terminal] (n) at (cn) {$n$};
+                \node at ($(cn)-(0,2)$) {\texttt{子树}};
+                \draw [dashed,rounded corners=10pt]
+                    (root) .. controls (0,4) .. (0,0)
+                    -- (5,0) .. controls (5,4) .. (root);
+                \draw [dashed,rounded corners=10pt]
+                    (n) .. controls (2.5,2.5) .. (2.5,0.5)
+                    -- ++(2,0) .. controls (4.5,2.5) .. (n);
+                \draw [very thick,red!50!gray]
+                    (root) .. controls ($(cr)+(0.5,-2)$) and ($(cn)+(-0.5,2)$) ..
+                    node [sloped,above] {\smaller\texttt{\alert{路径}}} (n);
+                \draw (n) .. controls ($(cn)+(-0.125,-0.75)$) and ($(csa)+(0.125,0.75)$) .. (csa) node [fill,circle] {};
+                \draw (n) .. controls ($(cn)+(0.125,-1.5)$) and ($(csb)+(-0.125,1.25)$) .. (csb) node [fill,circle] {};
+                \draw (root) .. controls ($(cr)+(-0.25,-1.25)$) and ($(cta)+(0,1.5)$) .. (cta) node [fill,circle] {}
+                    .. controls ($(cta)+(-1.5,0)$) and ($(ctb)+(0,0.5)$) .. (ctb) node [fill,circle] {};
+                \draw (cta) .. controls ($(cta)+(2,-1)$) and ($(ctc)+(0,1)$) .. (ctc) node [fill,circle] {}
+                    .. controls ($(ctc)+(-1,0)$) and ($(ctd)+(0.5,1)$) .. (ctd) node [fill,circle] {};
+                \draw [<->] (ca) -- node [sloped,above] {\texttt{结点\alert{深度}}} (cb);
+                \draw [<->] (cb) -- node [sloped,above] {\texttt{结点\alert{高度}}} (cc);
+                \draw [<->] (cd) -- node [sloped,above] {\texttt{树的\alert{高度}}} (ce);
+                \draw (root.east) -- ($(ca)+(0.2,0)$);
+                \draw (root.west) -- ($(ce)-(0.2,0)$);
+                \draw (n.east) -- ($(cb)+(0.2,0)$);
+                \draw ($(cc)-(1.2,0)$) -- ($(cc)+(0.2,0)$);
+                \draw ($(cd)-(0.2,0)$) -- ($(cd)+(0.7,0)$);
+            \end{tikzpicture}
+            \caption{路径、高度与深度}
+            \label{fig:path_depth_height}
+        \end{figure}
+    }
+
+    \footnotetext[7]{又称结点所在\textbf{层数(layer)}，根在第$0$层}
+    \footnotetext{此处范围仅限于以其为根的子树内，一般为该子树最大叶深}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{与线性结构的比较}
+        \begin{table}
+            \begin{tabular}{rl}
+                \toprule
+                \textbf{线性} & \textbf{半线性} \\
+                \midrule
+                首元素无前驱 & 根结点无父结点 \\
+                尾元素无后继 & 叶结点无子结点 \\
+                其他元素单前驱单后继 & 其他结点单父结点\alert{多}子结点 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+    \end{block}
+\end{frame}
