@@ -1,0 +1,573 @@
+\section{树与二叉树}
+
+% \begin{fragile}
+%     \frametitle{\insertsectionhead}
+%     \begin{block}{树的抽象数据类型}
+%         \begin{minted}[linenos=false,escapeinside=@@]{console}
+%             ADT Tree {
+%             数据:
+%                 数据对象: @$\mathcal{D} = \{a_{k} | a_{k}\in\text{数据元素集合}, k\in\mathbb{Z}\cap[1,n]\}$@
+%                 逻辑关系: @$\mathcal{R} = \{\langle{}a_{k-1},a_{k}\rangle | k\in\mathbb{Z}\cap[2,n]\}$@
+%             操作:
+%                 create_stack()
+%                     构造并初始化一个空栈@$s$@
+%                 is_empty_stack()
+%                     判断栈是否为空
+%                 push_stack(s, x)
+%                     若栈@$s$@存在且未满, 则在其栈顶插入值为@$x$@的新元素
+%                 pop_stack(s)
+%                     若栈@$s$@存在且非空, 则删除其栈顶元素
+%                 top_stack(s)
+%                     若栈@$s$@存在且非空, 则返回其栈顶元素
+%             }
+%         \end{minted}
+%     \end{block}
+% \end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{树的存储结构}
+        \begin{itemize}
+            \item 可采用\alert{顺序}或\alert{链式}存储结构
+            \item 每结点须记录：数据信息、与其他结点的逻辑关系
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{树的结点关系表示方法}
+        \begin{itemize}
+            \item 父结点表示法：只记录父结点信息
+            \item 子结点表示法：只记录子结点信息
+            \item 父子结点表示法：同时记录父子结点信息
+            \item 长子兄弟表示法：同时记录第一个子结点与兄弟结点信息
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{父结点表示法}
+            \begin{itemize}
+                \item 采用数组按层存储各结点
+                \item 每结点包括数据信息与父结点序号
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{复杂度}
+            \begin{itemize}
+                \item 空间：$O(n)$
+                \item 时间：
+                    \begin{itemize}
+                        \item 查找父结点$O(1)$
+                        \item 但查找子结点\alert{$O(n)$}
+                    \end{itemize}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{2}
+                \bitbox[]{2}{\tiny{$i$}}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{data}}
+                \bitbox{4}{\mintinline[fontsize=\smaller]{c}{parent}}
+            \end{bytefield}
+            \caption{父结点表示法}
+            \label{fig:parent_representation}
+        \end{figure}
+        \begin{minted}{c}
+            typedef struct {
+                DataType data; // 数据信息
+                int parent; // 父结点序号
+            } TreeNode;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}}
+                            child {node [terminal] {$H$}}
+                        }
+                        child {node [terminal] {$E$}}
+                        child {node [terminal] {$F$}
+                            child {node [terminal] {$I$}}
+                        }
+                    }
+                    child {node [terminal] {$C$}};
+            \end{tikzpicture}
+            \caption{逻辑表示}
+            \label{subfig:parent_logistic_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{2}{\tiny{$0$}}\bitboxes{3}{{$A$}{\alert{$-1$}}} \\
+                \bitbox[]{2}{\tiny{$1$}}\bitboxes{3}{{$B$}{$0$}} \\
+                \bitbox[]{2}{\tiny{$2$}}\bitboxes{3}{{$C$}{$0$}} \\
+                \bitbox[]{2}{\tiny{$3$}}\bitboxes{3}{{$D$}{$1$}} \\
+                \bitbox[]{2}{\tiny{$4$}}\bitboxes{3}{{$E$}{$1$}} \\
+                \bitbox[]{2}{\tiny{$5$}}\bitboxes{3}{{$F$}{$1$}} \\
+                \bitbox[]{2}{\tiny{$6$}}\bitboxes{3}{{$G$}{$3$}} \\
+                \bitbox[]{2}{\tiny{$7$}}\bitboxes{3}{{$H$}{$3$}} \\
+                \bitbox[]{2}{\tiny{$8$}}\bitboxes{3}{{$I$}{$5$}}
+            \end{bytefield}
+            \caption{存储表示}
+            \label{subfig:parent_storage_representation}
+        \end{subfigure}
+        \caption{父结点表示法}
+        \label{fig:demo_parent_representation}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{子结点表示法}
+            \begin{itemize}
+                \item 采用数组按层存储各结点
+                \item 每结点包括数据信息与子结点序号链表
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{复杂度}
+            \begin{itemize}
+                \item 空间：$O(n)$
+                \item 时间：
+                    \begin{itemize}
+                        \item 查找子结点$O(d)$\footnotemark
+                        \item 但查找父结点\alert{$O(n)$}
+                    \end{itemize}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{2}
+                \bitbox[]{2}{\tiny{$i$}}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{data}}
+                \bitbox{5}{\mintinline[fontsize=\smaller]{c}{children}}
+            \end{bytefield}
+            \caption{子结点表示法}
+            \label{fig:children_representation}
+        \end{figure}
+        \begin{minted}{c}
+            typedef struct {
+                DataType data; // 数据信息
+                LinkedList children; // 子结点序号链表
+            } TreeNode;
+        \end{minted}
+    }
+
+    \footnotetext{若该结点度数为$d$}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}}
+                            child {node [terminal] {$H$}}
+                        }
+                        child {node [terminal] {$E$}}
+                        child {node [terminal] {$F$}
+                            child {node [terminal] {$I$}}
+                        }
+                    }
+                    child {node [terminal] {$C$}};
+            \end{tikzpicture}
+            \caption{逻辑表示}
+            \label{subfig:children_logistic_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{2}{\tiny{$0$}}\bitbox{3}{$A$}\bitbox{2}{\tikzmark{saab}}\bitbox[]{2}{\tikzmark{taab}}\bitbox{3}{$1$}\bitbox{2}{\tikzmark{saac}}\bitbox[]{2}{\tikzmark{taac}}\bitbox{3}{$2$}\bitbox{2}{\tikzmark{saan}} \\
+                \bitbox[]{2}{\tiny{$1$}}\bitbox{3}{$B$}\bitbox{2}{\tikzmark{sabd}}\bitbox[]{2}{\tikzmark{tabd}}\bitbox{3}{$3$}\bitbox{2}{\tikzmark{sabe}}\bitbox[]{2}{\tikzmark{tabe}}\bitbox{3}{$4$}\bitbox{2}{\tikzmark{sabf}}\bitbox[]{2}{\tikzmark{tabf}}\bitbox{3}{$5$}\bitbox{2}{\tikzmark{sabn}} \\
+                \bitbox[]{2}{\tiny{$2$}}\bitbox{3}{$C$}\bitbox{2}{\tikzmark{sacn}} \\
+                \bitbox[]{2}{\tiny{$3$}}\bitbox{3}{$D$}\bitbox{2}{\tikzmark{sadg}}\bitbox[]{2}{\tikzmark{tadg}}\bitbox{3}{$6$}\bitbox{2}{\tikzmark{sadh}}\bitbox[]{2}{\tikzmark{tadh}}\bitbox{3}{$7$}\bitbox{2}{\tikzmark{sadn}} \\
+                \bitbox[]{2}{\tiny{$4$}}\bitbox{3}{$E$}\bitbox{2}{\tikzmark{saen}} \\
+                \bitbox[]{2}{\tiny{$5$}}\bitbox{3}{$F$}\bitbox{2}{\tikzmark{safi}}\bitbox[]{2}{\tikzmark{tafi}}\bitbox{3}{$8$}\bitbox{2}{\tikzmark{safn}} \\
+                \bitbox[]{2}{\tiny{$6$}}\bitbox{3}{$G$}\bitbox{2}{\tikzmark{sagn}} \\
+                \bitbox[]{2}{\tiny{$7$}}\bitbox{3}{$H$}\bitbox{2}{\tikzmark{sahn}} \\
+                \bitbox[]{2}{\tiny{$8$}}\bitbox{3}{$I$}\bitbox{2}{\tikzmark{sain}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($(pic cs:saab)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:taab)+(0.26,-0.03)$);
+                \fill ($(pic cs:saab)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:saac)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:taac)+(0.26,-0.03)$);
+                \fill ($(pic cs:saac)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sabd)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tabd)+(0.26,-0.03)$);
+                \fill ($(pic cs:sabd)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sabe)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tabe)+(0.26,-0.03)$);
+                \fill ($(pic cs:sabe)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sabf)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tabf)+(0.26,-0.03)$);
+                \fill ($(pic cs:sabf)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sadg)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tadg)+(0.26,-0.03)$);
+                \fill ($(pic cs:sadg)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sadh)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tadh)+(0.26,-0.03)$);
+                \fill ($(pic cs:sadh)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:safi)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tafi)+(0.26,-0.03)$);
+                \fill ($(pic cs:safi)+(0,-0.03)$) circle [radius=0.05];
+                \draw ($(pic cs:saan)+(-0.23,-0.3)$) to ($(pic cs:saan)+(0.23,0.23)$);
+                \draw ($(pic cs:sabn)+(-0.23,-0.3)$) to ($(pic cs:sabn)+(0.23,0.23)$);
+                \draw ($(pic cs:sacn)+(-0.23,-0.3)$) to ($(pic cs:sacn)+(0.23,0.23)$);
+                \draw ($(pic cs:sadn)+(-0.23,-0.3)$) to ($(pic cs:sadn)+(0.23,0.23)$);
+                \draw ($(pic cs:saen)+(-0.23,-0.3)$) to ($(pic cs:saen)+(0.23,0.23)$);
+                \draw ($(pic cs:safn)+(-0.23,-0.3)$) to ($(pic cs:safn)+(0.23,0.23)$);
+                \draw ($(pic cs:sagn)+(-0.23,-0.3)$) to ($(pic cs:sagn)+(0.23,0.23)$);
+                \draw ($(pic cs:sahn)+(-0.23,-0.3)$) to ($(pic cs:sahn)+(0.23,0.23)$);
+                \draw ($(pic cs:sain)+(-0.23,-0.3)$) to ($(pic cs:sain)+(0.23,0.23)$);
+            \end{tikzpicture}
+            \vspace{-2ex}
+            \caption{存储表示}
+            \label{subfig:children_storage_representation}
+        \end{subfigure}
+        \caption{子结点表示法}
+        \label{fig:demo_chidren_representation}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{父子结点表示法}
+            \begin{itemize}
+                \item 结合上述二者
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{复杂度}
+            \begin{itemize}
+                \item 空间：$O(n)$
+                \item 时间：
+                    \begin{itemize}
+                        \item 查找子结点$O(d)$
+                        \item 但查找父结点$O(1)$
+                    \end{itemize}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{2}
+                \bitbox[]{2}{\tiny{$i$}}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{data}}
+                \bitbox{4}{\mintinline[fontsize=\smaller]{c}{parent}}
+                \bitbox{5}{\mintinline[fontsize=\smaller]{c}{children}}
+            \end{bytefield}
+            \caption{父子结点表示法}
+            \label{fig:parent_children_representation}
+        \end{figure}
+        \begin{minted}{c}
+            typedef struct {
+                DataType data; // 数据信息
+                int parent; // 父结点序号
+                LinkedList children; // 子结点序号链表
+            } TreeNode;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}}
+                            child {node [terminal] {$H$}}
+                        }
+                        child {node [terminal] {$E$}}
+                        child {node [terminal] {$F$}
+                            child {node [terminal] {$I$}}
+                        }
+                    }
+                    child {node [terminal] {$C$}};
+            \end{tikzpicture}
+            \caption{逻辑表示}
+            \label{subfig:parent_children_logistic_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{2}{\tiny{$0$}}\bitboxes{3}{{$A$}{\alert{$-1$}}}\bitbox{2}{\tikzmark{sbab}}\bitbox[]{2}{\tikzmark{tbab}}\bitbox{3}{$1$}\bitbox{2}{\tikzmark{sbac}}\bitbox[]{2}{\tikzmark{tbac}}\bitbox{3}{$2$}\bitbox{2}{\tikzmark{sban}} \\
+                \bitbox[]{2}{\tiny{$1$}}\bitboxes{3}{{$B$}{$0$}}\bitbox{2}{\tikzmark{sbbd}}\bitbox[]{2}{\tikzmark{tbbd}}\bitbox{3}{$3$}\bitbox{2}{\tikzmark{sbbe}}\bitbox[]{2}{\tikzmark{tbbe}}\bitbox{3}{$4$}\bitbox{2}{\tikzmark{sbbf}}\bitbox[]{2}{\tikzmark{tbbf}}\bitbox{3}{$5$}\bitbox{2}{\tikzmark{sbbn}} \\
+                \bitbox[]{2}{\tiny{$2$}}\bitboxes{3}{{$C$}{$0$}}\bitbox{2}{\tikzmark{sbcn}} \\
+                \bitbox[]{2}{\tiny{$3$}}\bitboxes{3}{{$D$}{$1$}}\bitbox{2}{\tikzmark{sbdg}}\bitbox[]{2}{\tikzmark{tbdg}}\bitbox{3}{$6$}\bitbox{2}{\tikzmark{sbdh}}\bitbox[]{2}{\tikzmark{tbdh}}\bitbox{3}{$7$}\bitbox{2}{\tikzmark{sbdn}} \\
+                \bitbox[]{2}{\tiny{$4$}}\bitboxes{3}{{$E$}{$1$}}\bitbox{2}{\tikzmark{sben}} \\
+                \bitbox[]{2}{\tiny{$5$}}\bitboxes{3}{{$F$}{$1$}}\bitbox{2}{\tikzmark{sbfi}}\bitbox[]{2}{\tikzmark{tbfi}}\bitbox{3}{$8$}\bitbox{2}{\tikzmark{sbfn}} \\
+                \bitbox[]{2}{\tiny{$6$}}\bitboxes{3}{{$G$}{$3$}}\bitbox{2}{\tikzmark{sbgn}} \\
+                \bitbox[]{2}{\tiny{$7$}}\bitboxes{3}{{$H$}{$3$}}\bitbox{2}{\tikzmark{sbhn}} \\
+                \bitbox[]{2}{\tiny{$8$}}\bitboxes{3}{{$I$}{$5$}}\bitbox{2}{\tikzmark{sbin}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($(pic cs:sbab)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbab)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbab)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbac)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbac)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbac)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbbd)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbbd)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbbd)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbbe)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbbe)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbbe)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbbf)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbbf)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbbf)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbdg)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbdg)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbdg)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbdh)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbdh)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbdh)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sbfi)+(0,-0.03)$) to [out=0,in=180] ($(pic cs:tbfi)+(0.26,-0.03)$);
+                \fill ($(pic cs:sbfi)+(0,-0.03)$) circle [radius=0.05];
+                \draw ($(pic cs:sban)+(-0.23,-0.3)$) to ($(pic cs:sban)+(0.23,0.23)$);
+                \draw ($(pic cs:sbbn)+(-0.23,-0.3)$) to ($(pic cs:sbbn)+(0.23,0.23)$);
+                \draw ($(pic cs:sbcn)+(-0.23,-0.3)$) to ($(pic cs:sbcn)+(0.23,0.23)$);
+                \draw ($(pic cs:sbdn)+(-0.23,-0.3)$) to ($(pic cs:sbdn)+(0.23,0.23)$);
+                \draw ($(pic cs:sben)+(-0.23,-0.3)$) to ($(pic cs:sben)+(0.23,0.23)$);
+                \draw ($(pic cs:sbfn)+(-0.23,-0.3)$) to ($(pic cs:sbfn)+(0.23,0.23)$);
+                \draw ($(pic cs:sbgn)+(-0.23,-0.3)$) to ($(pic cs:sbgn)+(0.23,0.23)$);
+                \draw ($(pic cs:sbhn)+(-0.23,-0.3)$) to ($(pic cs:sbhn)+(0.23,0.23)$);
+                \draw ($(pic cs:sbin)+(-0.23,-0.3)$) to ($(pic cs:sbin)+(0.23,0.23)$);
+            \end{tikzpicture}
+            \vspace{-2ex}
+            \caption{存储表示}
+            \label{subfig:parent_children_storage_representation}
+        \end{subfigure}
+        \caption{父子结点表示法}
+        \label{fig:demo_parent_chidren_representation}
+    \end{figure}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{父子结点表示法的性质}
+        \begin{itemize}
+            \item \textbf{优势}：一定程度上兼顾了查找效率
+            \item \textbf{不足}：\alert{插入/删除}结点操作需大量修改链表，效率偏
+                  低
+        \end{itemize}
+    \end{alertblock}
+    \pause
+    \begin{block}{基本术语}
+        \begin{itemize}
+            \item 若同一结点的所有子结点间具备某种线性次序，则称之为\textbf{有序
+                  树(ordered tree)}
+            \item 有序树的任意非叶结点均有且仅有$1$个\textbf{长子(eldest son)}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{长子兄弟表示法}
+            \begin{itemize}
+                \item 采用数组按层存储各结点
+                \item 每结点包括
+                \begin{itemize}
+                    \item 数据信息
+                    \item 长子结点序号
+                    \item 首个兄弟结点序号
+                \end{itemize}
+                
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{2}
+                \bitbox[]{2}{\tiny{$i$}}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{data}}
+                \bitbox{7}{\mintinline[fontsize=\smaller]{c}{eldest_son}}
+                \bitbox{5}{\mintinline[fontsize=\smaller]{c}{sibling}}
+            \end{bytefield}
+            \caption{长子兄弟表示法}
+            \label{fig:eldest_son_sibling_representation}
+        \end{figure}
+        \begin{minted}{c}
+            typedef struct {
+                DataType data; // 数据信息
+                int eldest_son; // 长子结点序号
+                int sibling; // 兄弟结点序号
+            } TreeNode;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}}
+                            child {node [terminal] {$H$}}
+                        }
+                        child {node [terminal] {$E$}}
+                        child {node [terminal] {$F$}
+                            child {node [terminal] {$I$}}
+                        }
+                    }
+                    child {node [terminal] {$C$}};
+            \end{tikzpicture}
+            \caption{逻辑表示}
+            \label{subfig:eldest_son_sibling_logistic_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{2}{\tiny{$0$}}\bitboxes{3}{{$A$}{$1$}{\alert{$-1$}}} \\
+                \bitbox[]{2}{\tiny{$1$}}\bitboxes{3}{{$B$}{$3$}{$2$}} \\
+                \bitbox[]{2}{\tiny{$2$}}\bitboxes{3}{{$C$}{\alert{$-1$}}{\alert{$-1$}}} \\
+                \bitbox[]{2}{\tiny{$3$}}\bitboxes{3}{{$D$}{$6$}{$4$}} \\
+                \bitbox[]{2}{\tiny{$4$}}\bitboxes{3}{{$E$}{\alert{$-1$}}{$5$}} \\
+                \bitbox[]{2}{\tiny{$5$}}\bitboxes{3}{{$F$}{$8$}{\alert{$-1$}}} \\
+                \bitbox[]{2}{\tiny{$6$}}\bitboxes{3}{{$G$}{\alert{$-1$}}{$7$}} \\
+                \bitbox[]{2}{\tiny{$7$}}\bitboxes{3}{{$H$}{\alert{$-1$}}{\alert{$-1$}}} \\
+                \bitbox[]{2}{\tiny{$8$}}\bitboxes{3}{{$I$}{\alert{$-1$}}{\alert{$-1$}}}
+            \end{bytefield}
+            \caption{存储表示}
+            \label{subfig:eldest_son_sibling_storage_representation}
+        \end{subfigure}
+        \caption{长子兄弟表示法}
+        \label{fig:demo_eldest_son_sibling_representation}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{二叉树(binary tree)}
+        \begin{itemize}
+            \item 度不大于$2$的树
+            \item 子结点可按左右区分
+        \end{itemize}
+    \end{block}
+    \begin{block}{转化为二叉树}
+        \begin{itemize}
+            \item 令长子为左子结点、首个兄弟为右子结点
+            \item 任何树均可按此法转化为二叉树
+            \item 因二叉树的表示与运算相对方便，故树的问题均可转化为二叉树形式进
+                  行研究
+        \end{itemize}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}}
+                            child {node [terminal] {$H$}}
+                        }
+                        child {node [terminal] {$E$}}
+                        child {node [terminal] {$F$}
+                            child {node [terminal] {$I$}}
+                        }
+                    }
+                    child {node [terminal] {$C$}};
+            \end{tikzpicture}
+            \caption{树表示}
+            \label{subfig:tree_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    % level distance=3ex, % sibling distance=5ex, %
+                ]
+                \matrix [row sep=2.5ex,column sep=3ex] {
+                    \node[terminal](a){$A$}; & & \\
+                    \node[terminal](b){$B$}; & \node[terminal](c){$C$}; & \\
+                    \node[terminal](d){$D$}; & \node[terminal](e){$E$}; & \node[terminal](f){$F$}; \\
+                    \node[terminal](g){$G$}; & \node[terminal](h){$H$}; & \node[terminal](i){$I$}; \\
+                };
+                \draw (a) -- (b) -- (d) -- (g);
+                \draw (f) -- (i);
+                \draw [dashed] (b) -- (c);
+                \draw [dashed] (d) -- (e) -- (f);
+                \draw [dashed] (g) -- (h);
+            \end{tikzpicture}
+            \vspace{-1ex}
+            \caption{中间表示}
+            \label{subfig:middle_representation}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=3ex, % sibling distance=5ex, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}
+                            child {node [terminal] {$G$}
+                                child [missing]
+                                child {node [terminal] {$H$}}
+                            }
+                            child {node [terminal] {$E$}
+                                child [missing]
+                                child {node [terminal] {$F$}
+                                    child {node [terminal] {$I$}}
+                                    child [missing]
+                                }
+                            }
+                        }
+                        child {node [terminal] {$C$}}
+                    }
+                    child [missing];
+            \end{tikzpicture}
+            \caption{二叉树表示}
+            \label{subfig:binary_tree_representation}
+        \end{subfigure}
+        \caption{树到二叉树的转化}
+        \label{fig:demo_tree_to_binary_tree}
+    \end{figure}
+\end{fragile}
