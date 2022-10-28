@@ -1,0 +1,180 @@
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.45]{
+        \begin{exampleblock}{应用实例：迷宫寻路}
+            \begin{itemize}
+                \item 输入：迷宫
+                \begin{itemize}
+                    \item 由$\mathbb{R}^{m\times{}n}$上的矩阵表示
+                    \item 矩阵元素可为\alert{墙壁}或\alert{地面}
+                \end{itemize}
+                \item 输出：自\alert{始}至\alert{终}的一条\alert{通路}
+                \begin{itemize}
+                    \item 通路由\alert{相邻}的地面序列组成
+                    \item 相邻指\alert{八邻域}
+                \end{itemize}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitboxes{2}{{X}{\alert{始}}{X}{X}{X}{X}{X}{X}} \\
+                \bitboxes{2}{{X}{\only<2>{$\checkmark$}}{X}{\only<2>{$\checkmark$}}{ }{ }{X}{X}} \\
+                \bitboxes{2}{{X}{X}{\only<2>{$\checkmark$}}{X}{\only<2>{$\checkmark$}}{ }{ }{X}} \\
+                \bitboxes{2}{{X}{X}{ }{X}{\only<2>{$\checkmark$}}{X}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{ }{X}{\only<2>{$\checkmark$}}{ }{ }{X}} \\
+                \bitboxes{2}{{X}{ }{X}{X}{X}{\only<2>{$\checkmark$}}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{ }{X}{ }{\only<2>{$\checkmark$}}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{X}{X}{X}{X}{\alert{终}}{X}}
+            \end{bytefield}
+            \caption{迷宫示意图（X表示墙壁）}
+            \label{fig:demo_maze}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.45]{
+        \begin{exampleblock}{回溯法(Backtracking)思想}
+            \begin{itemize}
+                \item 一种试探纠错的搜索方法
+            \end{itemize}
+            \begin{enumerate}
+                \item 自初始点出发
+                \item 初始化搜索方向
+                \item 按搜索方向向前搜索
+                \item 判断搜索结果
+                \begin{itemize}
+                    \item 若到达终止点，则成功停止
+                    \item 否则切换新搜索方向并转向步骤3
+                \end{itemize}
+                \item \alert{沿原路返回}上一结点并转向步骤2
+                \item 失败停止
+            \end{enumerate}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitboxes{2}{{X}{\alert{始}}{X}{X}{X}{X}{X}{X}} \\
+                \bitboxes{2}{{X}{\only<2->{\alert{$\checkmark$}}}{X}{\only<12->{\alert{$\checkmark$}}}{ }{ }{X}{X}} \\
+                \bitboxes{2}{{X}{X}{\only<3->{\alert{$\checkmark$}}}{X}{\only<13->{\alert{$\checkmark$}}}{ }{ }{X}} \\
+                \bitboxes{2}{{X}{X}{\only<4->{\alert<4-10>{$\checkmark$}}}{X}{\only<14->{\alert{$\checkmark$}}}{X}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{\only<5->{\alert<5-9>{$\checkmark$}}}{X}{\only<15->{\alert{$\checkmark$}}}{ }{ }{X}} \\
+                \bitboxes{2}{{X}{\only<6->{\alert<6-8>{$\checkmark$}}}{X}{X}{X}{\only<16->{\alert{$\checkmark$}}}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{\only<7->{\alert<7>{$\checkmark$}}}{X}{ }{\only<17->{\alert{$\checkmark$}}}{X}{X}} \\
+                \bitboxes{2}{{X}{X}{X}{X}{X}{X}{\alert<18>{终}}{X}}
+            \end{bytefield}
+            \caption{回溯法一种可能的过程（X表示墙壁）}
+            \label{fig:demo_backtracking}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{alertblock}{思考}
+        \begin{itemize}
+            \item 以何种数据结构表达迷宫？
+            \item 如何表达寻路试探方向？
+            \item 如何记录已试探结点以便原路返回？
+            \item 如何避免重复试探相同结点？
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.45]{
+        \begin{exampleblock}{表达迷宫的数据结构}
+            \begin{itemize}
+                \item 可采用二维整型数组
+                \begin{itemize}
+                    \item 0：地面
+                    \item 1：障碍
+                \end{itemize}
+                \item 为实现方便可外加一圈障碍
+            \end{itemize}
+        \end{exampleblock}
+        \begin{minted}{c}
+            #define WIDTH 8
+            #define HEIGHT 8
+
+            static int map[HEIGHT + 2][WIDTH + 2];
+        \end{minted}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitboxes{2}{{1}{1}{1}{1}{1}{1}{1}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{\alert{0}}{1}{1}{1}{1}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{0}{1}{0}{0}{0}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{0}{1}{0}{0}{0}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{0}{1}{0}{1}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{0}{1}{0}{0}{0}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{0}{1}{1}{1}{0}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{0}{1}{0}{0}{1}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{1}{1}{1}{1}{\alert{0}}{1}{1}} \\
+                \bitboxes{2}{{1}{1}{1}{1}{1}{1}{1}{1}{1}{1}}
+            \end{bytefield}
+            \caption{迷宫数据结构}
+            \label{fig:data_structure_maze}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.55]{
+        \begin{exampleblock}{寻路的试探方向}
+            \begin{itemize}
+                \item 可采用二维向量
+            \end{itemize}
+        \end{exampleblock}
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitboxes{8}{{$(x-1,y-1)$}{$(x+0,y-1)$}{$(x+1,y-1)$}} \\
+                \bitboxes{8}{{$(x-1,y+0)$}{$(x+0,y+0)$}{$(x+1,y+0)$}} \\
+                \bitboxes{8}{{$(x-1,y+1)$}{$(x+0,y+1)$}{$(x+1,y+1)$}}
+            \end{bytefield}
+            \caption{试探方向}
+            \label{fig:searching_directions}
+        \end{figure}
+    }{
+        \begin{minted}{c}
+            #define N_DIRECTIONS 8
+
+            typedef struct {
+                int x, y;
+            } Direction;
+
+            static const Direction steps[N_DIRECTIONS] = {
+                {1, 0}, {1, 1}, {0, 1}, {-1, 1},
+                {-1, 0}, {-1, -1}, {0, -1}, {1, -1},
+            };
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{exampleblock}{结点记录与原路返回}
+            \begin{itemize}
+                \item 可采用\alert{栈}记录已访问结点
+                \item 结点信息须包含\alert{位置}与\alert{方向}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{minted}{c}
+            typedef struct {
+                int x; // 横坐标
+                int y; // 纵坐标
+                int d; // 方向数组下标
+            } Cell; // 结点类型
+        \end{minted}
+    }
+\end{fragile}
