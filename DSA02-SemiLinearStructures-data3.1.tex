@@ -1,0 +1,238 @@
+\subsection{几种特殊的二叉树}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{左斜树\footnotemark}
+            \begin{itemize}
+                \item 所有非叶结点均有且仅有$1$个左子树
+                \item 每层均有且仅有$1$个结点
+                \item 已退化为线性结构
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, sibling distance=4ex, %
+                    ]
+                    \node [terminal] {$A$}
+                        child {node [terminal] {$B$}
+                            child {node [terminal] {$C$}
+                                child {node [terminal] {$D$}}
+                                child [missing]
+                            }
+                            child [missing]
+                        }
+                        child [missing];
+                \end{tikzpicture}
+                \caption{左斜树}
+                \label{subfig:left_slanted_tree}
+            \end{subfigure}
+            ~
+            \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, sibling distance=4ex, %
+                    ]
+                    \node [terminal] {$A$}
+                        child [missing]
+                        child {node [terminal] {$B$}
+                            child [missing]
+                            child {node [terminal] {$C$}
+                                child [missing]
+                                child {node [terminal] {$D$}}
+                            }
+                        };
+                \end{tikzpicture}
+                \caption{右斜树}
+                \label{subfig:right_slanted_tree}
+            \end{subfigure}
+            \caption{斜树}
+            \label{fig:demo_slanted_tree}
+        \end{figure}
+    }
+
+    \footnotetext{右斜树与之类似，只需将左改作右}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{满二叉树(full binary tree)}
+            \begin{itemize}
+                \item 所有叶结点均在最后一层
+                \item 所有非叶结点度均为$2$
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{性质}
+            \begin{itemize}
+                \item 同深度的二叉树中满二叉树结点最多
+                \item 同深度的二叉树中满二叉树叶结点最多
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, %
+                        level 1/.style={sibling distance=16ex}, %
+                        level 2/.style={sibling distance=8ex}, %
+                        level 3/.style={sibling distance=4ex}, %
+                    ]
+                    \node [terminal] {$A$}
+                        child {node [terminal] {$B$}
+                            child {node [terminal] {$D$}
+                                child {node [terminal] {$H$}}
+                                child {node [terminal] {$I$}}
+                            }
+                            child {node [terminal] {$E$}
+                                child {node [terminal] {$J$}}
+                                child {node [terminal] {$K$}}
+                            }
+                        }
+                        child {node [terminal] {$C$}
+                            child {node [terminal] {$F$}
+                                child {node [terminal] {$L$}}
+                                child {node [terminal] {$M$}}
+                            }
+                            child {node [terminal] {$G$}
+                                child {node [terminal] {$N$}}
+                                child {node [terminal] {$O$}}
+                            }
+                        };
+                \end{tikzpicture}
+            \caption{满二叉树}
+            \label{fig:demo_full_binary_tree}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+        \begin{figure}
+            \centering
+            \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, %
+                        level 1/.style={sibling distance=16ex}, %
+                        level 2/.style={sibling distance=8ex}, %
+                        level 3/.style={sibling distance=4ex}, %
+                    ]
+                    \node [terminal] {$A$}
+                        child {node [terminal] {$B$}
+                            child {node [terminal] {$D$}
+                                child {node [terminal] {$H$}}
+                                child {node [terminal] {$I$}}
+                            }
+                            child {node [terminal] {$E$}
+                                child {node [terminal] {$J$}}
+                                child {node [terminal] {$K$}}
+                            }
+                        }
+                        child {node [terminal] {$C$}
+                            child {node [terminal] {$F$}
+                                child {node [terminal] {$L$}}
+                                child {node [terminal] {$M$}}
+                            }
+                            child {node [terminal] {\alert{$G$}}}
+                        };
+                \end{tikzpicture}
+                \caption{叶结点不在同层}
+                \label{subfig:non_full_binary_tree_a}
+            \end{subfigure}
+            ~
+            \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, %
+                        level 1/.style={sibling distance=16ex}, %
+                        level 2/.style={sibling distance=8ex}, %
+                        level 3/.style={sibling distance=4ex}, %
+                    ]
+                    \node [terminal] {$A$}
+                        child {node [terminal] {$B$}
+                            child {node [terminal] {$D$}
+                                child {node [terminal] {$H$}}
+                                child {node [terminal] {$I$}}
+                            }
+                            child {node [terminal] {$E$}
+                                child {node [terminal] {$J$}}
+                                child {node [terminal] {$K$}}
+                            }
+                        }
+                        child {node [terminal] {$C$}
+                            child {node [terminal] {$F$}
+                                child {node [terminal] {$L$}}
+                                child {node [terminal] {$M$}}
+                            }
+                            child {node [terminal] {\alert{$G$}}
+                                child {node [terminal] {$N$}}
+                                child [missing]
+                            }
+                        };
+                \end{tikzpicture}
+                \caption{个别非叶结点度不为$2$}
+                \label{subfig:non_full_binary_tree_b}
+            \end{subfigure}
+            \caption{非满二叉树}
+            \label{fig:demo_non_full_binary_tree}
+        \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{完全二叉树(proper binary tree)}
+            \begin{itemize}
+                \item 若去除最后一层结点，则为满二叉树
+                \item 最后一层结点自左至右连续\footnotemark{}排列
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{性质}
+            \begin{itemize}
+                \item 同结点数的二叉树中完全二叉树最矮
+                \item 满二叉树亦为完全二叉树的一种
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        level distance=4ex, %
+                        level 1/.style={sibling distance=16ex}, %
+                        level 2/.style={sibling distance=8ex}, %
+                        level 3/.style={sibling distance=4ex}, %
+                    ]
+                    \node [terminal] {$A$}
+                        child {node [terminal] {$B$}
+                            child {node [terminal] {$D$}
+                                child {node [terminal] {$H$}}
+                                child {node [terminal] {$I$}}
+                            }
+                            child {node [terminal] {$E$}
+                                child {node [terminal] {$J$}}
+                                child [missing]
+                            }
+                        }
+                        child {node [terminal] {$C$}
+                            child {node [terminal] {$F$}}
+                            child {node [terminal] {$G$}}
+                        };
+                \end{tikzpicture}
+            \caption{完全二叉树}
+            \label{fig:demo_proper_binary_tree}
+        \end{figure}
+    }
+
+    \footnotetext{指中间无空结点}
+\end{fragile}
