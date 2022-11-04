@@ -1,0 +1,259 @@
+\subsection{二叉树的存储结构}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{顺序存储}
+        \begin{itemize}
+            \item 按完全二叉树层序编号方式为二叉树编号，跳过不存在结点的编号
+            \item 以静态数组方式存储，留空不存在的结点
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=4ex, %
+                    level 1/.style={sibling distance=16ex}, %
+                    level 2/.style={sibling distance=8ex}, %
+                    level 3/.style={sibling distance=4ex}, %
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}}
+                        child {node [terminal] {$E$}
+                            child {node [terminal] {$G$}}
+                            child [missing]
+                        }
+                    }
+                    child {node [terminal] {$C$}
+                        child [missing]
+                        child {node [terminal] {$F$}}
+                    };
+            \end{tikzpicture}
+            \caption{逻辑结构}
+            \label{subfig:demo_logistic_structure_binary_tree_sequence_storage}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                % \foreach \i in {0,...,10} {\bitbox[]{2}{\tiny{\i}}} \\
+                \bitboxes[]{2}{{\tiny{$0$}}{\tiny{$1$}}{\tiny{$2$}}{\tiny{$3$}}{\tiny{$4$}}{\tiny{$5$}}{\tiny{$6$}}{\tiny{$7$}}{\tiny{$8$}}{\tiny{$9$}}{\tiny{$10$}}} \\
+                \bitboxes{2}{{}{$A$}{$B$}{$C$}{$D$}{$E$}{}{$F$}{}{}{$G$}}
+            \end{bytefield}
+            \caption{物理结构}
+            \label{subfig:demo_physical_structure_binary_tree_sequence_storage}
+        \end{subfigure}
+        \caption{二叉树的顺序存储示例}
+        \label{fig:demo_sequence_storage_binary_tree}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.35\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=4ex, %
+                    level 1/.style={sibling distance=16ex}, %
+                    level 2/.style={sibling distance=8ex}, %
+                    level 3/.style={sibling distance=4ex}, %
+                ]
+                \node [terminal] {$A$}
+                    child [missing]
+                    child {node [terminal] {$B$}
+                        child [missing]
+                        child {node [terminal] {$C$}
+                            child [missing]
+                            child {node [terminal] {$D$}}}
+                    };
+            \end{tikzpicture}
+            \caption{逻辑结构}
+            \label{subfig:demo_logistic_structure_slanted_tree_sequence_storage}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.55\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                % \foreach \i in {0,...,10} {\bitbox[]{2}{\tiny{\i}}} \\
+                \bitboxes[]{2}{{\tiny{$0$}}{\tiny{$1$}}{\tiny{$2$}}{\tiny{$3$}}{\tiny{$4$}}{\tiny{$5$}}{\tiny{$6$}}{\tiny{$7$}}{\tiny{$8$}}{\tiny{$9$}}{\tiny{$10$}}{\tiny{$11$}}{\tiny{$12$}}{\tiny{$13$}}{\tiny{$14$}}{\tiny{$15$}}} \\
+                \bitboxes{2}{{}{$A$}{}{$B$}{}{}{}{$C$}{}{}{}{}{}{}{}{$D$}}
+            \end{bytefield}
+            \caption{物理结构}
+            \label{subfig:demo_physical_structure_slanted_tree_sequence_storage}
+        \end{subfigure}
+        \caption{右斜树的顺序存储示例}
+        \label{fig:demo_sequence_storage_slanted_tree}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{顺序存储的特点}
+        \begin{itemize}
+            \item 可利用性质戊快速访问各结点：$O(1)$
+            \item 增删结点可能需要大幅调整存储
+            \item 在存储含有稀疏结点的二叉树时需耗费大量存储空间
+            \item 仅适合存储含有稠密结点的完全二叉树
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{链式存储}
+            \begin{itemize}
+                \item 采用二/三叉链表表示结点
+                \item 结点除存信息包括
+                    \begin{itemize}
+                        \item 数据信息
+                        \item 左、右子结点地址
+                        \item 可选的父结点地址
+                    \end{itemize}
+                \item 为后续处理方便，设置虚拟首结点
+            \end{itemize}
+        \end{block}
+        \begin{figure}
+            \centering
+            \begin{bytefield}[boxformatting=\baselinealign]{2}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{data}}
+                \bitbox{3}{\mintinline[fontsize=\smaller]{c}{left}}
+                \bitbox{4}{\mintinline[fontsize=\smaller]{c}{right}}
+                \bitbox{4}{\mintinline[fontsize=\smaller]{console}{parent}}
+            \end{bytefield}
+            \caption{二叉树结点的链式存储结构}
+            \label{fig:linked_node_binary_tree}
+        \end{figure}
+    }{
+        \begin{minted}{c}
+            typedef struct BinaryTreeNode {
+                DataType data; // 数据信息
+                struct BinaryTreeNode *left; // 左子结点地址
+                struct BinaryTreeNode *right; // 右子结点地址
+                struct BinaryTreeNode *parent; // 可选的父结点地址
+            } BinaryTreeNode;
+        \end{minted}
+        \begin{minted}{c}
+            typedef struct {
+                BinaryTreeNode *head; // 虚拟首结点
+            } BinaryTree;
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=4ex, %
+                    level/.style={sibling distance=12ex/#1}
+                ]
+                \node [terminal] {$A$}
+                    child {node [terminal] {$B$}
+                        child {node [terminal] {$D$}}
+                        child {node [terminal] {$E$}
+                            child {node [terminal] {$G$}}
+                            child [missing]
+                        }
+                    }
+                    child {node [terminal] {$C$}
+                        child [missing]
+                        child {node [terminal] {$F$}}
+                    };
+            \end{tikzpicture}
+            \caption{逻辑结构}
+            \label{subfig:demo_logistic_structure_binary_tree_linked_storage}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.6\textwidth}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{2}{\tikzmark{tchu}} \\
+                \bitbox{2}{首}\bitboxes{1}{{\tikzmark{scha}}{\tikzmark{schx}}{\tikzmark{schy}}}
+                \bitbox[]{9}{}\bitbox[]{1}{\tikzmark{tcal}}
+                \bitbox{2}{$A$}\bitboxes{1}{{\tikzmark{scab}}{\tikzmark{scac}}{\tikzmark{scah}}} \\
+                \bitbox[]{5}{}
+                \bitbox[]{2}{\tikzmark{tcbu}}\bitbox[]{8}{}
+                \bitbox[]{2}{\tikzmark{tcad}}\bitbox[]{8}{}
+                \bitbox[]{2}{\tikzmark{tccu}} \\
+                \bitbox[]{5}{}
+                \bitbox{2}{$B$}\bitboxes{1}{{\tikzmark{scbd}}{\tikzmark{scbe}}{\tikzmark{scba}}}
+                \bitbox[]{15}{}
+                \bitbox{2}{$C$}\bitboxes{1}{{\tikzmark{sccx}}{\tikzmark{sccf}}{\tikzmark{scca}}} \\
+                \bitbox[]{2}{\tikzmark{tcdu}}\bitbox[]{3}{}\bitbox[]{2}{\tikzmark{tcbd}}\bitbox[]{3}{}
+                \bitbox[]{2}{\tikzmark{tceu}}\bitbox[]{13}{}\bitbox[]{2}{\tikzmark{tccd}}\bitbox[]{3}{}
+                \bitbox[]{2}{\tikzmark{tcfu}} \\
+                \bitbox{2}{$D$}\bitboxes{1}{{\tikzmark{scdx}}{\tikzmark{scdy}}{\tikzmark{scdb}}}
+                \bitbox[]{5}{}
+                \bitbox{2}{$E$}\bitboxes{1}{{\tikzmark{sceg}}{\tikzmark{scex}}{\tikzmark{sceb}}}
+                \bitbox[]{15}{}
+                \bitbox{2}{$F$}\bitboxes{1}{{\tikzmark{scfx}}{\tikzmark{scfy}}{\tikzmark{scfc}}} \\
+                \bitbox[]{8}{}
+                \bitbox[]{2}{\tikzmark{tcgu}}\bitbox[]{2}{\tikzmark{tced}} \\
+                \bitbox[]{8}{}
+                \bitbox{2}{$G$}\bitboxes{1}{{\tikzmark{scgx}}{\tikzmark{scgy}}{\tikzmark{scge}}}
+            \end{bytefield}
+            \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
+                    list item/.style={draw=gray, rounded corners, thick} %
+                ]
+                \draw[->] ($(pic cs:scha)+(0,-0.03)$) to [out=90,in=180] ($(pic cs:tcal)+(0.1,-0.03)$);
+                \fill ($(pic cs:scha)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:scab)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tcbu)+(0,-0.3)$);
+                \fill ($(pic cs:scab)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:scac)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tccu)+(0,-0.3)$);
+                \fill ($(pic cs:scac)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:scbd)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tcdu)+(0,-0.3)$);
+                \fill ($(pic cs:scbd)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:scbe)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tceu)+(0,-0.3)$);
+                \fill ($(pic cs:scbe)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sccf)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tcfu)+(0,-0.3)$);
+                \fill ($(pic cs:sccf)+(0,-0.03)$) circle [radius=0.05];
+                \draw[->] ($(pic cs:sceg)+(0,-0.03)$) to [out=-90,in=90] ($(pic cs:tcgu)+(0,-0.3)$);
+                \fill ($(pic cs:sceg)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scah)+(0,-0.03)$) to [out=90,in=90] ($(pic cs:tchu)+(0,-0.3)$);
+                \fill ($(pic cs:scah)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scba)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tcad)+(0,0.23)$);
+                \fill ($(pic cs:scba)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scca)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tcad)+(0,0.23)$);
+                \fill ($(pic cs:scca)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scdb)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tcbd)+(0,0.23)$);
+                \fill ($(pic cs:scdb)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:sceb)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tcbd)+(0,0.23)$);
+                \fill ($(pic cs:sceb)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scfc)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tccd)+(0,0.23)$);
+                \fill ($(pic cs:scfc)+(0,-0.03)$) circle [radius=0.05];
+                \draw[dashed,->] ($(pic cs:scge)+(0,-0.03)$) to [out=90,in=-90] ($(pic cs:tced)+(0,0.23)$);
+                \fill ($(pic cs:scge)+(0,-0.03)$) circle [radius=0.05];
+                \draw ($(pic cs:schx)+(-0.1,-0.3)$) to ($(pic cs:schx)+(0.1,0.23)$);
+                \draw ($(pic cs:schy)+(-0.1,-0.3)$) to ($(pic cs:schy)+(0.1,0.23)$);
+                \draw ($(pic cs:sccx)+(-0.1,-0.3)$) to ($(pic cs:sccx)+(0.1,0.23)$);
+                \draw ($(pic cs:scdx)+(-0.1,-0.3)$) to ($(pic cs:scdx)+(0.1,0.23)$);
+                \draw ($(pic cs:scdy)+(-0.1,-0.3)$) to ($(pic cs:scdy)+(0.1,0.23)$);
+                \draw ($(pic cs:scex)+(-0.1,-0.3)$) to ($(pic cs:scex)+(0.1,0.23)$);
+                \draw ($(pic cs:scfx)+(-0.1,-0.3)$) to ($(pic cs:scfx)+(0.1,0.23)$);
+                \draw ($(pic cs:scfy)+(-0.1,-0.3)$) to ($(pic cs:scfy)+(0.1,0.23)$);
+                \draw ($(pic cs:scgx)+(-0.1,-0.3)$) to ($(pic cs:scgx)+(0.1,0.23)$);
+                \draw ($(pic cs:scgy)+(-0.1,-0.3)$) to ($(pic cs:scgy)+(0.1,0.23)$);
+            \end{tikzpicture}
+            \vspace{-2ex}
+            \caption{物理结构}
+            \label{subfig:demo_physical_structure_binary_tree_linked_storage}
+        \end{subfigure}
+        \caption{二叉树的链式存储示例}
+        \label{fig:demo_linked_storage_binary_tree}
+    \end{figure}
+\end{fragile}
