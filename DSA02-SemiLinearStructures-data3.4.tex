@@ -1,0 +1,131 @@
+\subsection{二叉树的基本操作}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{二叉树的抽象数据类型}
+        \begin{minted}[linenos=false,escapeinside=@@]{c}
+            ADT BinaryTree {
+                数据:
+                    数据对象: @$\mathcal{D} = \{a_{k} | a_{k}\in\text{数据元素集合}, k\in\mathbb{Z}\cap[0,n)\}$@
+                    逻辑关系: 若@$\mathcal{D}=\varnothing$@, 则@$\mathcal{R}=\varnothing$@; 否则@$\mathcal{R}=\{\langle{}a_{i},a_{j}\rangle | i<j;i,j\in\mathbb{Z}\cap[0,n);a_{i},a_{j}\in\mathcal{D}_{l}\cup\{a_{0}\}\text{或}\mathcal{D}_{r}\cup\{a_{0}\}\}$\footnotemark@
+                操作:
+                    create_binary_tree()
+                        构造并初始化一个空二叉树@$t$@
+                    insert_left_binary_tree(p, d)
+                        在二叉树中结点@$p$@下插入值为@$d$@的左子结点, 右子结点可简单类比, 略
+                    remove_left_binary_tree(p)
+                        在二叉树中删除结点@$p$@的左子树, 右子树可简单类比, 略
+                    traverse_binary_tree(t)
+                        以某种方式遍历二叉树@$t$@的所有结点
+            }
+        \end{minted}
+    \end{block}
+
+    \footnotetext{$a_{0}$为根结点，$\mathcal{D}_{l}$与$\mathcal{D}_{r}$分别为其
+                  左右子树结点集合，且$\mathcal{D}_{l}\cap\mathcal{D}_{r}=\varnothing$}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{二叉树的初始化}
+            \begin{itemize}
+                \item 利用结点初始化方法
+                \item 注意空指针处理
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}{c}
+            BinaryTreeNode *create_binary_tree_node(DataType d) {
+                BinaryTreeNode *n = 
+                        malloc(sizeof(BinaryTreeNode));
+                if (n) {
+                    n->data = d;
+                    n->left = n->right = n->parent = NULL;
+                }
+                return n;
+            }
+        \end{minted}
+        \begin{minted}{c}
+            BinaryTree *create_binary_tree() {
+                BinaryTree *t = malloc(sizeof(BinaryTree));
+                if (t) {
+                    t->head = create_binary_tree_node(0);
+                }
+                return t;
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{为二叉树中的指定结点插入左子结点\footnotemark}
+            \begin{itemize}
+                \item 将原左子树作为新结点的左子树
+                \item 注意更新双向链接关系的顺序
+                \item 可将操作拆分为两部分
+                \item 类似于双向链表的结点插入
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={5,7}]{c}
+            BinaryTreeNode *attach_left_binary_tree(
+                    BinaryTreeNode *p, BinaryTreeNode *n) {
+                assert(n && p);
+                if (p->left) {
+                    n->left = p->left, p->left->parent = n;
+                }
+                p->left = n, n->parent = p;
+                return n;
+            }
+        \end{minted}
+        \begin{minted}{c}
+            bool insert_left_binary_tree(
+                    BinaryTreeNode *p, DataType d) {
+                if (!p) {
+                    printf("Wrong insertion place!\n");
+                    return false;
+                }
+                BinaryTreeNode *n = create_binary_tree_node(d);
+                return n && attach_left_binary_tree(p, n);
+            }
+        \end{minted}
+    }
+
+    \footnotetext{右子结点可直接类比，略，下同}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{删除二叉树中的指定结点的左子树}
+            \begin{itemize}
+                \item 注意更新双向链接关系的顺序
+                \item 可将操作拆分为两部分
+                \item 拆除的子树须通过遍历释放
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}[highlightlines={5}]{c}
+            BinaryTreeNode *detach_left_binary_tree(
+                    BinaryTreeNode *p) {
+                assert(p && p->left);
+                BinaryTreeNode *c = p->left;
+                p->left = c->parent = NULL;
+                return c;
+            }
+        \end{minted}
+        \begin{minted}{c}
+            bool remove_left_binary_tree(BinaryTreeNode *p) {
+                if (!p) {
+                    printf("Wrong removal place!\n");
+                    return false;
+                }
+                BinaryTreeNode *c = detach_left_binary_tree(p);
+                return cleanup_binary_tree_by_node(c);
+            }
+        \end{minted}
+    }
+\end{fragile}
