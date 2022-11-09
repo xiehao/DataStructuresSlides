@@ -1,0 +1,429 @@
+\subsection{二叉树的遍历}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{遍历(traversal)}
+        \begin{itemize}
+            \item 按某种约定顺序访问半线性结构中的所有结点
+            \item 每个结点均\alert{被且仅被}访问$1$次
+            \item \alert{意义}：使半线性结构转化为线性结构
+            \item 两类常见遍历方式：\alert{深度}优先与\alert{广度}优先
+            \item 前者可按访问\alert{根}结点的次序区分
+                \begin{itemize}
+                    \item \textbf{先序(preorder)遍历}：\alert{根}结点
+                        $\Rightarrow$子树序列\footnote{按顺序遍历每个子树，遍历
+                        方式亦为递归相同遍历方式，其余类同}
+                    \item \textbf{中序(inorder)遍历}\footnote{仅针对二叉树}：左
+                        子树$\Rightarrow$\alert{根}结点$\Rightarrow$右子树
+                    \item \textbf{后序(postorder)遍历}：子树序列
+                        $\Rightarrow$\alert{根}结点
+                \end{itemize}
+            \item 后者包括\textbf{层序(level order)遍历}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=24ex/#1}
+            ]
+            \node [terminal] (a) {$A$}
+                child {node [terminal] (b) {$B$}
+                    child {node [terminal] (d) {$D$}}
+                    child {node [terminal] (e) {$E$}
+                        child {node [terminal] (g) {$G$}}
+                        child [missing]
+                    }
+                }
+                child {node [terminal] (c) {$C$}
+                    child [missing]
+                    child {node [terminal] (f) {$F$}}
+                };
+            \draw [dashed,->] (a) to [in=90,out=-90] (b);
+            \draw [dashed,->] (b) to [in=90,out=-90] (d);
+            \draw [dashed,->] (d) to [in=90,out=-90] (e);
+            \draw [dashed,->] (e) to [in=90,out=-90] (g);
+            \draw [dashed,->] (g) to [in=90,out=-90] (c);
+            \draw [dashed,->] (c) to [in=90,out=-90] (f);
+        \end{tikzpicture}
+        \vspace{-8ex}
+        \caption{二叉树的\alert{先}序遍历示
+        例：$A\rightarrow{}B\rightarrow{}D\rightarrow{}E\rightarrow{}G\rightarrow{}C\rightarrow{}F$}
+        \label{fig:demo_traverse_binary_tree_preorder}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=24ex/#1}
+            ]
+            \node [terminal] (a) {$A$}
+                child {node [terminal] (b) {$B$}
+                    child {node [terminal] (d) {$D$}}
+                    child {node [terminal] (e) {$E$}
+                        child {node [terminal] (g) {$G$}}
+                        child [missing]
+                    }
+                }
+                child {node [terminal] (c) {$C$}
+                    child [missing]
+                    child {node [terminal] (f) {$F$}}
+                };
+            \draw [dashed,->] (d) to [in=180,out=0] (b);
+            \draw [dashed,->] (b) to [in=180,out=0] (g);
+            \draw [dashed,->] (g) to [in=180,out=0] (e);
+            \draw [dashed,->] (e) to [in=180,out=0] (a);
+            \draw [dashed,->] (a) to [in=180,out=0] (c);
+            \draw [dashed,->] (c) to [in=180,out=0] (f);
+        \end{tikzpicture}
+        % \vspace{0ex}
+        \caption{二叉树的\alert{中}序遍历示
+        例：$D\rightarrow{}B\rightarrow{}G\rightarrow{}E\rightarrow{}A\rightarrow{}C\rightarrow{}F$}
+        \label{fig:demo_traverse_binary_tree_inorder}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=24ex/#1}
+            ]
+            \node [terminal] (a) {$A$}
+                child {node [terminal] (b) {$B$}
+                    child {node [terminal] (d) {$D$}}
+                    child {node [terminal] (e) {$E$}
+                        child {node [terminal] (g) {$G$}}
+                        child [missing]
+                    }
+                }
+                child {node [terminal] (c) {$C$}
+                    child [missing]
+                    child {node [terminal] (f) {$F$}}
+                };
+            \draw [dashed,->] (d) to [in=-90,out=90] (g);
+            \draw [dashed,->] (g) to [in=-90,out=90] (e);
+            \draw [dashed,->] (e) to [in=-90,out=90] (b);
+            \draw [dashed,->] (b) to [in=-90,out=90] (f);
+            \draw [dashed,->] (f) to [in=-90,out=90] (c);
+            \draw [dashed,->] (c) to [in=-90,out=90] (a);
+        \end{tikzpicture}
+        \vspace{-6ex}
+        \caption{二叉树的\alert{后}序遍历示
+        例：$D\rightarrow{}G\rightarrow{}E\rightarrow{}B\rightarrow{}F\rightarrow{}C\rightarrow{}A$}
+        \label{fig:demo_traverse_binary_tree_postorder}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=24ex/#1}
+            ]
+            \node [terminal] (a) {$A$}
+                child {node [terminal] (b) {$B$}
+                    child {node [terminal] (d) {$D$}}
+                    child {node [terminal] (e) {$E$}
+                        child {node [terminal] (g) {$G$}}
+                        child [missing]
+                    }
+                }
+                child {node [terminal] (c) {$C$}
+                    child [missing]
+                    child {node [terminal] (f) {$F$}}
+                };
+            \draw [dashed,->] (a) to [in=180,out=0] (b);
+            \draw [dashed,->] (b) to [in=180,out=0] (c);
+            \draw [dashed,->] (c) to [in=180,out=0] (d);
+            \draw [dashed,->] (d) to [in=180,out=0] (e);
+            \draw [dashed,->] (e) to [in=180,out=0] (f);
+            \draw [dashed,->] (f) to [in=180,out=0] (g);
+        \end{tikzpicture}
+        % \vspace{0ex}
+        \caption{二叉树的\alert{层}序遍历示
+        例：$A\rightarrow{}B\rightarrow{}C\rightarrow{}D\rightarrow{}E\rightarrow{}F\rightarrow{}G$}
+        \label{fig:demo_traverse_binary_tree_levelorder}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{二叉树遍历性质甲}
+        \begin{itemize}
+            \item 由\alert{先}序遍历与\alert{中}序遍历可推出\alert{后}序遍历
+        \end{itemize}
+    \end{block}
+    \pause
+    \bicolumns[0.5]{
+        \begin{alertblock}{证明}
+            \begin{enumerate}
+                \item 由先序遍历性质可找出根结点
+                \item 由中序遍历性质可找出左右子树
+                \item 对左右子树分别递归应用上述步骤直至无左右子树\hfill$\qed$
+            \end{enumerate}
+        \end{alertblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{6}{先序：}\bitbox{2}{根}\bitbox{6}{左子树}\bitbox{6}{右子树} \\
+                \\
+                \bitbox[]{6}{中序：}\bitbox{6}{左子树}\bitbox{2}{根}\bitbox{6}{右子树}
+            \end{bytefield}
+            \caption{先序$+$中序$\Rightarrow$后序}
+            \label{fig:preorder_inorder__postorder}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 已知先序：$A\rightarrow{}B\rightarrow{}D\rightarrow{}E\rightarrow{}G\rightarrow{}C\rightarrow{}F$
+            \item 已知中序：$D\rightarrow{}B\rightarrow{}G\rightarrow{}E\rightarrow{}A\rightarrow{}C\rightarrow{}F$
+            \item 求后序
+        \end{itemize}
+    \end{exampleblock}
+    \begin{figure}
+        \centering
+        \begin{bytefield}{2}
+            \bitbox[]{6}{先序：}\bitboxes{3}{{\alert<2->{$A$}}{\alert<3->{$B$}}{\alert<4->{$D$}}{\alert<5->{$E$}}{\alert<6->{$G$}}{\alert<7->{$C$}}{\alert<8->{$F$}}} \\
+            \\
+            \bitbox[]{6}{中序：}\bitboxes{3}{{\alert<4->{$D$}}{\alert<3->{$B$}}{\alert<6->{$G$}}{\alert<5->{$E$}}{\alert<2->{$A$}}{\alert<7->{$C$}}{\alert<8->{$F$}}} \\
+            \\
+            \bitbox[]{6}{后序：}\bitboxes{3}{{\only<4->{$D$}}{\only<6->{$G$}}{\only<5->{$E$}}{\only<3->{$B$}}{\only<8->{$F$}}{\only<7->{$C$}}{\only<2->{$A$}}}
+        \end{bytefield}
+        \caption{示例过程：先序$+$中序$\Rightarrow$后序}
+        \label{fig:demo_preorder_inorder__postorder}
+    \end{figure}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{二叉树遍历性质乙}
+        \begin{itemize}
+            \item 由\alert{后}序遍历与\alert{中}序遍历可推出\alert{先}序遍历
+        \end{itemize}
+    \end{block}
+    \pause
+    \bicolumns[0.5]{
+        \begin{alertblock}{证明}
+            \begin{enumerate}
+                \item 与性质甲类似，略
+            \end{enumerate}
+        \end{alertblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{6}{后序：}\bitbox{6}{左子树}\bitbox{6}{右子树}\bitbox{2}{根} \\
+                \\
+                \bitbox[]{6}{中序：}\bitbox{6}{左子树}\bitbox{2}{根}\bitbox{6}{右子树}
+            \end{bytefield}
+            \caption{后序$+$中序$\Rightarrow$先序}
+            \label{fig:postorder_inorder__preorder}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 已知后序：$D\rightarrow{}G\rightarrow{}E\rightarrow{}B\rightarrow{}F\rightarrow{}C\rightarrow{}A$
+            \item 已知中序：$D\rightarrow{}B\rightarrow{}G\rightarrow{}E\rightarrow{}A\rightarrow{}C\rightarrow{}F$
+            \item 求先序
+        \end{itemize}
+    \end{exampleblock}
+    \begin{figure}
+        \centering
+        \begin{bytefield}{2}
+            \bitbox[]{6}{后序：}\bitboxes{3}{{\alert<4->{$D$}}{\alert<6->{$G$}}{\alert<5->{$E$}}{\alert<3->{$B$}}{\alert<8->{$F$}}{\alert<7->{$C$}}{\alert<2->{$A$}}} \\
+            \\
+            \bitbox[]{6}{中序：}\bitboxes{3}{{\alert<4->{$D$}}{\alert<3->{$B$}}{\alert<6->{$G$}}{\alert<5->{$E$}}{\alert<2->{$A$}}{\alert<7->{$C$}}{\alert<8->{$F$}}} \\
+            \\
+            \bitbox[]{6}{先序：}\bitboxes{3}{{\only<2->{$A$}}{\only<3->{$B$}}{\only<4->{$D$}}{\only<5->{$E$}}{\only<6->{$G$}}{\only<7->{$C$}}{\only<8->{$F$}}}
+        \end{bytefield}
+        \caption{示例过程：后序$+$中序$\Rightarrow$先序}
+        \label{fig:demo_postorder_inorder__preorder}
+    \end{figure}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{二叉树遍历性质丙}
+        \begin{itemize}
+            \item 由\alert{先}序遍历与\alert{后}序遍历\alert{不可}推出\alert{中}序遍历
+        \end{itemize}
+    \end{block}
+    \pause
+    \bicolumns[0.5]{
+        \begin{alertblock}{证明}
+            \begin{enumerate}
+                \item 当根结点度为$1$时无法区分左右子树
+            \end{enumerate}
+        \end{alertblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{bytefield}{2}
+                \bitbox[]{6}{先序：}\bitbox{2}{根}\bitbox{12}{左子树$\;?\;$右子树} \\
+                \\
+                \bitbox[]{6}{后序：}\bitbox{12}{左子树$\;?\;$右子树}\bitbox{2}{根}
+            \end{bytefield}
+            \caption{先序$+$后序$\nRightarrow$中序}
+            \label{fig:preorder_postorder__inorder}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{二叉树深度优先遍历的递归实现\footnote{须事先定
+                  义：\mintinline[fontsize=\smaller]{c}{typedef void
+                  (*Visit)(DataType);}}}
+        \begin{columns}
+            \column{0.33\textwidth}
+            \begin{minted}[linenos=false]{c}
+                void traverse_preorder(
+                        BinaryTreeNode *p,
+                        Visit v) {
+                    if (!p) {
+                        return; // 递归出口
+                    }
+                    v(p->data);
+                    traverse_preorder(p->left, v);
+                    traverse_preorder(p->right, v);
+                }
+            \end{minted}
+            \column{0.33\textwidth}
+            \begin{minted}[linenos=false]{c}
+                void traverse_inorder(
+                        BinaryTreeNode *p,
+                        Visit v) {
+                    if (!p) {
+                        return; // 递归出口
+                    }
+                    traverse_inorder(p->left, v);
+                    v(p->data);
+                    traverse_inorder(p->right, v);
+                }
+            \end{minted}
+            \column{0.33\textwidth}
+            \begin{minted}[linenos=false]{c}
+                void traverse_postorder(
+                        BinaryTreeNode *p,
+                        Visit v) {
+                    if (!p) {
+                        return; // 递归出口
+                    }
+                    traverse_postorder(p->left, v);
+                    traverse_postorder(p->right, v);
+                    v(p->data);
+                }
+            \end{minted}
+        \end{columns}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{二叉树广度优先遍历的非递归实现}
+            \begin{itemize}
+                \item 用队列对每层结点按顺序缓存
+                \item 根结点首先入队
+                \item 当结点出队时均将其子树按顺序入队
+                \item 当队列空时结束
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{minted}{c}
+            void traverse_binary_tree_level_order(
+                    BinaryTreeNode *p, Visit v) {
+                LinkedQueue *buffer = create_linked_queue();
+                if (!buffer) { return; }
+                push_linked_queue(buffer, p);
+                while (!empty_linked_queue(buffer)) {
+                    pop_linked_queue(buffer, (DataType *)(&p));
+                    v(p->data);
+                    if (p->left) {
+                        push_linked_queue(buffer, p->left);
+                    }
+                    if (p->right) {
+                        push_linked_queue(buffer, p->right);
+                    }
+                }
+                destroy_linked_queue(buffer);
+            }
+        \end{minted}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{exampleblock}{应用：表达式树}
+        \begin{itemize}
+            \item 考虑仅包括二元运算的表达式
+            \item 可将运算符作为根结点，左右操作数分别为左右子结点
+            \item 操作数为叶结点，运算符为非叶结点
+            \item 如此可将表达式转换为二叉树
+            \item 前/中/后缀表达式分别对应二叉树的先/中/后序遍历
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{exampleblock}{例：表达式树}
+            \begin{itemize}
+                \item 前缀表达：\mintinline[fontsize=\smaller]{console}{+ - A / B C * D E}
+                \item 中缀表达：\mintinline[fontsize=\smaller]{console}{A - B / C + D * E}
+                \item 后缀表达：\mintinline[fontsize=\smaller]{console}{A B C / - D E * +}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=4ex, %
+                    level/.style={sibling distance=16ex/#1}
+                ]
+                \node [terminal] {$+$}
+                    child {node [terminal] {$-$}
+                        child {node [terminal] {$A$}}
+                        child {node [terminal] {$/$}
+                            child {node [terminal] {$B$}}
+                            child {node [terminal] {$C$}}
+                        }
+                    }
+                    child {node [terminal] {$*$}
+                        child {node [terminal] {$D$}}
+                        child {node [terminal] {$E$}}
+                    };
+            \end{tikzpicture}
+            \caption{表达式树示例}
+            \label{fig:demo_expression_tree}
+        \end{figure}
+    }
+\end{fragile}
