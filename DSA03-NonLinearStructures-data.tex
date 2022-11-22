@@ -1,0 +1,81 @@
+\begin{standout}[第三章]
+    非线性结构\\
+    Non-Linear Structures
+\end{standout}
+
+\begin{frame}{大纲}
+    \setbeamertemplate{section in toc}[sections numbered]
+    % \begin{multicols}{2}
+    \tableofcontents
+    % \end{multicols}
+\end{frame}
+
+\begin{fragile}
+    \bicolumns[0.6]{
+        \begin{exampleblock}{引例：Königsberg七桥问题}
+            \begin{itemize}
+                \item 在Königsberg市有$7$座桥连通了$4$块区域
+                \item 是否有算法实现
+                      \begin{itemize}
+                          \item 从某处出发
+                          \item 依次穿过所有桥仅$1$次
+                          \item 回到原地
+                      \end{itemize}
+                \item<2> 可抽象为图的一笔画问题
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \only<1>{
+                \includegraphics[height=3.6cm]{images/Konigsberg_bridges.png}
+            }
+            \only<2>{
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                    ]
+                    \node (a) [terminal] at (-2,0) {$A$};
+                    \node (b) [terminal] at (0,-1.5) {$B$};
+                    \node (c) [terminal] at (2,0) {$C$};
+                    \node (d) [terminal] at (0,1.5) {$D$};
+                    \draw (a) to [bend left] (b);
+                    \draw (a) to [bend right] (b);
+                    \draw (a) to [bend left] (d);
+                    \draw (a) to [bend right] (d);
+                    \draw (b) to [bend right] (c);
+                    \draw (d) to [bend left] (c);
+                    \draw (a) to (c);
+                \end{tikzpicture}
+            }
+            \caption{Königsberg七桥问题}
+            \label{fig:demo-Königsberg}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \begin{block}{非线性结构}
+        \begin{itemize}
+            \item 在半线性结构的基础上允许有环的存在
+            \item 半线性结构的一种扩展
+            \item 非线性结构主要指\textbf{图}结构
+            \item 图与树之间可转换
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\input{DSA03-NonLinearStructures-data1.tex}
+\input{DSA03-NonLinearStructures-data2.tex}
+
+\section{小结}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{itemize}
+        \item
+    \end{itemize}
+\end{frame}
+
+\begin{standout}[]
+    问与答
+\end{standout}

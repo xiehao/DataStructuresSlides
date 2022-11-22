@@ -1,0 +1,438 @@
+\section{基本术语}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{图(Graph)}
+            \begin{itemize}
+                \item 可被定义为$G=(V,E)$，其中\footnotemark
+                      \begin{itemize}
+                          \item 集合$V$中元素$v$为\textbf{顶点(vertex)}
+                          \item 集合$E$中元素$e\in{V}\times{V}$为\textbf{边
+                                    (edge)}
+                      \end{itemize}
+                \item 只定义\alert{拓扑}关系，与几何位置无关
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-2,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-1.5) {$v_{1}$};
+                \node (c) [terminal] at (2,0) {$v_{2}$};
+                \node (d) [terminal] at (0,1.5) {$v_{3}$};
+                \draw[->] (a) to [bend left] node [pos=0.7,above,sloped] {$e_{0}$} (b);
+                \draw[<-] (a) to [bend right] node [pos=0.5,below,sloped] {$e_{1}$} (b);
+                \draw[->] (a) to [bend left] node [pos=0.5,above,sloped] {$e_{2}$} (d);
+                \draw[<-] (a) to [bend right] node [pos=0.7,below,sloped] {$e_{3}$} (d);
+                \draw (b) to [bend right] node [pos=0.5,below,sloped] {$e_{4}$} (c);
+                \draw (d) to [bend left] node [pos=0.5,above,sloped] {$e_{5}$} (c);
+                \draw (a) to node [pos=0.7,above,sloped] {$e_{6}$} (c);
+            \end{tikzpicture}
+            \caption{图}
+            \label{fig:demo-graph}
+        \end{figure}
+    }
+
+    \footnotetext{顶点又名\textbf{结点(node)}，边又名\textbf{弧(arc)}，且$V$与
+        $E$均为有限集}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{有向图(Undigraph)与无向图(Digraph)}
+            \begin{itemize}
+                \item 按顶点是否有顺序可将边$e$分为
+                      \begin{itemize}
+                          \item 无顺序的\textbf{无向边}，记作$(u,v)$
+                          \item 有顺序的\textbf{有向边}，记作
+                                $\langle{u,v}\rangle$
+                      \end{itemize}
+                \item 只有无向边的图为\textbf{无向图}
+                \item 只有有向边的图为\textbf{有向图}
+                \item 二者均有的图为\textbf{混合图(mixed graph)}
+                \item 无向图与混合图均可转化为有向图
+                      \begin{itemize}
+                          \item 将一条无向边拆成两条相反的有向边
+                      \end{itemize}
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{subfigure}[T]{0.9\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                    ]
+                    \node (a) [terminal] at (-2,0) {$v_{0}$};
+                    \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                    \node (c) [terminal] at (2,0) {$v_{2}$};
+                    \node (d) [terminal] at (0,.5) {$v_{3}$};
+                    \draw[->] (a) to (b);
+                    \draw[<-] (a) to (d);
+                    \draw[->] (b) to (c);
+                    \draw[->] (d) to (c);
+                    \draw[->] (a) to (c);
+                \end{tikzpicture}
+                \caption{有向图}
+                \label{subfig:digraph}
+            \end{subfigure}
+            ~
+            \begin{subfigure}[T]{0.9\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                    ]
+                    \node (a) [terminal] at (-2,0) {$v_{0}$};
+                    \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                    \node (c) [terminal] at (2,0) {$v_{2}$};
+                    \node (d) [terminal] at (0,.5) {$v_{3}$};
+                    \draw (a) to (b);
+                    \draw (a) to (d);
+                    \draw (b) to (c);
+                    \draw (d) to (c);
+                    \draw (a) to (c);
+                \end{tikzpicture}
+                \caption{无向图}
+                \label{subfig:undigraph}
+            \end{subfigure}
+            \caption{有向图与无向图}
+            \label{fig:digraph_undigraph}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.55]{
+        \begin{block}{顶点的度(Degree)}
+            \begin{itemize}
+                \item 若边$e=\langle{}v_{a},v_{b}\rangle$，则
+                      \begin{itemize}
+                          \item 称$v_{a}$与$v_{b}$\textbf{邻接(adjacent)}
+                          \item 称二者均与$e$彼此\textbf{关联(incident)}
+                          \item 称$e$为$v_{a}$的\textbf{出边(outgoing edge)}
+                          \item 称$e$为$v_{b}$的\textbf{入边(incoming edge)}
+                      \end{itemize}
+                \item 在无向图中称与顶点$v$关联的边数为$v$的\textbf{度}
+                \item 在有向图中称与顶点$v$关联的出入边数分别为$v$的\textbf{出
+                          度(out-degree)}与\textbf{入度(in-degree)}
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{subfigure}[T]{0.9\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                        every node/.style={terminal, rectangle split, rectangle split horizontal, rectangle split parts=2}, %
+                    ]
+                    \node (a) at (-1.5,0) {$2$\nodepart{two}$1$};
+                    \node (b) at (0,-.5) {$1$\nodepart{two}$1$};
+                    \node (c) at (1.5,0) {$0$\nodepart{two}$3$};
+                    \node (d) at (0,.5) {$1$\nodepart{two}$1$};
+                    \draw[->] (a) to (b);
+                    \draw[<-] (a) to (d);
+                    \draw[->] (b) to (c);
+                    \draw[->] (d) to (c);
+                    \draw[->] (a) to (c);
+                \end{tikzpicture}
+                \caption{有向图的出度（左）与入度（右）}
+                \label{subfig:degree_digraph}
+            \end{subfigure}
+            ~
+            \begin{subfigure}[T]{0.9\textwidth}
+                \centering
+                \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                        list item/.style={draw=gray, circle, thick}, %
+                    ]
+                    \node (a) [terminal] at (-1.5,0) {$3$};
+                    \node (b) [terminal] at (0,-.5) {$2$};
+                    \node (c) [terminal] at (1.5,0) {$3$};
+                    \node (d) [terminal] at (0,.5) {$2$};
+                    \draw (a) to (b);
+                    \draw (a) to (d);
+                    \draw (b) to (c);
+                    \draw (d) to (c);
+                    \draw (a) to (c);
+                \end{tikzpicture}
+                \caption{无向图的度}
+                \label{subfig:degree_undigraph}
+            \end{subfigure}
+            \caption{顶点的度}
+            \label{fig:degree_digraph_undigraph}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{简单图(Simple Graph)}
+        \begin{itemize}
+            \item 称起点与终点相同的边为\textbf{自环(self-loop)}
+            \item 称\alert{不含}自环且所有边均\alert{唯一}的图为\textbf{简单
+                      图}\footnote{本课程只讨论简单图}
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw (a) to (b);
+                \draw (a) to (d);
+                \draw (b) to (c);
+                \draw (d) to (c);
+                \draw (a) to (c);
+            \end{tikzpicture}
+            \caption{简单图}
+            \label{subfig:simple_graph}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw (a) to (b);
+                \draw[red] (a) to [loop above] ();
+                \draw (a) to (d);
+                \draw (b) to (c);
+                \draw (d) to (c);
+                \draw (a) to (c);
+            \end{tikzpicture}
+            \caption{带自环的非简单图}
+            \label{subfig:non_simple_graph_a}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw (a) to (b);
+                \draw[red] (a) to [bend right] (b);
+                \draw (a) to (d);
+                \draw (b) to (c);
+                \draw (d) to (c);
+                \draw (a) to (c);
+            \end{tikzpicture}
+            \caption{有重复边的非简单图}
+            \label{subfig:non_simple_graph_b}
+        \end{subfigure}
+        \caption{简单图与非简单图}
+        \label{fig:simple_graph_non_simple_graph}
+    \end{figure}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{路径(Path)}
+        \begin{itemize}
+            \item 若序列$\pi=\{v_{k}\}_{k=0}^{n}$满足$v_{k}$与$v_{k+1}$\alert{邻
+                      接}\footnote{指存在边$e_{k}$满足$e_{k}=(v_{k},v_{k+1})$或
+                  $e_{k}=\langle{}v_{k},v_{k+1}\rangle$，$k\in\mathbb{Z}\cap[0,n)$}，
+                  则称之为自$v_{0}$至$v_{n}$的一条\textbf{路径}
+                  \begin{itemize}
+                      \item 称经过的总边数$|\pi|$为路径\textbf{长度(length)}
+                      \item 称无重复顶点的路径为\textbf{简单(simple)路径}
+                  \end{itemize}
+            \item 两顶点间的路径一般\alert{不唯一}
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[<-,red] (a) to (b);
+                \draw (a) to (d);
+                \draw (b) to (c);
+                \draw[<-,red] (d) to (c);
+                \draw[->,red] (a) to (c);
+            \end{tikzpicture}
+            \caption{简单路径：$(v_{1},v_{0},v_{2},v_{3})$}
+            \label{subfig:simple_path}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[<-,red] (a) to (b);
+                \draw[<-,red] (a) to (d);
+                \draw (b) to (c);
+                \draw[<-,red] (d) to (c);
+                \draw[->,red] (a) to (c);
+            \end{tikzpicture}
+            \caption{非简单路径：$(v_{1},v_{0},v_{2},v_{3},v_{0})$}
+            \label{subfig:non_simple_path}
+        \end{subfigure}
+        \caption{图的路径}
+        \label{fig:graph_paths}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{环路(Cycle)}
+        \begin{itemize}
+            \item 若路径$\pi=\{v_{k}\}_{k=0}^{n}$中起止顶点相同，即
+                  $v_{0}=v_{n}$，则称其为\textbf{环路}
+                  \begin{itemize}
+                      \item 若除起止结点相同外无任何其他结点两两相同，则称其为
+                            \textbf{简单环路}
+                      \item 称经过图中各\alert{边}一次且仅一次的环路为\textbf{欧
+                                拉环路(Eulerian tour)}
+                      \item 称经过图中各\alert{顶点}一次且仅一次的环路为
+                            \textbf{哈米尔顿环路(Hamiltonian tour)}
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to (b);
+                \draw[<-,red] (a) to (d);
+                \draw[->] (b) to (c);
+                \draw[<-,red] (d) to (c);
+                \draw[->,red] (a) to (c);
+                \draw[<-] (a) to [bend left=60] (c);
+            \end{tikzpicture}
+            \caption{简单环路：$(v_{0},v_{2},v_{3})$}
+            \label{subfig:simple_cycle}
+        \end{subfigure}
+        \begin{subfigure}[T]{0.35\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->,red] (a) to (b);
+                \draw[<-,red] (a) to (d);
+                \draw[->,red] (b) to (c);
+                \draw[<-,red] (d) to (c);
+                \draw[->,red] (a) to (c);
+                \draw[<-,red] (a) to [bend left=60] (c);
+            \end{tikzpicture}
+            \caption{欧拉环路：$(v_{0},v_{1},v_{2},v_{0},v_{2},v_{3},v_{0})$}
+            \label{subfig:demo_euler_tour}
+        \end{subfigure}
+        \begin{subfigure}[T]{0.32\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->,red] (a) to (b);
+                \draw[<-,red] (a) to (d);
+                \draw[->,red] (b) to (c);
+                \draw[<-,red] (d) to (c);
+                \draw[->] (a) to (c);
+                \draw[<-] (a) to [bend left=60] (c);
+            \end{tikzpicture}
+            \caption{哈米尔顿环路：$(v_{0},v_{1},v_{2},v_{3},v_{0})$}
+            \label{subfig:demo_hamiltonian_tour}
+        \end{subfigure}
+        \caption{图的环路}
+        \label{fig:graph_cycles}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{带权图(Weighted Graph)}
+        \begin{itemize}
+            \item 为每条边指定权重，又名\textbf{带权网络(network)}
+            \item 用于表示顶点关系的细节，如长度、流量、成本等
+            \item 普通图可看作所有边权重均为$1$的带权图
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to (b);
+                \draw[<-] (a) to (d);
+                \draw[->] (b) to (c);
+                \draw[<-] (d) to (c);
+                \draw[->] (a) to (c);
+            \end{tikzpicture}
+            \caption{普通图}
+            \label{subfig:non_weighted_graph}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to node [pos=0.5,below,sloped] {$w_{0}$} (b);
+                \draw[<-] (a) to node [pos=0.5,above,sloped] {$w_{1}$} (d);
+                \draw[->] (b) to node [pos=0.5,below,sloped] {$w_{2}$} (c);
+                \draw[<-] (d) to node [pos=0.5,above,sloped] {$w_{3}$} (c);
+                \draw[->] (a) to node [pos=0.5,sloped] {$w_{4}$} (c);
+            \end{tikzpicture}
+            \caption{带权图}
+            \label{subfig:demo_weighted_graph}
+        \end{subfigure}
+        \caption{普通图与带权图}
+        \label{fig:weighted_graphs}
+    \end{figure}
+\end{fragile}
