@@ -1,0 +1,197 @@
+\section{图的存储结构}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{图的抽象数据类型}
+        \begin{minted}[linenos=false,escapeinside=@@]{c}
+            ADT Graph {
+            数据:
+                数据对象: @$\mathcal{D} = \{v_{k} | v_{k}\in\text{顶点集合}, k\in\mathbb{Z}\cap[1,n]\}$@
+                逻辑关系: @$\mathcal{R} = \{\langle{}v_{x},v_{y}\rangle | \exists{e_{x}}\in\text{边集合}, s.t.\;e_{x}=\langle{}v_{x},v_{y}\rangle\}$@
+            操作:
+                create_graph(), destroy_graph(g)
+                    构造与销毁一个图@$g$@
+                get_vertex(g, v), get_first_neighbor(g, v), get_next_neighbor(g, v, w)
+                    返回顶点@$v$@的信息, 获取顶点@$v$@的第一个邻接顶点与相对于@$w$@的下一个邻接顶点
+                insert_vertex(g, v), remove_vertex(g, v)
+                    插入与删除顶点@$v$@
+                insert_edge(g, va, vb), remove_edge(g, va, vb)
+                    在顶点@$v_{a}$@与@$v_{b}$@间插入与删除一条边
+                depth_first_search(g, x), breadth_first_search(g, x)
+                    对图@$g$@进行深度与广度优先搜索值@$x$@
+            }
+        \end{minted}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{邻接矩阵(Adjacency Matrix)}
+        \begin{itemize}
+            \item 图抽象数据类型的一种基本实现
+            \item 用稠密方阵表示，其元素描述一对顶点间可能的邻接关系
+                  \begin{itemize}
+                      \item 若有边相连，则元素为该边权重；否则可为$\infty$或$0$
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+    \vspace{-4ex}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to node [pos=0.5,below,sloped] {$w_{0}$} (b);
+                \draw[<-] (a) to node [pos=0.5,above,sloped] {$w_{1}$} (d);
+                \draw[->] (b) to node [pos=0.5,below,sloped] {$w_{2}$} (c);
+                \draw[<-] (d) to node [pos=0.5,above,sloped] {$w_{3}$} (c);
+                \draw[->] (a) to node [pos=0.5,sloped] {$w_{4}$} (c);
+            \end{tikzpicture}
+            \caption{带权图}
+            \label{subfig:demo__weighted_graph}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \[
+                \bordermatrix{ ~ & v_{0} & v_{1} & v_{2} & v_{3} \cr
+                    v_{0} & \infty & w_{0}  & w_{4}  & \infty \cr
+                    v_{1} & \infty & \infty & w_{2}  & \infty \cr
+                    v_{2} & \infty & \infty & \infty & w_{3}  \cr
+                    v_{3} & w_{1}  & \infty & \infty & \infty \cr}
+            \]\vspace{-2ex}
+            \caption{带权图的邻接矩阵}
+            \label{subfig:demo__adjacent_matrix}
+        \end{subfigure}
+        \caption{邻接矩阵}
+        \label{fig:demo_adjacent_matrix}
+    \end{figure}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{邻接矩阵特点}
+        \begin{itemize}
+            \item 无向图邻接矩阵必\alert{对称}，故可只存储上三角部分
+            \item 有向图邻接矩阵第$k$\alert{行/列}非零元素个数为对应顶点的
+                  \alert{出/入度}
+            \item 增删边只需修改矩阵特定元素值
+            \item 增删顶点需调整矩阵\alert{维度}，导致大量元素移动
+        \end{itemize}
+    \end{exampleblock}
+    \begin{exampleblock}{复杂度}
+        \begin{itemize}
+            \item 空间复杂度：$O(n^{2})$，不利于表达\alert{稀疏图(sparse
+                      graph)\footnote{指边数远小于完全图边数的图}}
+            \item 查找特定边的时间复杂度：$O(1)$
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{邻接表(Adjacency List)}
+        \begin{itemize}
+            \item 每个顶点以\alert{链表}存储其邻接顶点集合
+                  \begin{itemize}
+                      \item 链表结点存储信息包括：顶点序号、边权重、下一个邻接顶
+                            点
+                  \end{itemize}
+            \item 相当于只存储邻接矩阵中的有效元素
+        \end{itemize}
+    \end{block}
+    % \vspace{-4ex}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to node [pos=0.5,below,sloped] {$w_{0}$} (b);
+                \draw[<-] (a) to node [pos=0.5,above,sloped] {$w_{1}$} (d);
+                \draw[->] (b) to node [pos=0.5,below,sloped] {$w_{2}$} (c);
+                \draw[<-] (d) to node [pos=0.5,above,sloped] {$w_{3}$} (c);
+                \draw[->] (a) to node [pos=0.5,sloped] {$w_{4}$} (c);
+            \end{tikzpicture}
+            \caption{带权图}
+            \label{subfig:demo___weighted_graph}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={
+                            draw=gray, circle, thick %
+                        }, %
+                    every node/.style={
+                            terminal, rectangle split, %
+                            rectangle split horizontal, %
+                            rectangle split parts=3, %
+                            rectangle split ignore empty parts, %
+                        }, %
+                ] %
+                \node (a) at (0,0)
+                {$0$\nodepart{two}$v_{0}$\nodepart{three}$\;\!\!$}; %
+                \node (b) at ($(a.center)-(a.north)+(a.south)$)
+                {$1$\nodepart{two}$v_{1}$\nodepart{three}$\;\!\!$}; %
+                \node (c) at ($(b.center)-(b.north)+(b.south)$)
+                {$2$\nodepart{two}$v_{2}$\nodepart{three}$\;\!\!$}; %
+                \node (d) at ($(c.center)-(c.north)+(c.south)$)
+                {$3$\nodepart{two}$v_{3}$\nodepart{three}$\;\!\!$}; %
+                \node (ab) at ($(a.center)+(2,0)$)
+                {$1$\nodepart{two}$w_{0}$\nodepart{three}$\;\!\!$}; %
+                \node (ac) at ($(ab.center)+(2,0)$)
+                {$2$\nodepart{two}$w_{4}$\nodepart{three}$\;\!\!$}; %
+                \node (bc) at ($(b.center)+(2,0)$)
+                {$2$\nodepart{two}$w_{2}$\nodepart{three}$\;\!\!$}; %
+                \node (cd) at ($(c.center)+(2,0)$)
+                {$3$\nodepart{two}$w_{3}$\nodepart{three}$\;\!\!$}; %
+                \node (da) at ($(d.center)+(2,0)$)
+                {$0$\nodepart{two}$w_{1}$\nodepart{three}$\;\!\!$}; %
+                \draw[->] (a.three) to (ab.west); %
+                \fill (a.three) circle [radius=0.05]; %
+                \draw[->] (ab.three) to (ac.west); %
+                \fill (ab.three) circle [radius=0.05]; %
+                \draw[->] (b.three) to (bc.west); %
+                \fill (b.three) circle [radius=0.05]; %
+                \draw[->] (c.three) to (cd.west); %
+                \fill (c.three) circle [radius=0.05]; %
+                \draw[->] (d.three) to (da.west); %
+                \fill (d.three) circle [radius=0.05]; %
+                \draw (ac.two split south) to (ac.north east); %
+                \draw (bc.two split south) to (bc.north east); %
+                \draw (cd.two split south) to (cd.north east); %
+                \draw (da.two split south) to (da.north east); %
+            \end{tikzpicture}
+            \caption{带权图的邻接表}
+            \label{subfig:demo__adjacent_list}
+        \end{subfigure}
+        \caption{邻接矩阵}
+        \label{fig:demo_adjacent_list}
+    \end{figure}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{邻接表特点}
+        \begin{itemize}
+            \item 只存储邻接顶点信息，可大幅节省空间
+            \item 增删边或顶点只需修改极少量数据
+        \end{itemize}
+    \end{exampleblock}
+    \begin{exampleblock}{复杂度}
+        \begin{itemize}
+            \item 空间复杂度：$O(n+e)$\footnote{$n$与$e$分别为顶点数与边数}
+            \item 查找特定边的时间复杂度：$O(n)$
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}

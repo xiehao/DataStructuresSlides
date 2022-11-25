@@ -386,6 +386,67 @@
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
+    \begin{block}{完全图(Complete Graph)}
+        \begin{itemize}
+            \item 图中任意两顶点均邻接
+            \item 若顶点数为$n$则无向与有向边数分别为$\frac{n(n-1)}{2}$与
+            $n(n-1)$
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-0.75) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,0.75) {$v_{3}$};
+                \draw (a) to (b);
+                \draw (a) to [bend right=90] (c);
+                \draw (a) to (d);
+                \draw (b) to (c);
+                \draw (b) to (d);
+                \draw (c) to (d);
+            \end{tikzpicture}
+            \caption{完全无向图}
+            \label{subfig:complete_undigraph}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-0.75) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,0.75) {$v_{3}$};
+                \draw[->] (a) to [bend right=10] (b);
+                \draw[->] (a) to [bend right=90] (c);
+                \draw[->] (a) to [bend right=10] (d);
+                \draw[->] (b) to [bend right=10] (c);
+                \draw[->] (b) to [bend right=10] (d);
+                \draw[->] (c) to [bend right=10] (d);
+                \draw[<-] (a) to [bend left=10] (b);
+                \draw[<-] (a) to [bend left=90] (c);
+                \draw[<-] (a) to [bend left=10] (d);
+                \draw[<-] (b) to [bend left=10] (c);
+                \draw[<-] (b) to [bend left=10] (d);
+                \draw[<-] (c) to [bend left=10] (d);
+            \end{tikzpicture}
+            \caption{完全有向图}
+            \label{subfig:demo_complete_digraph}
+        \end{subfigure}
+        \caption{完全图}
+        \label{fig:complete_graphs}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
     \begin{block}{带权图(Weighted Graph)}
         \begin{itemize}
             \item 为每条边指定权重，又名\textbf{带权网络(network)}
