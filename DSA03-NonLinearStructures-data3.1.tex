@@ -1,0 +1,98 @@
+\subsection{深度优先搜索}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{深度优先搜索(Depth-First Search, DFS)}
+        \begin{itemize}
+            \item 基本原则：不撞南墙不回头
+            \item 类似树的先序遍历或后序遍历
+            \item 结果不唯一，与遍历邻接顶点的顺序有关
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{思路}
+        \begin{enumerate}
+            \item 标记所有顶点为\alert{未被访问}状态
+            \item 按序号依次取出\alert{未被访问}顶点并执行
+                  \begin{enumerate}[a.]
+                      \item 访问该顶点并将其标记为\alert{已被访问}
+                      \item 对其所有\alert{未被访问}的\alert{邻接}顶点递归执行深
+                            度优先搜索
+                      \item 返回步骤2
+                  \end{enumerate}
+            \item 结束
+        \end{enumerate}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=16ex/#1}
+            ]
+            \node [terminal] (a) {\alert<2->{$A$}}
+            child {node [terminal] (b) {\alert<3->{$B$}}
+                    child {node [terminal] (d) {\alert<4->{$D$}}
+                            child [missing]
+                            child {node [terminal] (h) {\alert<6->{$H$}}}
+                        }
+                    child {node [terminal] (e) {\alert<5->{$E$}}}
+                }
+            child {node [terminal] (c) {\alert<7->{$C$}}
+                    child {node [terminal] (f) {\alert<8->{$F$}}}
+                    child {node [terminal] (g) {\alert<9->{$G$}}}
+                };
+            \draw (d) to (e);
+            \draw (f) to (g);
+            \draw<3-> [red] (a) to (b);
+            \draw<7-> [red] (a) to (c);
+            \draw<4-> [red] (b) to (d);
+            % \draw [red] (b) to (e);
+            \draw<5-> [red] (d) to (e);
+            \draw<8-> [red] (c) to (f);
+            % \draw [red] (c) to (g);
+            \draw<9-> [red] (f) to (g);
+            \draw<6-> [red] (d) to (h);
+        \end{tikzpicture}
+        \caption{图的深度优先遍历过程：$A,B,D,E,H,C,F,G$}
+        \label{fig:demo_dfs}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{练习：从$A$开始的深度优先搜索可能结果为}
+            \begin{enumerate}[I.]
+                \item $A,B,E,C,D,F$
+                \item $A,C,F,E,B,D$
+                \item $A,E,B,C,F,D$
+                \item \alert<2->{$A,E,D,F,C,B$}
+            \end{enumerate}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                    level distance=5ex, %
+                    level/.style={sibling distance=8ex/#1}
+                ]
+                \node [terminal] (a) {$A$}
+                child {node [terminal] (b) {$B$}}
+                child {node [terminal] (e) {$E$}
+                        child {node [terminal] (d) {$D$}}
+                    }
+                child {node [terminal] (c) {$C$}
+                        child {node [terminal] (f) {$F$}}
+                    };
+                \draw (d) to (f);
+            \end{tikzpicture}
+            \caption{图的深度优先遍历测试}
+            \label{fig:test_dfs}
+        \end{figure}
+    }
+\end{fragile}

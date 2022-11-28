@@ -1,0 +1,122 @@
+\section{图的遍历}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{图的连通性}
+        \begin{itemize}
+            \item 图中任意两顶点间均有\alert{路径}相连\footnote{满足单向相连即
+                      可，亦称为\textbf{可达(reachable)}；约定只有单个顶点的图为
+                      连通图}，则称该图为\textbf{连通图(connected graph)}
+            \item 若图$G=(V,E)$与$G'=(V',E')$满足$V'\subseteq{V}$且
+                  $E'\subseteq{E}$，则称$G'$为$G$的\textbf{子图(subgraph)}
+            \item 称非连通图的\alert{极大连通子图}为\textbf{连通域(connected
+                      component)}
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to (b);
+                \draw[<-] (a) to (d);
+                \draw[->] (b) to (c);
+                \draw[<-] (d) to (c);
+                \draw[->] (a) to (c);
+            \end{tikzpicture}
+            \caption{连通图}
+            \label{subfig:connected_graph}
+        \end{subfigure}
+        ~
+        \begin{subfigure}[T]{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (-1.5,0) {$v_{0}$};
+                \node (b) [terminal] at (0,-.5) {$v_{1}$};
+                \node (c) [terminal] at (1.5,0) {$v_{2}$};
+                \node (d) [terminal] at (0,.5) {$v_{3}$};
+                \draw[->] (a) to (b);
+                % \draw[<-] (a) to (d);
+                \draw[->] (b) to (c);
+                % \draw[<-] (d) to (c);
+                \draw[->] (a) to (c);
+            \end{tikzpicture}
+            \caption{非连通图}
+            \label{subfig:disconnected_graph}
+        \end{subfigure}
+        \caption{连通图与非连通图}
+        \label{fig:connected_and_disconnected_graphs}
+    \end{figure}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{遍历(Traversal)\footnote{在图中亦称\textbf{搜索(search)}}}
+        \begin{itemize}
+            \item 按某种约定顺序访问非线性结构中的所有顶点与边
+            \item 每个顶点与边均\alert{被且仅被}访问$1$次
+            \item \alert{意义}：使非线性结构转化为半线性结构
+            \item 遍历的产物\footnote{此处\alert{生成}亦可替换为\textbf{支撑
+                          (support)}或\textbf{遍历}}
+                  \begin{itemize}
+                      \item 称对连通图遍历生成的\alert{树}为\textbf{生成树
+                                (spanning tree)}
+                      \item 称对非连通图遍历生成的\alert{森林}为\textbf{生成森林
+                                (spanning forest)}
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{几个关键问题}
+        \begin{itemize}
+            \item 遍历过程从何处出发？
+                  \begin{itemize}
+                      \item<2-> 原则上约定从编号最小的顶点出发
+                  \end{itemize}
+            \item 如何避免遗漏顶点或边？
+                  \begin{itemize}
+                      \item<3-> 多发生于非连通图中，可对不同连通子图分别执行
+                  \end{itemize}
+            \item 如何避免重复访问顶点？
+                  \begin{itemize}
+                      \item<4-> 在每个顶点上设置被访问状态，并在访问后更新
+                  \end{itemize}
+            \item 如何选择下一个顶点？
+                  \begin{itemize}
+                      \item<5-> 常见思路：\alert{深度}优先搜索与\alert{广度}优先
+                          搜索
+                  \end{itemize}
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\input{DSA03-NonLinearStructures-data3.1.tex}
+\input{DSA03-NonLinearStructures-data3.2.tex}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{table}
+        \centering\small
+        \caption{深度优先搜索与广度优先搜索的比较}
+        \label{tab:dfs_vs_bfs}
+        \begin{tabular}{rcc}
+            \toprule
+                            & \textbf{深度优先搜索} & \textbf{广度优先搜索} \\
+            \midrule
+            \textbf{其余邻接顶点} & 后遍历             & 先遍历             \\
+            \textbf{辅助结构}   & 栈               & 队列              \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}

@@ -1,0 +1,68 @@
+\subsection{广度优先搜索}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{广度优先搜索(Breadth-First Search, BFS)}
+        \begin{itemize}
+            \item 基本原则：
+            \item 类似树的层次遍历
+            \item 结果不唯一，与遍历邻接顶点的顺序有关
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{思路}
+        \begin{enumerate}
+            \item 标记所有顶点为\alert{未被访问}状态
+            \item 按序号依次取出\alert{未被访问}顶点并执行
+                  \begin{enumerate}[a.]
+                      \item 初始化顶点队列
+                      \item 访问该顶点、将其标记为\alert{已被访问}并入队
+                      \item 若队列不空，则执行
+                            \begin{enumerate}[i.]
+                                \item 将队首顶点出队
+                                \item 对该顶点的所有未被访问邻接顶点执行：访问、
+                                      标记为\alert{已被访问}并入队
+                            \end{enumerate}
+                      \item 销毁队列并返回步骤2
+                  \end{enumerate}
+            \item 结束
+        \end{enumerate}
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+                level distance=5ex, %
+                level/.style={sibling distance=16ex/#1}
+            ]
+            \node [terminal] (a) {\alert<2->{$A$}}
+            child {node [terminal] (b) {\alert<3->{$B$}}
+                    child {node [terminal] (d) {\alert<5->{$D$}}
+                            child [missing]
+                            child {node [terminal] (h) {\alert<9->{$H$}}}
+                        }
+                    child {node [terminal] (e) {\alert<6->{$E$}}}
+                }
+            child {node [terminal] (c) {\alert<4->{$C$}}
+                    child {node [terminal] (f) {\alert<7->{$F$}}}
+                    child {node [terminal] (g) {\alert<8->{$G$}}}
+                };
+            \draw (d) to (e);
+            \draw (f) to (g);
+            \draw<3-> [red] (a) to (b);
+            \draw<4-> [red] (a) to (c);
+            \draw<5-> [red] (b) to (d);
+            \draw<6-> [red] (b) to (e);
+            % \draw [red] (d) to (e);
+            \draw<7-> [red] (c) to (f);
+            \draw<8-> [red] (c) to (g);
+            % \draw [red] (f) to (g);
+            \draw<9-> [red] (d) to (h);
+        \end{tikzpicture}
+        \caption{图的一种广度优先遍历过程：$A,B,C,D,E,F,G,H$}
+        \label{fig:demo_bfs}
+    \end{figure}
+\end{fragile}
