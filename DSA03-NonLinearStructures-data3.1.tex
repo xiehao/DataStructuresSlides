@@ -9,7 +9,7 @@
             \item 结果不唯一，与遍历邻接顶点的顺序有关
         \end{itemize}
     \end{block}
-    \begin{alertblock}{思路}
+    \begin{alertblock}{算法步骤}
         \begin{enumerate}
             \item 标记所有顶点为\alert{未被访问}状态
             \item 按序号依次取出\alert{未被访问}顶点并执行
@@ -95,4 +95,98 @@
             \label{fig:test_dfs}
         \end{figure}
     }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{深度优先搜索的一种\alert{邻接矩阵}结构递归实现}
+        \vspace{2ex}
+        \bicolumns[0.5]{
+            \begin{itemize}
+                \item 多次调用以便找出可能的多个连通域
+                        \begin{minted}[highlightlines={7,8}]{c}
+                            void depth_first_search_matrix(
+                                    AdjacencyMatrix *m, VisitType v) {
+                                assert(m);
+                                clear_matrix_states(m); // 清除顶点状态
+                                for (int i = 0; i < m->size; ++i) {
+                                    if (!vertex_at(m, i)->visited) {
+                                        depth_first_search_matrix_core(
+                                                m, i, v);
+                                    }
+                                }
+                            }
+                        \end{minted}
+            \end{itemize}
+        }{
+            \begin{itemize}
+                \item 对特定顶点递归执行深度优先搜索
+                        \begin{minted}[highlightlines={9,10}]{c}
+                            static void depth_first_search_matrix_core(
+                                    AdjacencyMatrix *m, int k, VisitType v) {
+                                Vertex *vertex = vertex_at(m, k);
+                                v(vertex->data); // 访问顶点数据
+                                vertex->visited = true; // 标记已被访问
+                                for (int i = 0; i < m->size; ++i) {
+                                    if (is_adjacent(m, k, i) &&
+                                        !vertex_at(m, i)->visited) {
+                                        depth_first_search_matrix_core(
+                                                m, i, v);
+                                    }
+                                }
+                            }
+                        \end{minted}
+            \end{itemize}
+        }
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{深度优先搜索的一种\alert{邻接表}结构递归实现}
+        \vspace{2ex}
+        \bicolumns[0.5]{
+            \begin{itemize}
+                \item 多次调用以便找出可能的多个连通域
+                        \begin{minted}[highlightlines={11,12}]{c}
+                            void depth_first_search_list(
+                                    AdjacencyList *l, VisitType v) {
+                                assert(l);
+                                clear_list_states(l); // 清除顶点状态
+                                int n_vertices = 
+                                    size_of_vector(l->vertices);
+                                for (int i = 0; i < n_vertices; ++i) {
+                                    Vertex *x = 
+                                        get_vertex_at(l->vertices, i);
+                                    if (x && !x->visited) {
+                                        depth_first_search_list_core(
+                                                l, x, v);
+                                    }
+                                }
+                            }
+                        \end{minted}
+            \end{itemize}
+        }{
+            \begin{itemize}
+                \item 对特定顶点递归执行深度优先搜索
+                        \begin{minted}[highlightlines={11,12}]{c}
+                            static void depth_first_search_list_core(
+                                    AdjacencyList *l, Vertex *x, VisitType v) {
+                                v(x->data); // 访问顶点数据
+                                x->visited = true; // 标记已被访问
+                                int n_neighbors = 
+                                    size_of_vector(x->neighbors);
+                                for (int i = 0; i < n_neighbors; ++i) {
+                                    Vertex *to = 
+                                        get_edge_at(x->neighbors, i)->to;
+                                    if (!to->visited) {
+                                        depth_first_search_list_core(
+                                                l, to, v);
+                                    }
+                                }
+                            }
+                        \end{minted}
+            \end{itemize}
+        }
+    \end{block}
 \end{fragile}

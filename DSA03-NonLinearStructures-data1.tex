@@ -44,7 +44,7 @@
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \bicolumns[0.5]{
-        \begin{block}{有向图(Undigraph)与无向图(Digraph)}
+        \begin{block}{无向图(Undigraph)与有向图(Digraph)}
             \begin{itemize}
                 \item 按顶点是否有顺序可将边$e$分为
                       \begin{itemize}
@@ -254,7 +254,7 @@
                   $e_{k}=\langle{}v_{k},v_{k+1}\rangle$，$k\in\mathbb{Z}\cap[0,n)$}，
                   则称之为自$v_{0}$至$v_{n}$的一条\textbf{路径}
                   \begin{itemize}
-                      \item 称经过的总边数$|\pi|$为路径\textbf{长度(length)}
+                      \item 称经过的总边数$|\pi|-1$为路径\textbf{长度(length)}
                       \item 称无重复顶点的路径为\textbf{简单(simple)路径}
                   \end{itemize}
             \item 两顶点间的路径一般\alert{不唯一}
@@ -311,7 +311,7 @@
             \item 若路径$\pi=\{v_{k}\}_{k=0}^{n}$中起止顶点相同，即
                   $v_{0}=v_{n}$，则称其为\textbf{环路}
                   \begin{itemize}
-                      \item 若除起止结点相同外无任何其他结点两两相同，则称其为
+                      \item 若除起止顶点相同外无任何其他顶点两两相同，则称其为
                             \textbf{简单环路}
                       \item 称经过图中各\alert{边}一次且仅一次的环路为\textbf{欧
                                 拉环路(Eulerian tour)}

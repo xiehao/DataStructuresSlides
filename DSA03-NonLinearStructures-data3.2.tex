@@ -4,12 +4,12 @@
     \frametitle{\insertsubsectionhead}
     \begin{block}{广度优先搜索(Breadth-First Search, BFS)}
         \begin{itemize}
-            \item 基本原则：
+            \item 基本原则：远交近攻
             \item 类似树的层次遍历
             \item 结果不唯一，与遍历邻接顶点的顺序有关
         \end{itemize}
     \end{block}
-    \begin{alertblock}{思路}
+    \begin{alertblock}{算法步骤}
         \begin{enumerate}
             \item 标记所有顶点为\alert{未被访问}状态
             \item 按序号依次取出\alert{未被访问}顶点并执行
@@ -65,4 +65,100 @@
         \caption{图的一种广度优先遍历过程：$A,B,C,D,E,F,G,H$}
         \label{fig:demo_bfs}
     \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{广度优先搜索的一种\alert{邻接矩阵}结构非递归实现}
+        \begin{itemize}
+            \item 多次调用以便找出可能的多个连通域
+                    \begin{minted}[highlightlines={6}]{c}
+                        void breadth_first_search_matrix(AdjacencyMatrix *m, VisitType v) {
+                            assert(m);
+                            clear_matrix_states(m);
+                            for (int i = 0; i < m->size; ++i) {
+                                if (!vertex_at(m, i)->visited) {
+                                    breadth_first_search_matrix_core(m, i, v);
+                                }
+                            }
+                        }
+                    \end{minted}
+        \end{itemize}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{广度优先搜索的一种\alert{邻接矩阵}结构非递归实现}
+        \begin{itemize}
+            \item 对特定顶点执行广度优先搜索
+                    \begin{minted}[highlightlines={5,7,11}]{c}
+                        static void breadth_first_search_matrix_core(AdjacencyMatrix *m, int k, VisitType v) {
+                            LinkedQueue *buffer = create_linked_queue(); // 准备辅助队列
+                            if (!buffer) { return; }
+                            Vertex *from = vertex_at(m, k); // 取出当前顶点
+                            visit_vertex_and_push_queue(v, buffer, from); // 访问之并入队
+                            while (!empty_linked_queue(buffer)) { // 若队列非空，则循环执行
+                                pop_linked_queue(buffer, (DataType *)&from); // 出队
+                                for (int i = 0; i < m->size; ++i) { // 依次处理出队顶点的未被访问邻接顶点
+                                    Vertex *to = vertex_at(m, i);
+                                    if (is_adjacent(m, from->index, i) && !to->visited) {
+                                        visit_vertex_and_push_queue(v, buffer, to); // 访问之并入队
+                                    }
+                                }
+                            }
+                            destroy_linked_queue(buffer); // 销毁队列
+                        }
+                    \end{minted}
+        \end{itemize}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{广度优先搜索的一种\alert{邻接表}结构非递归实现}
+        \begin{itemize}
+            \item 多次调用以便找出可能的多个连通域
+                    \begin{minted}[highlightlines={8}]{c}
+                        void breadth_first_search_list(AdjacencyList *l, VisitType v) {
+                            assert(l);
+                            clear_list_states(l);
+                            int n_vertices = size_of_vector(l->vertices);
+                            for (int i = 0; i < n_vertices; ++i) {
+                                Vertex *x = get_vertex_at(l->vertices, i);
+                                if (!x->visited) {
+                                    breadth_first_search_list_core(l, x, v);
+                                }
+                            }
+                        }
+                    \end{minted}
+        \end{itemize}
+    \end{block}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead}
+    \begin{block}{广度优先搜索的一种\alert{邻接表}结构非递归实现}
+        \begin{itemize}
+            \item 对特定顶点执行广度优先搜索
+                    \begin{minted}[highlightlines={4,6,11}]{c}
+                        static void breadth_first_search_list_core(AdjacencyList *l, Vertex *x, VisitType v) {
+                            LinkedQueue *buffer = create_linked_queue();
+                            if (!buffer) { return; }
+                            visit_vertex_and_push_queue(v, buffer, x);
+                            while (!empty_linked_queue(buffer)) {
+                                pop_linked_queue(buffer, (DataType *)&x);
+                                int n_neighbors = size_of_vector(x->neighbors);
+                                for (int i = 0; i < n_neighbors; ++i) {
+                                    Vertex *to = get_edge_at(x->neighbors, i)->to;
+                                    if (!to->visited) {
+                                        visit_vertex_and_push_queue(v, buffer, to);
+                                    }
+                                }
+                            }
+                            destroy_linked_queue(buffer);
+                        }
+                    \end{minted}
+        \end{itemize}
+    \end{block}
 \end{fragile}

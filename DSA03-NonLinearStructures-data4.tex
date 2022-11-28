@@ -129,10 +129,11 @@
     \frametitle{\insertsectionhead}
     \begin{block}{Prim算法\footnote{作者：R. C. Prim，1956年}核心思想}
         \begin{itemize}
-            \item 在分割图时始终选择权重\alert{最小}的桥梁作为生成树的边
+            \item 不断将原图分割为逐渐\alert{膨胀}与逐渐\alert{收缩}的两个子图
+            \item 在每次分割时始终选择权重\alert{最小}的桥梁作为生成树的边
         \end{itemize}
     \end{block}
-    \begin{exampleblock}{步骤}
+    \begin{exampleblock}{算法步骤}
         \begin{enumerate}
             \item 初始化
                   \begin{itemize}

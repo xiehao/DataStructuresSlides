@@ -195,3 +195,50 @@
         \end{itemize}
     \end{exampleblock}
 \end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{基本结构实现}
+        \vspace*{2ex}
+        \bicolumns[0.5]{
+            \begin{itemize}
+                \item 顶点结构
+                        \begin{minted}{c}
+                            typedef struct {
+                                DataType data; // 数据
+                                int index; // 序号
+                                Vector *neighbors; // 邻边
+                                bool visited; // 被访问状态
+                            } Vertex;
+                        \end{minted}
+                \item 边结构
+                        \begin{minted}{c}
+                            typedef struct {
+                                Vertex *from; // 起始顶点
+                                Vertex *to; // 目的顶点
+                                unsigned weight; // 权重
+                                bool visited; // 被访问状态
+                            } Edge;
+                        \end{minted}
+            \end{itemize}
+        }{
+            \begin{itemize}
+                \item 邻接矩阵表示
+                        \begin{minted}{c}
+                            typedef struct {
+                                Vertex *vertices; // 顶点列表（用数组）
+                                unsigned **weights; // 权重矩阵
+                                int size; // 顶点个数
+                            } AdjacencyMatrix;
+                        \end{minted}
+                \item 邻接表表示
+                        \begin{minted}{c}
+                            typedef struct {
+                                Vector *vertices; // 顶点列表（用向量）
+                                Vector *edges; // 边列表（用向量）
+                            } AdjacencyList;
+                        \end{minted}
+            \end{itemize}
+        }
+    \end{block}
+\end{fragile}
