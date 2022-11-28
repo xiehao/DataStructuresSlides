@@ -1,0 +1,193 @@
+\section{最小生成树}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{exampleblock}{引例：网线铺设问题}
+            \begin{itemize}
+                \item 假设$6$个城市之间路线连接关系如图
+                \item 图中边的权值可表示路线的距离与代价
+                \item 如何铺设网线连接所有城市且代价最低
+                \item<2-> \alert{可转化为连通图的最小生成树问题}
+            \end{itemize}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal] at (0,0) {$A$};
+                \node (b) [terminal] at ($(a.center)+(18:2)$) {$B$};
+                \node (c) [terminal] at ($(a.center)+(90:2)$) {$C$};
+                \node (d) [terminal] at ($(a.center)+(162:2)$) {$D$};
+                \node (e) [terminal] at ($(a.center)+(234:2)$) {$E$};
+                \node (f) [terminal] at ($(a.center)+(306:2)$) {$F$};
+                \draw (a) to node [pos=0.5,] {$26$} (b);
+                \draw (a) to node [pos=0.5,] {$19$} (d);
+                \draw (a) to node [pos=0.5,] {$25$} (e);
+                \draw (a) to node [pos=0.5,] {$25$} (f);
+                \draw (b) to node [pos=0.5,] {$12$} (c);
+                \draw (c) to node [pos=0.5,] {$34$} (d);
+                \draw (d) to node [pos=0.5,] {$46$} (e);
+                \draw (e) to node [pos=0.5,] {$17$} (f);
+                \draw (f) to node [pos=0.5,] {$38$} (b);
+            \end{tikzpicture}
+            \caption{引例：网线铺设问题}
+            \label{fig:example_wire_deployment}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{最小生成树(Minimum Spanning Tree, MST)}
+        \begin{itemize}
+            \item 在连通图$G$的所有生成树中，称边权重之和最小的为\textbf{最小生
+                      成树}
+                  % \item 因无权图所有边权重均相等，且所有生成树边数相同，故所有生成树均
+                  %       为最小生成树
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+            ]
+            \node (a) [terminal] at (0,0) {$A$};
+            \node (b) [terminal] at ($(a.center)+(18:2)$) {$B$};
+            \node (c) [terminal] at ($(a.center)+(90:2)$) {$C$};
+            \node (d) [terminal] at ($(a.center)+(162:2)$) {$D$};
+            \node (e) [terminal] at ($(a.center)+(234:2)$) {$E$};
+            \node (f) [terminal] at ($(a.center)+(306:2)$) {$F$};
+            \draw[red] (a) to node [pos=0.5,] {$26$} (b);
+            \draw[red] (a) to node [pos=0.5,] {$19$} (d);
+            \draw[red] (a) to node [pos=0.5,] {$25$} (e);
+            \draw (a) to node [pos=0.5,] {$25$} (f);
+            \draw[red] (b) to node [pos=0.5,] {$12$} (c);
+            \draw (c) to node [pos=0.5,] {$34$} (d);
+            \draw (d) to node [pos=0.5,] {$46$} (e);
+            \draw[red] (e) to node [pos=0.5,] {$17$} (f);
+            \draw (f) to node [pos=0.5,] {$38$} (b);
+        \end{tikzpicture}
+        \caption{最小生成树示例}
+        \label{fig:demo_mst}
+    \end{figure}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.7]{
+        \begin{block}{连通图的分割与桥梁\footnotemark}
+            \begin{itemize}
+                \item 已知图$G=(V,E)$与其子图$G_{a}=(V_{a},E_{a})$与
+                      $G_{b}=(V_{b},E_{b})$
+                \item 若$G_{a}$与$G_{b}$满足
+                      \[
+                          V=V_{a}\cup{}V_{b},\quad\emptyset=V_{a}\cap{}V_{b},
+                      \]
+                      则称$G_{a}$与$G_{b}$构成图$G$的一个\textbf{分割(cut)}，记
+                      作$(G_{a}:G_{b})$
+                \item 若$G_{a}$与$G_{b}$构成图$G$的一个分割，且
+                      \[
+                          e\in{}E-(E_{a}\cup{}E_{b}),
+                      \]
+                      则称$e$为$G_{a}$与$G_{b}$间的一个\textbf{桥梁(bridge)}
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                    list item/.style={draw=gray, circle, thick}, %
+                ]
+                \node (a) [terminal,red] at (0,0) {$A$};
+                \node (b) [terminal,red] at ($(a.center)+(18:2)$) {$B$};
+                \node (c) [terminal,red] at ($(a.center)+(90:2)$) {$C$};
+                \node (d) [terminal,cyan] at ($(a.center)+(162:2)$) {$D$};
+                \node (e) [terminal,cyan] at ($(a.center)+(234:2)$) {$E$};
+                \node (f) [terminal,cyan] at ($(a.center)+(306:2)$) {$F$};
+                \draw[red] (a) to (b);
+                \draw[dashed] (a) to (d);
+                \draw[dashed] (a) to (e);
+                \draw[dashed] (a) to (f);
+                \draw[red] (b) to (c);
+                \draw[dashed] (c) to (d);
+                \draw[cyan] (d) to (e);
+                \draw[cyan] (e) to (f);
+                \draw[dashed] (f) to (b);
+            \end{tikzpicture}
+            \caption{图的分割与桥梁}
+            \label{fig:example_graph_cut_bridges}
+        \end{figure}
+    }
+
+    \footnotetext{以下图与子图均指\alert{连通图}}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{Prim算法\footnote{作者：R. C. Prim，1956年}核心思想}
+        \begin{itemize}
+            \item 在分割图时始终选择权重\alert{最小}的桥梁作为生成树的边
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{步骤}
+        \begin{enumerate}
+            \item 初始化
+                  \begin{itemize}
+                      \item 在图$G$中任选一顶点$v_{0}$作为起始点
+                      \item 对$G$做分割$(G_{a},G_{b})$，使得$G_{a}=\{v_{0}\}$且
+                            $G_{b}=G-G_{a}$
+                      \item 令生成树边的集合$E_{mst}=\emptyset$
+                  \end{itemize}
+            \item 将权重最小的桥梁$e$加入$E_{mst}$
+            \item 若$G_{b}=\emptyset$则结束；否则在$G_{b}$中去除$e$的端点并将其
+                  加入$G_{a}$中，执行2
+        \end{enumerate}
+    \end{exampleblock}
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+            ]
+            \node (a) [terminal] at (0,0) {\alert<2->{$A$}};
+            \node (b) [terminal] at ($(a.center)+(18:2)$) {\alert<6->{$B$}};
+            \node (c) [terminal] at ($(a.center)+(90:2)$) {\alert<7->{$C$}};
+            \node (d) [terminal] at ($(a.center)+(162:2)$) {\alert<3->{$D$}};
+            \node (e) [terminal] at ($(a.center)+(234:2)$) {\alert<4->{$E$}};
+            \node (f) [terminal] at ($(a.center)+(306:2)$) {\alert<5->{$F$}};
+            \only<-1>{\draw (a) to node [pos=0.5,] {$26$} (b);} %
+            \only<2-4>{\draw[dashed] (a) to node [pos=0.5,] {$26$} (b);} %
+            \only<5>{\draw[red,dashed] (a) to node [pos=0.5,] {$26$} (b);} %
+            \only<6->{\draw[red,very thick] (a) to node [pos=0.5,] {$26$} (b);} %
+            \only<-1>{\draw (a) to node [pos=0.5,] {$19$} (d);} %
+            \only<2>{\draw[red,dashed] (a) to node [pos=0.5,] {$19$} (d);} %
+            \only<3->{\draw[red,very thick] (a) to node [pos=0.5,] {$19$} (d);} %
+            \only<-1>{\draw (a) to node [pos=0.5,] {$25$} (e);} %
+            \only<2>{\draw[dashed] (a) to node [pos=0.5,] {$25$} (e);} %
+            \only<3>{\draw[red,dashed] (a) to node [pos=0.5,] {$25$} (e);} %
+            \only<4->{\draw[red,very thick] (a) to node [pos=0.5,] {$25$} (e);} %
+            \only<-1,5->{\draw (a) to node [pos=0.5,] {$25$} (f);} %
+            \only<2-4>{\draw[dashed] (a) to node [pos=0.5,] {$25$} (f);} %
+            \only<-5>{\draw (b) to node [pos=0.5,] {$12$} (c);} %
+            \only<6>{\draw[red,dashed] (b) to node [pos=0.5,] {$12$} (c);} %
+            \only<7->{\draw[red,very thick] (b) to node [pos=0.5,] {$12$} (c);} %
+            \only<-2,7->{\draw (c) to node [pos=0.5,] {$34$} (d);} %
+            \only<3-6>{\draw[dashed] (c) to node [pos=0.5,] {$34$} (d);} %
+            \only<-2,4->{\draw (d) to node [pos=0.5,] {$46$} (e);} %
+            \only<3>{\draw[dashed] (d) to node [pos=0.5,] {$46$} (e);} %
+            \only<-3>{\draw (e) to node [pos=0.5,] {$17$} (f);} %
+            \only<4>{\draw[red,dashed] (e) to node [pos=0.5,] {$17$} (f);} %
+            \only<5->{\draw[red,very thick] (e) to node [pos=0.5,] {$17$} (f);} %
+            \only<-4,6->{\draw (f) to node [pos=0.5,] {$38$} (b);} %
+            \only<5>{\draw[dashed] (f) to node [pos=0.5,] {$38$} (b);} %
+        \end{tikzpicture}
+        \caption{Prim算法示例过程}
+        \label{fig:demo_mst_prim}
+    \end{figure}
+\end{fragile}
