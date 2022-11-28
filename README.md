@@ -11,7 +11,8 @@ Some slides for the course *Data Structures and Algorithms*, involving the follo
 - Semi-Linear Structures
     - Tree
     - Binary Tree
-    - ...
+        - Huffman Coding
 - Non-Linear Structures
-    - ...
+    - Graph
+- ...
 
