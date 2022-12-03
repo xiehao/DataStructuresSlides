@@ -107,16 +107,21 @@
 \begin{frame}
     \frametitle{\insertsectionhead}
     \begin{table}
-        \centering\small
+        \centering
+        \small
+        \setlength{\leftmargini}{0.4cm}
         \caption{深度优先搜索与广度优先搜索的比较}
         \label{tab:dfs_vs_bfs}
-        \begin{tabular}{rcc}
+        \begin{tabular}{rll}
             \toprule
-                            & \textbf{深度优先搜索} & \textbf{广度优先搜索} \\
+                                           & \textbf{深度优先搜索} & \textbf{广度优先搜索} \\
             \midrule
-            \textbf{其余邻接顶点} & 后遍历             & 先遍历             \\
-            \textbf{辅助结构}   & 栈               & 队列              \\
-            \textbf{典型用途}   & 识别连通域           & 求无权图最短路径        \\
+            \textbf{其余邻接顶点}                & 后遍历             & 先遍历             \\
+            \midrule
+            \textbf{辅助结构}                  & 栈               & 队列              \\
+            \midrule
+            \multirow{2}{*}{\textbf{典型用途}} & 有向无环图顶点的拓扑排序    & 无权图的单源最短路径      \\
+                                           & 有向图的强连通域        & 无向图的连通域         \\
             \bottomrule
         \end{tabular}
     \end{table}

@@ -69,16 +69,22 @@
 \input{DSA03-NonLinearStructures-data3.tex}
 \input{DSA03-NonLinearStructures-data4.tex}
 
-\begin{standout}[]
-    未完待续$\dots$
-\end{standout}
-
 \section{小结}
 
 \begin{frame}
     \frametitle{\insertsectionhead}
     \begin{itemize}
-        \item
+        \item 非线性结构为半线性结构的扩展，以图为代表
+        \item 顶点间的连接关系不拘泥于父子关系，更灵活、更多样
+        \item 顶点的邻接关系从\alert{逻辑上}可表示为\alert{邻接矩阵}
+        \item 从\alert{存储上}可分为\alert{稠密}矩阵与\alert{稀疏}矩阵两种表示
+              \begin{itemize}
+                  \item 稠密：采用连续结构表示，如数组
+                  \item 稀疏：采用离散结构表示，如链表
+              \end{itemize}
+        \item 图的遍历/搜索可将\alert{非}线性结构转化为\alert{半}线性结构
+        \item 深度优先搜索与广度优先搜素的算法思想可被应用于多种算法中
+        \item Prim算法可高效求得带权图的最小生成树
     \end{itemize}
 \end{frame}
 
