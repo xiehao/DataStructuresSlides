@@ -1,0 +1,28 @@
+\documentclass[algorithm,pgfplots,colortheme=dark]{cuzbeamer}
+
+\usepackage{pgf-pie}
+\usetikzlibrary{mindmap, arrows.meta, calc, quotes, tikzmark, shapes.multipart}
+
+\usepackage[bitheight=3ex,bitwidth=auto]{bytefield}
+\bytefieldsetup{boxformatting={\centering\ttfamily\footnotesize}}
+
+\newcommand{\stackbox}[3]{
+    \bytefieldsetup{bitheight=#1\baselineskip}
+    \bitbox{#2}{#3}
+}
+
+\newlength{\maxheight}
+\setlength{\maxheight}{\heightof{w}}
+\newcommand{\baselinealign}[1]{%
+\centering
+\raisebox{0pt}[\maxheight][0pt]{#1}%
+}
+
+\usepackage{relsize}
+\usepackage{subcaption}
+
+\begin{document}
+\input{initialization.tex}
+\maketitle
+\input{DSA04-BasicAlgorithms-data.tex}
+\end{document}

@@ -1,0 +1,368 @@
+\section{排序}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{基本概念}
+        \begin{itemize}
+            \item 已知数据元素序列$\{a_{i}\}_{i=0}^{n}$，为每个元素$a_{i}$均关联
+                  一个\textbf{关键码(key)}\footnote{简称\textbf{键}}$k_{i}$
+            \item 为关键码定义一种\textbf{顺序(order)}，使得关键码之间可互相比较
+                  大小
+            \item 对下标序列$\{i\}_{i=0}^{n}$重\alert{排列}生成新序列
+                  $\{p_{i}\}_{i=0}^{n}$
+            \item 若满足$k_{p_{0}}\leq{}k_{p_{1}}\leq\cdots\leq{}k_{p_{n}}$，则
+                  称$\{a_{p_{i}}\}_{i=0}^{n}$为\textbf{有序序列(sorted
+                      sequence)}
+            \item 称生成有序序列的过程为\textbf{排序(sorting)}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{例}
+        \begin{itemize}
+            \item 已知整数序列：$21, 25, 22, 10, 25, 18$
+            \item \alert{关键码}为元素值本身
+            \item 约定\alert{顺序}为升序
+            \item 排序结果为：$10, 18, 21, 22, 25, 25$
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{排序的分类方法}
+        \vspace*{2ex}
+        \bicolumns[0.5]{
+            \begin{itemize}
+                \item 根据\alert{数据规模}与\alert{存储特点}分：
+                      \begin{itemize}
+                          \item \textbf{内部排序}：规模较小，内存足矣
+                                \only<2>{$\checkmark$}
+                          \item \textbf{外部排序}：规模庞大，须借助外存
+                                \footnotemark
+                      \end{itemize}
+                \item 根据\alert{输入形式}分：
+                      \begin{itemize}
+                          \item \textbf{离线排序}：一次性给出全部数据
+                                \only<2>{$\checkmark$}
+                          \item \textbf{在线排序}：实时生成数据，分批给出
+                      \end{itemize}
+            \end{itemize}
+        }{
+            \begin{itemize}
+                \item 根据\alert{体系结构}分：
+                      \begin{itemize}
+                          \item \textbf{串行排序}：按顺序依次处理
+                                \only<2>{$\checkmark$}
+                          \item \textbf{并行排序}：部分同时处理
+                      \end{itemize}
+                \item 根据\alert{算法策略}分：
+                      \begin{itemize}
+                          \item \textbf{确定排序}：不采用随机策略
+                                \only<2>{$\checkmark$}
+                          \item \textbf{随机排序}：采用随机策略
+                      \end{itemize}
+            \end{itemize}
+        }
+    \end{block}
+
+    \footnotetext{如硬盘、分布式设备等}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{排序的种类}
+        \begin{table}
+            \centering
+            \smaller
+            \begin{tabular}{l|l}
+                \toprule
+                \textbf{算法}                   & \textbf{特点}              \\
+                \midrule
+                插入类：\alert{直接插入}              & \multirow{2}{*}{顺序比较、简单} \\
+                选择类：\alert{直接选择}、\alert{冒泡}、堆 &                          \\
+                \midrule
+                \alert{快速}、归并                 & 分治策略                     \\
+                \midrule
+                希尔、桶、基数                       & 其他                       \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{插入排序：整理一手乱序扑克牌}
+        \begin{itemize}
+            \item 将序列$s$分为\alert{无序}与\alert{有序}两个子序列$s_{u}=s$与
+                  $s_{o}=\emptyset$
+            \item 反复从$s_{u}$中取出元素并插入$s_{o}$使之依然有序，直至
+                  $s_{u}=\emptyset$，则$s_{o}$即为所求
+        \end{itemize}
+    \end{block}
+    \bicolumns[0.5]{
+        \begin{block}{算法描述}
+            \begin{algorithmx}[alg:insertion]{插入排序}
+                \Procedure{InsersionSort}{$s,f,t$}
+                \State \Comment{对序列$s$中下标区间$[f,t)$内的元素进行插入排序}
+                \State $i\gets f$
+                \While{$i<t$}
+                \State $s\gets$ InsertElement($s,f,i$)\Comment{插入元素子算法}
+                \State $i\gets i+1$
+                \EndWhile\label{insertionendwhile}
+                \State \textbf{return} $s$\Comment{返回排序后的序列$s$}
+                \EndProcedure
+            \end{algorithmx}
+        \end{block}
+    }{
+        \begin{exampleblock}{实例}
+            \begin{itemize}
+                \item 原序列：$()\alert{21}, 25, 22, 10, 25, 18$
+                \item 第一趟：$(21), \alert{25}, 22, 10, 25, 18$
+                \item 第二趟：$(21, 25), \alert{22}, 10, 25, 18$
+                \item 第三趟：$(21, 22, 25), \alert{10}, 25, 18$
+                \item 第四趟：$(10, 21, 22, 25), \alert{25}, 18$
+                \item 第五趟：$(10, 21, 22, 25, 25), \alert{18}$
+                \item 第六趟：$(10, 18, 21, 22, 25, 25)$
+            \end{itemize}
+        \end{exampleblock}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{插入元素}
+        \begin{itemize}
+            \item 在\alert{有序序列}中\alert{查找}并\alert{插入}指定元素
+        \end{itemize}
+    \end{block}
+    \begin{block}{可选思路}
+        \begin{itemize}
+            \item 顺序查找\footnote{称对应算法为\textbf{直接插入排序}}：按前驱后
+                  继顺序依次遍历子序列元素，找出目标元素的合理插入位置
+            \item 一些改进：二分/折半查找、Fibonacci查找、散列查找等
+        \end{itemize}
+    \end{block}
+    \begin{block}{存储方式}
+        \begin{itemize}
+            \item 连续存储：须移动大量元素
+            \item 链式存储：只需移动局部元素，较方便
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{排序算法的稳定性}
+        \begin{itemize}
+            \item 若键相同的元素在排序前后的相对顺序保持不变，则称该排序算法为
+                  \textbf{稳定的}
+            \item 稳定排序算法适用于\alert{多键排序}\footnote{先按主键排序，在主
+                      键重复的序列中按次键排序，以此类推。}
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{直接插入排序算法性能分析}
+        \begin{itemize}
+            \item 时间复杂度：$O(n^{2})$
+                  \begin{itemize}
+                      \item 平均比较次
+                            数：$\sum_{k=2}^{n}\frac{k}{2}=\frac{(n+2)(n-1)}{4}$
+                  \end{itemize}
+            \item 空间复杂度：$O(n)$
+                  \begin{itemize}
+                      \item 须额外一个元素的空间缓存待交换元素
+                  \end{itemize}
+            \item 稳定性
+                  \begin{itemize}
+                      \item 在插入元素时若遇键相同的情况可小心处理顺序，故该算法
+                            \alert{稳定}
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{选择排序：择优录取}
+        \begin{itemize}
+            \item 将序列$s$分为\alert{无序}与\alert{有序}两个子序列$s_{u}=s$与
+                  $s_{o}=\emptyset$
+            \item 反复从$s_{u}$中取出键最小的元素并放至$s_{o}$末尾，直至
+                  $s_{u}=\emptyset$，则$s_{o}$即为所求
+        \end{itemize}
+    \end{block}
+    \bicolumns[0.5]{
+        \begin{block}{算法描述}
+            \begin{algorithmx}[alg:selection]{选择排序}
+                \Procedure{SelectionSort}{$s,f,t$}
+                \State \Comment{对序列$s$中下标区间$[f,t)$内的元素进行选择排序}
+                \State $i\gets f$
+                \While{$i<t$}
+                \State $k\gets$ SelectElement($s,i,t$)\Comment{选择元素子算法}
+                \State Swap($s_{i},s_{k}$)\Comment{交换元素}
+                \State $i\gets i+1$
+                \EndWhile
+                \State \textbf{return} $s$\Comment{返回排序后的序列$s$}
+                \EndProcedure
+            \end{algorithmx}
+        \end{block}
+    }{
+        \begin{exampleblock}{实例}
+            \begin{itemize}
+                \item 原序列：$()21, 25, 22, \alert{10}, 25, 18$
+                \item 第一趟：$(10), 25, 22, 21, 25, \alert{18}$
+                \item 第二趟：$(10, 18), 25, 22, \alert{21}, 25$
+                \item 第三趟：$(10, 18, 21), 25, \alert{22}, 25$
+                \item 第四趟：$(10, 18, 21, 22), \alert{25}, 25$
+                \item 第五趟：$(10, 18, 21, 22, 25), \alert{25}$
+                \item 第六趟：$(10, 18, 21, 22, 25, 25)$
+            \end{itemize}
+        \end{exampleblock}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{选择元素}
+        \begin{itemize}
+            \item 在\alert{无序序列}中\alert{查找}键最小元素
+        \end{itemize}
+    \end{block}
+    \begin{block}{可选思路}
+        \begin{itemize}
+            \item \textbf{冒泡排序}：通过逐个交换相邻元素的方式\alert{选出}键最
+                  小元素
+            \item \textbf{直接选择排序}：按前驱后继顺序依次遍历子序列元
+                  素，\alert{找出}键最小元素
+            \item \textbf{堆排序}：采用\alert{优先队列}组织无序子序列
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{直接选择排序的性能分析}
+        \begin{itemize}
+            \item 与直接插入排序类似，略
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{快速排序：分治策略的应用}
+        \begin{itemize}
+            \item 将序列\alert{划分}为三部分：任意元素$s_{m}$作为\alert{支点}、
+                  所有元素分别比$s_{m}$小与大的两个子序列
+            \item 对后两个子序列递归执行上述\alert{划分}策略，直至所有子序列为空
+        \end{itemize}
+    \end{block}
+    \bicolumns[0.5]{
+        \begin{block}{算法描述}
+            \begin{algorithmx}[alg:quick]{快速排序}
+                \Procedure{QuickSort}{$s,l,h$}
+                \State \Comment{对序列$s$中下标区间$[l,h]$内的元素进行选择排序}
+                \While{$l<h$}
+                \State $m\gets$ Partition($s,l,h$)\Comment{序列划分子算法}
+                \State QuickSort($s,l,m-1$)\Comment{左侧递归}
+                \State QuickSort($s,m+1,h$)\Comment{右侧递归}
+                \EndWhile
+                \State \textbf{return} $s$\Comment{返回排序后的序列$s$}
+                \EndProcedure
+            \end{algorithmx}
+        \end{block}
+    }{
+        \begin{exampleblock}{实例}
+            \begin{itemize}
+                \item 原序列：$21, 25, 22, 10, 25, 18$
+                \item 第一趟：$18, 10, \alert{21}, 22, 25, 25$
+                \item 第二趟：$10, \alert{18}, \alert{21}, \alert{22}, 25, 25$
+                \item 第三趟：$\alert{10}, \alert{18}, \alert{21}, \alert{22}, \alert{25}, 25$
+                \item 第四趟：$\alert{10}, \alert{18}, \alert{21}, \alert{22}, \alert{25}, \alert{25}$
+            \end{itemize}
+        \end{exampleblock}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.5]{
+        \begin{block}{划分算法}
+            \begin{minted}{c}
+                int partition(DataType *s, int l, int h,
+                              CompareType c) {
+                    DataType pivot = s[l]; // 缓存支点元素
+                    for (;;) {
+                        for (; l < h && c(&pivot, s + h) < 0; --h)
+                            ; // 左移h指针至须交换处
+                        if (l >= h) break;
+                        s[l++] = s[h]; // 交换元素并右移l指针
+                        for (; l < h && c(s + l, &pivot) < 0; ++l)
+                            ; // 右移l指针至须交换处
+                        if (l >= h) break;
+                        s[h--] = s[l]; // 交换元素并左移h指针
+                    } // 此时l与h二指针重合，结束循环
+                    s[l] = pivot; // 放回支点元素
+                    return l; // 返回支点元素新下标
+                }
+            \end{minted}
+        \end{block}
+    }{
+        \begin{exampleblock}{实例：一次划分}
+            \begin{itemize}
+                \item 原始序列：$21_{l}, 25, 22, 10, 25, 18_{h}, (\,\,\,\,\,\,)$
+                \item 缓存支点：$\alert{\,\,\,\,\,\,_{l}}, 25, 22, 10, 25, \alert{18_{h}},(21_{m})$
+                \item \alert{交换元素}：$\alert{18_{l}}, 25, 22, 10, 25, \alert{\,\,\,\,\,\,_{h}},(21_{m})$
+                \item 移动指针：$18, \alert{25_{l}}, 22, 10, 25, \alert{\,\,\,\,\,\,_{h}},(21_{m})$
+                \item \alert{交换元素}：$18, \alert{\,\,\,\,\,\,_{l}}, 22, 10, 25, \alert{25_{h}},(21_{m})$
+                \item 移动指针：$18, \alert{\,\,\,\,\,\,_{l}}, 22, 10, \alert{25_{h}}, 25,(21_{m})$
+                \item 移动指针：$18, \alert{\,\,\,\,\,\,_{l}}, 22, \alert{10_{h}}, 25, 25,(21_{m})$
+                \item \alert{交换元素}：$18, \alert{10_{l}}, 22, \alert{\,\,\,\,\,\,_{h}}, 25, 25,(21_{m})$
+                \item 移动指针：$18, 10, \alert{22_{l}}, \alert{\,\,\,\,\,\,_{h}}, 25, 25,(21_{m})$
+                \item \alert{交换元素}：$18, 10, \alert{\,\,\,\,\,\,_{l}}, \alert{22_{h}}, 25, 25,(21_{m})$
+                \item 移动指针：$18, 10, \alert{\,\,\,\,\,\,_{lh}}, 22, 25, 25,(21_{m})$
+                \item 放回支点：$18, 10, \alert{21_{m}}, 22, 25, 25,(\,\,\,\,\,\,)$
+            \end{itemize}
+        \end{exampleblock}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{快速排序的性能分析}
+        \begin{itemize}
+            \item 时间复杂度
+                  \begin{itemize}
+                      \item 最好情况：$O(n\log n)$
+                      \item 最坏情况：$O(n^{2})$
+                      \item 平均情况：$O(n\log n)$
+                  \end{itemize}
+            \item 空间复杂度：$O(n)$
+            \item 稳定性
+                  \begin{itemize}
+                      \item 由于交换过程会越过支点元素且无法控制，故该算法
+                            \alert{不稳定}
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{alertblock}{各种排序算法的取舍}
+        \begin{itemize}
+            \item 问题规模较小\footnote{一般认为待排序序列元素不超过$23$个}：直
+                  接选择排序、直接插入排序
+            \item 问题规模略大：快速排序、归并排序、堆排序
+            \item 当需要多键排序时，宜选用稳定算法：直接选择排序、直接插入排序、
+                  堆排序
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
