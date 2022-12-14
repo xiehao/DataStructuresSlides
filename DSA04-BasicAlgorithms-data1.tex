@@ -218,8 +218,8 @@
             \begin{itemize}
                 \item 原序列：$()21, 25, 22, \alert{10}, 25, 18$
                 \item 第一趟：$(10), 25, 22, 21, 25, \alert{18}$
-                \item 第二趟：$(10, 18), 25, 22, \alert{21}, 25$
-                \item 第三趟：$(10, 18, 21), 25, \alert{22}, 25$
+                \item 第二趟：$(10, 18), 22, \alert{21}, 25, 25$
+                \item 第三趟：$(10, 18, 21), \alert{22}, 25, 25$
                 \item 第四趟：$(10, 18, 21, 22), \alert{25}, 25$
                 \item 第五趟：$(10, 18, 21, 22, 25), \alert{25}$
                 \item 第六趟：$(10, 18, 21, 22, 25, 25)$
@@ -250,7 +250,11 @@
     \frametitle{\insertsectionhead}
     \begin{block}{直接选择排序的性能分析}
         \begin{itemize}
-            \item 与直接插入排序类似，略
+            \item 复杂度与直接插入排序类似，略
+            \item 稳定性
+            \begin{itemize}
+                \item 因涉及到跨元素交换，故该算法\alert{不稳定}
+            \end{itemize}
         \end{itemize}
     \end{block}
 \end{frame}
@@ -359,10 +363,9 @@
     \begin{alertblock}{各种排序算法的取舍}
         \begin{itemize}
             \item 问题规模较小\footnote{一般认为待排序序列元素不超过$23$个}：直
-                  接选择排序、直接插入排序
-            \item 问题规模略大：快速排序、归并排序、堆排序
-            \item 当需要多键排序时，宜选用稳定算法：直接选择排序、直接插入排序、
-                  堆排序
+                  接选择排序、直接插入排序等
+            \item 问题规模略大：快速排序、归并排序、堆排序等
+            \item 当需要多键排序时，宜选用稳定算法：直接插入排序、堆排序等
         \end{itemize}
     \end{alertblock}
 \end{frame}
