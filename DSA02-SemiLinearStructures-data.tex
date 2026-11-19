@@ -10,6 +10,14 @@
     % \end{multicols}
 \end{frame}
 
+\begin{frame}{学习目标}
+    \begin{itemize}
+        \item 理解树与二叉树的基本术语、性质和存储方式
+        \item 能手工追踪前序、中序、后序及层次遍历
+        \item 理解Huffman编码如何利用带权路径长度构造前缀码
+    \end{itemize}
+\end{frame}
+
 \begin{frame}
     \begin{table}
         \small
@@ -20,18 +28,20 @@
             & \textbf{顺序列表} & \textbf{链式列表} \\
             \midrule
             访问元素 & $O(1)$ & $O(n)$ \\
-            增删元素 & $O(n)$ & $O(1)$ \\
+            指定位置增删 & $O(n)$ & $O(1)$ \\
             \bottomrule
         \end{tabular}
     \end{table}
     \pause
     \centering
-    \textbf{半线性结构}：可去二者之糟粕，取二者之精华
+    链表增删的$O(1)$不包含查找结点的成本；树可表示层次关系，
+    其操作代价取决于具体结构。
 \end{frame}
 
 \input{DSA02-SemiLinearStructures-data1.tex}
 \input{DSA02-SemiLinearStructures-data2.tex}
 \input{DSA02-SemiLinearStructures-data3.tex}
+\input{DSA02-SemiLinearStructures-data4.tex}
 
 \section{小结}
 
@@ -42,8 +52,20 @@
         \item 树与森林的问题均可转化为二叉树，使研究更加方便、统一
         \item 二叉树可采用顺序与链式两种方式存储
         \item 二叉树的遍历可将半线性结构转化为线性结构
+        \item 二叉搜索树利用键的顺序进行查找；操作代价取决于树高
         \item Huffman编码树可用于数据压缩
     \end{itemize}
+\end{frame}
+
+\begin{frame}{思考与自测}
+    \begin{itemize}
+        \item 根结点为$A$，左孩子为$B$，右孩子为$C$：写出三种深度优先遍历。
+        \item 若树有$n$个结点，遍历每个结点一次的时间复杂度是多少？
+    \end{itemize}
+    \pause
+    \begin{block}<2-|handout:0>{参考答案}
+        前序$A,B,C$；中序$B,A,C$；后序$B,C,A$。遍历时间为$O(n)$。
+    \end{block}
 \end{frame}
 
 \begin{standout}[]

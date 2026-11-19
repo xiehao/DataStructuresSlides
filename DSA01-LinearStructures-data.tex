@@ -10,6 +10,14 @@
     % \end{multicols}
 \end{frame}
 
+\begin{frame}{学习目标}
+    \begin{itemize}
+        \item 比较顺序表与链表的存储、访问及插入删除成本
+        \item 理解栈与队列的操作约束，并解释递归与调用栈的关系
+        \item 能追踪基本操作并处理空表、满表等边界情况
+    \end{itemize}
+\end{frame}
+
 \input{DSA01-LinearStructures-data1.tex}
 \input{DSA01-LinearStructures-data2.tex}
 \input{DSA01-LinearStructures-data3.tex}
@@ -34,6 +42,20 @@
                 \item 队列：先进先出，一般用于正序缓冲
             \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}{思考与自测}
+    \begin{enumerate}
+        \item 已知结点位置时，链表插入的时间复杂度是什么？按序号查找后再插入呢？
+        \item 元素$A,B,C$依次入栈后全部出栈，出栈顺序是什么？
+    \end{enumerate}
+    \pause
+    \begin{block}<2-|handout:0>{参考答案}
+        \begin{enumerate}
+            \item 插入本身为$O(1)$；加上按序号查找，最坏为$O(n)$。
+            \item $C,B,A$。
+        \end{enumerate}
+    \end{block}
 \end{frame}
 
 \begin{standout}[]

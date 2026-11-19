@@ -1,7 +1,8 @@
-\documentclass[algorithm,pgfplots,colortheme=light]{cuzbeamer}
+\documentclass[algorithm,pgfplots,colortheme=light,handout]{cuzbeamer}
 
+\input{slide-config.tex}
 \usepackage{pgf-pie}
-\usetikzlibrary{mindmap, arrows.meta, calc, quotes, tikzmark, shapes.multipart}
+\usetikzlibrary{mindmap, arrows.meta, calc, quotes, tikzmark}
 
 \usepackage[bitheight=3ex,bitwidth=auto]{bytefield}
 \bytefieldsetup{boxformatting={\centering\ttfamily\footnotesize}}
@@ -12,17 +13,16 @@
 }
 
 \newlength{\maxheight}
-\setlength{\maxheight}{\heightof{w}}
+\setlength{\maxheight}{\heightof{W}}
 \newcommand{\baselinealign}[1]{%
 \centering
 \raisebox{0pt}[\maxheight][0pt]{#1}%
 }
 
 \usepackage{relsize}
-\usepackage{subcaption}
 
 \begin{document}
 \input{initialization.tex}
 \maketitle
-\input{DSA03-NonLinearStructures-data.tex}
+\input{DSA01-LinearStructures-data.tex}
 \end{document}

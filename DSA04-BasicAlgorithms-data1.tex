@@ -143,7 +143,7 @@
         \begin{itemize}
             \item 顺序查找\footnote{称对应算法为\textbf{直接插入排序}}：按前驱后
                   继顺序依次遍历子序列元素，找出目标元素的合理插入位置
-            \item 一些改进：二分/折半查找、Fibonacci查找、散列查找等
+            \item 一些改进：二分/折半查找、Fibonacci查找等；连续存储时仍须移动元素
         \end{itemize}
     \end{block}
     \begin{block}{存储方式}
@@ -160,8 +160,8 @@
         \begin{itemize}
             \item 若键相同的元素在排序前后的相对顺序保持不变，则称该排序算法为
                   \textbf{稳定的}
-            \item 稳定排序算法适用于\alert{多键排序}\footnote{先按主键排序，在主
-                      键重复的序列中按次键排序，以此类推。}
+            \item 稳定排序算法适用于\alert{多键排序}\footnote{先按次键排序，再
+                      稳定地按主键排序；主键相同的元素保留次键顺序。}
         \end{itemize}
     \end{alertblock}
 \end{frame}
@@ -170,12 +170,11 @@
     \frametitle{\insertsectionhead}
     \begin{block}{直接插入排序算法性能分析}
         \begin{itemize}
-            \item 时间复杂度：$O(n^{2})$
+            \item 时间复杂度：最好$O(n)$，平均与最坏$O(n^{2})$
                   \begin{itemize}
-                      \item 平均比较次
-                            数：$\sum_{k=2}^{n}\frac{k}{2}=\frac{(n+2)(n-1)}{4}$
+                      \item 平均情况依赖输入分布及具体比较方式
                   \end{itemize}
-            \item 空间复杂度：$O(n)$
+            \item 辅助空间复杂度：$O(1)$
                   \begin{itemize}
                       \item 须额外一个元素的空间缓存待交换元素
                   \end{itemize}
@@ -190,17 +189,18 @@
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
+    \small
     \begin{block}{选择排序：择优录取}
         \begin{itemize}
-            \item 将序列$s$分为\alert{无序}与\alert{有序}两个子序列$s_{u}=s$与
-                  $s_{o}=\emptyset$
-            \item 反复从$s_{u}$中取出键最小的元素并放至$s_{o}$末尾，直至
-                  $s_{u}=\emptyset$，则$s_{o}$即为所求
+            \item 将$s$分为无序子序列$s_{u}=s$与有序子序列$s_{o}=\emptyset$
+            \item 反复选取$s_{u}$中的最小元素追加至$s_{o}$，直至$s_{u}=\emptyset$
         \end{itemize}
     \end{block}
+    \vspace{-1.5ex}
     \bicolumns[0.5]{
         \begin{block}{算法描述}
             \begin{algorithmx}[alg:selection]{选择排序}
+                \footnotesize
                 \Procedure{SelectionSort}{$s,f,t$}
                 \State \Comment{对序列$s$中下标区间$[f,t)$内的元素进行选择排序}
                 \State $i\gets f$
@@ -215,6 +215,7 @@
         \end{block}
     }{
         \begin{exampleblock}{实例}
+            \footnotesize
             \begin{itemize}
                 \item 原序列：$()21, 25, 22, \alert{10}, 25, 18$
                 \item 第一趟：$(10), 25, 22, 21, 25, \alert{18}$
@@ -250,7 +251,8 @@
     \frametitle{\insertsectionhead}
     \begin{block}{直接选择排序的性能分析}
         \begin{itemize}
-            \item 复杂度与直接插入排序类似，略
+            \item 时间复杂度：最好、最坏与平均情况均为$O(n^{2})$
+            \item 辅助空间复杂度：$O(1)$
             \item 稳定性
             \begin{itemize}
                 \item 因涉及到跨元素交换，故该算法\alert{不稳定}
@@ -261,23 +263,24 @@
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
+    \small
     \begin{block}{快速排序：分治策略的应用}
         \begin{itemize}
             \item 将序列\alert{划分}为三部分：任意元素$s_{m}$作为\alert{支点}、
-                  所有元素分别比$s_{m}$小与大的两个子序列
-            \item 对后两个子序列递归执行上述\alert{划分}策略，直至所有子序列为空
+                  左侧元素不大于支点，右侧元素不小于支点
+            \item 对左右子序列递归执行上述\alert{划分}策略，直至子序列长度不超过$1$
         \end{itemize}
     \end{block}
     \bicolumns[0.5]{
         \begin{block}{算法描述}
             \begin{algorithmx}[alg:quick]{快速排序}
                 \Procedure{QuickSort}{$s,l,h$}
-                \State \Comment{对序列$s$中下标区间$[l,h]$内的元素进行选择排序}
-                \While{$l<h$}
+                \State \Comment{对序列$s$中下标区间$[l,h]$内的元素进行快速排序}
+                \If{$l<h$}
                 \State $m\gets$ Partition($s,l,h$)\Comment{序列划分子算法}
                 \State QuickSort($s,l,m-1$)\Comment{左侧递归}
                 \State QuickSort($s,m+1,h$)\Comment{右侧递归}
-                \EndWhile
+                \EndIf
                 \State \textbf{return} $s$\Comment{返回排序后的序列$s$}
                 \EndProcedure
             \end{algorithmx}
@@ -297,6 +300,7 @@
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
+    \small
     \bicolumns[0.5]{
         \begin{block}{划分算法}
             \begin{minted}{c}
@@ -320,6 +324,7 @@
         \end{block}
     }{
         \begin{exampleblock}{实例：一次划分}
+            \footnotesize
             \begin{itemize}
                 \item 原始序列：$21_{l}, 25, 22, 10, 25, 18_{h}, (\,\,\,\,\,\,)$
                 \item 缓存支点：$\alert{\,\,\,\,\,\,_{l}}, 25, 22, 10, 25, \alert{18_{h}},(21_{m})$
@@ -348,7 +353,7 @@
                       \item 最坏情况：$O(n^{2})$
                       \item 平均情况：$O(n\log n)$
                   \end{itemize}
-            \item 空间复杂度：$O(n)$
+            \item 递归调用的辅助空间：平均$O(\log n)$，最坏$O(n)$
             \item 稳定性
                   \begin{itemize}
                       \item 由于交换过程会越过支点元素且无法控制，故该算法
@@ -362,10 +367,12 @@
     \frametitle{\insertsectionhead}
     \begin{alertblock}{各种排序算法的取舍}
         \begin{itemize}
-            \item 问题规模较小\footnote{一般认为待排序序列元素不超过$23$个}：直
-                  接选择排序、直接插入排序等
+            \item 问题规模较小：直接选择排序、直接插入排序等；具体阈值取决于
+                  数据、实现与运行环境
             \item 问题规模略大：快速排序、归并排序、堆排序等
-            \item 当需要多键排序时，宜选用稳定算法：直接插入排序、堆排序等
+            \item 当需要多键排序时，宜选用稳定算法：直接插入排序、归并排序等
         \end{itemize}
     \end{alertblock}
 \end{frame}
+
+\input{DSA04-BasicAlgorithms-data1.1.tex}

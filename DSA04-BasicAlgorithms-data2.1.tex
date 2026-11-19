@@ -1,0 +1,60 @@
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{散列函数与装载因子}
+        \begin{itemize}
+            \item 散列函数$h(k)$把键$k$映射到表下标，计算应快速且分布尽量均匀
+            \item 除留余数法示例：表长$m=7$，$h(k)=k\bmod 7$
+            \item 已存储$n$个键时，装载因子$\alpha=n/m$反映表的拥挤程度
+            \item 装载因子增加通常会增加冲突；可扩容并重新散列所有键
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{链地址法(Separate Chaining)}
+        \begin{itemize}
+            \item 每个桶保存映射到该位置的键；冲突键放入同一链表
+            \item 插入、查找和删除先定位桶，再在该桶中查找目标键
+            \item 均匀散列假设下平均查找时间为$O(1+\alpha)$；最坏为$O(n)$
+            \item 桶中可存多个键，因此$\alpha$可以大于$1$
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{例：$m=7$，$h(k)=k\bmod 7$}
+        插入$10,17,24$后，桶$3$的链表可为$10\rightarrow17\rightarrow24$。
+        查找$17$需在桶$3$中比较，查找$31$遍历该桶后失败。
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{开放定址法(Open Addressing)：线性探测}
+        \begin{itemize}
+            \item 全部键存于表内；冲突时依次探测$(h(k)+i)\bmod m$
+            \item 插入时选第一个可用位置；查找沿相同探测序列进行
+            \item 找到目标或遇到从未使用过的空槽时结束；最多探测$m$次
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{例：$m=7$，$h(k)=k\bmod 7$}
+        依次插入$10,17,24$，分别存入下标$3,4,5$；查找$24$依次检查$3,4,5$。
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{删除与性能}
+        \begin{itemize}
+            \item 开放定址删除时须留下\textbf{删除标记}，不能直接改为从未使用的空槽，
+                  否则可能截断后续键的查找路径
+            \item 插入可复用删除槽，但若需避免重复键，应继续探测至找到该键或确认不存在
+            \item 开放定址的$\alpha<1$；表接近满时探测会变长，需及时扩容并重建
+            \item 在良好的散列与受控装载因子下，平均查找可为$O(1)$；最坏为$O(n)$
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{思考}
+        上例删除$17$后，为什么不能把下标$4$直接标为从未使用？
+    \end{alertblock}
+    \begin{block}<2-|handout:0>{参考答案}
+        查找$24$会在下标$4$提前结束，无法到达下标$5$。
+    \end{block}
+\end{frame}

@@ -78,21 +78,15 @@
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \bicolumns[0.7]{
-        \begin{block}{连通图的分割与桥梁\footnotemark}
+        \begin{block}{连通图的分割与跨割边}
             \begin{itemize}
-                \item 已知图$G=(V,E)$与其子图$G_{a}=(V_{a},E_{a})$与
-                      $G_{b}=(V_{b},E_{b})$
-                \item 若$G_{a}$与$G_{b}$满足
+                \item 将图$G=(V,E)$的顶点分为两个非空集合$V_{a}$与$V_{b}$，满足
                       \[
                           V=V_{a}\cup{}V_{b},\quad\emptyset=V_{a}\cap{}V_{b},
                       \]
-                      则称$G_{a}$与$G_{b}$构成图$G$的一个\textbf{分割(cut)}，记
-                      作$(G_{a}:G_{b})$
-                \item 若$G_{a}$与$G_{b}$构成图$G$的一个分割，且
-                      \[
-                          e\in{}E-(E_{a}\cup{}E_{b}),
-                      \]
-                      则称$e$为$G_{a}$与$G_{b}$间的一个\textbf{桥梁(bridge)}
+                      称为图的一个\textbf{割(cut)}
+                \item 两个端点分别位于$V_{a}$和$V_{b}$的边称为\textbf{跨割边}；
+                      跨割边不一定是删除后使图不连通的桥
             \end{itemize}
         \end{block}
     }{
@@ -117,20 +111,19 @@
                 \draw[cyan] (e) to (f);
                 \draw[dashed] (f) to (b);
             \end{tikzpicture}
-            \caption{图的分割与桥梁}
+            \caption{图的分割与跨割边}
             \label{fig:example_graph_cut_bridges}
         \end{figure}
     }
 
-    \footnotetext{以下图与子图均指\alert{连通图}}
 \end{fragile}
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \begin{block}{Prim算法\footnote{作者：R. C. Prim，1956年}核心思想}
         \begin{itemize}
-            \item 不断将原图分割为逐渐\alert{膨胀}与逐渐\alert{收缩}的两个子图
-            \item 在每次分割时始终选择权重\alert{最小}的桥梁作为生成树的边
+            \item 将顶点分为已加入生成树的集合$V_{a}$与其余顶点集合$V_{b}$
+            \item 在每次分割时始终选择权重\alert{最小}的跨割边作为生成树的边
         \end{itemize}
     \end{block}
     \begin{exampleblock}{算法步骤}
@@ -138,13 +131,12 @@
             \item 初始化
                   \begin{itemize}
                       \item 在图$G$中任选一顶点$v_{0}$作为起始点
-                      \item 对$G$做分割$(G_{a},G_{b})$，使得$G_{a}=\{v_{0}\}$且
-                            $G_{b}=G-G_{a}$
+                      \item 令$V_{a}=\{v_{0}\}$、$V_{b}=V-V_{a}$
                       \item 令生成树边的集合$E_{mst}=\emptyset$
                   \end{itemize}
-            \item 将权重最小的桥梁$e$加入$E_{mst}$
-            \item 若$G_{b}=\emptyset$则结束；否则在$G_{b}$中去除$e$的端点并将其
-                  加入$G_{a}$中，执行2
+            \item 若$V_{b}=\emptyset$则结束
+            \item 将权重最小的跨割边$e$加入$E_{mst}$，把$e$在$V_{b}$中的端点
+                  移入$V_{a}$，返回步骤2
         \end{enumerate}
     \end{exampleblock}
 \end{fragile}
@@ -192,3 +184,5 @@
         \label{fig:demo_mst_prim}
     \end{figure}
 \end{fragile}
+
+\input{DSA03-NonLinearStructures-data4.1.tex}

@@ -48,30 +48,30 @@
     \frametitle{\insertsubsectionhead}
     \begin{alertblock}{思考：用何种属性描述顺序表？}
         \begin{itemize}
-            \item<2-> 存储空间的起始位置
-            \item<3-> \textbf{容量(capacity)}：最多可容纳的元素个数
-            \item<4-> \textbf{长度(length)}：实际容纳的元素个数
+            \item<2-|handout:0> 存储空间的起始位置
+            \item<3-|handout:0> \textbf{容量(capacity)}：最多可容纳的元素个数
+            \item<4-|handout:0> \textbf{长度(length)}：实际容纳的元素个数
         \end{itemize}
     \end{alertblock}
     \begin{figure}
         \centering
         \begin{bytefield}[bitwidth=1em]{2}
-            \bitboxes[]{6}{{\only<2->{\mintinline[fontsize=\smaller]{c}{first}}}}
+            \bitboxes[]{6}{{\only<2-|handout:0>{\mintinline[fontsize=\smaller]{c}{first}}}}
             \bitboxes[]{3}{{}{}{}{}{}{}{}{}} \\
-            \bitboxes[]{6}{{\only<2->{\tikzmark{sca}}}}
+            \bitboxes[]{6}{{\only<2-|handout:0>{\tikzmark{sca}}}}
             \bitboxes[]{3}{{}{}{}{}{}{}{}{}} \\
             \bitbox[]{3}{$s$：}
             \bitbox{3}{$34$}\bitbox{3}{$23$}\bitbox{3}{$67$}\bitbox{3}{$43$}
             \bitboxes{3}{{}{}{}{}}
             \bitbox{2}{$4$} \\
             \bitbox[]{3}{}
-            \bitbox[t]{24}{\only<3->{$\underbrace{\hspace{30em}}_{\text{容量}}$}}
-            \bitbox[t]{2}{\only<4->{$\underbrace{\hspace{2em}}_{\text{长度}}$}}
+            \bitbox[t]{24}{\only<3-|handout:0>{$\underbrace{\hspace{30em}}_{\text{容量}}$}}
+            \bitbox[t]{2}{\only<4-|handout:0>{$\underbrace{\hspace{2em}}_{\text{长度}}$}}
         \end{bytefield}
         \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
                 list item/.style={draw=gray, rounded corners, thick} %
             ]
-            \only<2->{
+            \only<2-|handout:0>{
                 \draw[->] ($({pic cs:{sca}})+(0,0.3)$) to [out=-90,in=90] ($({pic
                     cs:{sca}})+(0,-0.3)$);
             }
@@ -85,7 +85,7 @@
     \frametitle{\insertsubsectionhead}
     \begin{alertblock}{思考：如何为顺序表分配内存？}
         \begin{itemize}
-            \item<2-> 一维数组的静态分配
+            \item<2-|handout:0> 一维数组的静态分配
         \end{itemize}
     \end{alertblock}
     \begin{figure}
@@ -105,12 +105,12 @@
     \frametitle{\insertsubsectionhead}
     \begin{alertblock}{思考：如何获取任意元素的存储地址？}
         \begin{itemize}
-            \item<5-> 令$p_{k}$为元素$a_{k}$的起始地址，且每个元素$a_{k}$所占空
+            \item<5-|handout:0> 令$p_{k}$为元素$a_{k}$的起始地址，且每个元素$a_{k}$所占空
                   间为$m$，则有
                   \[
                         p_{k} = p_{1} + (k - 1)m, \qquad k\in\mathbb{Z}\cap[1, n]
                   \]
-            \item<6> 顺序列表中的元素可被\textbf{随机访问(Random Access)}，时间
+            \item<6|handout:0> 顺序列表中的元素可被\textbf{随机访问(Random Access)}，时间
                   复杂度为$O(1)$
         \end{itemize}
     \end{alertblock}

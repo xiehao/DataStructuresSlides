@@ -1,0 +1,85 @@
+\section{二叉搜索树}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \bicolumns[0.55]{
+        \begin{block}{二叉搜索树(Binary Search Tree, BST)}
+            \begin{itemize}
+                \item 对任一结点，左子树的键均小于该结点的键，右子树的键均大于该结点的键
+                \item 左右子树也分别是二叉搜索树；这里假设键不重复
+                \item 中序遍历得到键的升序序列
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[level distance=6ex, level/.style={sibling distance=14ex/#1}]
+                \node[terminal] {$21$}
+                    child {node[terminal] {$10$}
+                        child {node[terminal] {$5$}}
+                        child {node[terminal] {$18$}}}
+                    child {node[terminal] {$25$}
+                        child {node[terminal] {$22$}}
+                        child {node[terminal] {$30$}}};
+            \end{tikzpicture}
+            \caption{二叉搜索树示例}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{查找与插入}
+        \begin{itemize}
+            \item 从根出发比较目标键：较小走左子树，较大走右子树，相等则找到
+            \item 到达空指针仍未找到时查找失败；插入可在此位置创建新结点
+            \item 本例不插入重复键；也可另行约定计数或重复键处理方式
+        \end{itemize}
+    \end{block}
+    \begin{algorithmx}[alg:bst_search]{二叉搜索树查找}
+        \Procedure{Search}{$p,key$}
+        \While{$p\neq\mathrm{NULL}$ \textbf{and} $p.key\neq key$}
+        \If{$key<p.key$}
+        \State $p\gets p.left$
+        \Else
+        \State $p\gets p.right$
+        \EndIf
+        \EndWhile
+        \State \textbf{return} $p$
+        \EndProcedure
+    \end{algorithmx}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{删除结点}
+        \begin{enumerate}
+            \item 无孩子：直接删除该叶结点
+            \item 只有一个孩子：用孩子替代该结点
+            \item 有两个孩子：用右子树中最小结点（中序后继）的键替换，
+                  再删除该后继结点；后继至多有一个孩子
+        \end{enumerate}
+    \end{block}
+    \begin{exampleblock}{例：删除上一图中的$21$}
+        中序后继为$22$；将根键替换为$22$，再删除原位置的叶结点$22$。
+        结果仍满足左小右大的性质。
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{性能与取舍}
+        \begin{itemize}
+            \item 查找、插入和删除沿树高$h$进行，时间均为$O(h)$
+            \item 高度平衡时$h=O(\log n)$；退化成链时$h=O(n)$
+            \item 顺序插入$1,2,\ldots,n$可能产生退化树；平衡搜索树可控制高度
+            \item BST支持按序遍历和范围查询；普通散列表不保持键的顺序
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{思考}
+        依次插入$21,10,25,18$后，中序遍历结果是什么？
+    \end{alertblock}
+    \begin{block}<2-|handout:0>{参考答案}
+        $10,18,21,25$。
+    \end{block}
+\end{frame}

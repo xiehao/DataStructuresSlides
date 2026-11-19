@@ -1,0 +1,55 @@
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{Kruskal算法}
+        \begin{enumerate}
+            \item 将边按权重从小到大排序；初始时每个顶点各自构成一个连通分量
+            \item 依次检查边：若两端点属于不同分量，则选中该边并合并两个分量；
+                  否则跳过，避免形成环
+            \item 选中$n-1$条边时结束；可使用并查集维护连通分量
+        \end{enumerate}
+    \end{block}
+    \begin{alertblock}{适用范围}
+        对连通无向带权图求最小生成树；图不连通时得到最小生成森林。
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{前述网线铺设示例}
+        \begin{center}
+            \begin{tabular}{c|c|l}
+                \toprule
+                边 & 权重 & 处理 \\
+                \midrule
+                $BC$ & $12$ & 选中 \\
+                $EF$ & $17$ & 选中 \\
+                $AD$ & $19$ & 选中 \\
+                $AE$ & $25$ & 选中 \\
+                $AF$ & $25$ & 跳过：与$AE,EF$形成环 \\
+                $AB$ & $26$ & 选中，已有$5$条边 \\
+                \bottomrule
+            \end{tabular}
+        \end{center}
+        权重之和为$12+17+19+25+26=99$；同权边顺序不同时结果可能不同。
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{table}
+        \centering
+        \small
+        \caption{Prim与Kruskal的比较（$n$个顶点，$e$条边）}
+        \begin{tabular}{p{0.20\textwidth}p{0.35\textwidth}p{0.35\textwidth}}
+            \toprule
+            & Prim & Kruskal \\
+            \midrule
+            核心思路 & 从一个顶点扩展生成树 & 按边权合并不同分量 \\
+            常见实现 & 邻接矩阵；或邻接表加索引堆 & 边排序加并查集 \\
+            时间 & 矩阵$O(n^2)$；堆$O((n+e)\log n)$ & $O(n+e\log e)$ \\
+            存储 & 矩阵$O(n^2)$；邻接表$O(n+e)$ & 边集及并查集$O(n+e)$ \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \small 存储包括图或边集本身；矩阵适合稠密图，边排序常用于稀疏图。
+\end{frame}

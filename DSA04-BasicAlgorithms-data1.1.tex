@@ -1,0 +1,84 @@
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{block}{归并排序：分治策略的应用}
+        将序列分为两半，分别递归排序，再将两个有序子序列合并。
+    \end{block}
+    \bicolumns[0.5]{
+        \begin{block}{算法描述}
+            \begin{algorithmx}[alg:merge_sort]{归并排序}
+                \Procedure{MergeSort}{$s,l,r$}
+                \State \Comment{排序左闭右开区间$[l,r)$}
+                \If{$r-l\leq 1$}
+                \State \textbf{return} $s[l:r]$
+                \EndIf
+                \State $m\gets l+\lfloor(r-l)/2\rfloor$
+                \State $a\gets$ MergeSort($s,l,m$)
+                \State $b\gets$ MergeSort($s,m,r$)
+                \State \textbf{return} Merge($a,b$)
+                \EndProcedure
+            \end{algorithmx}
+        \end{block}
+    }{
+        \begin{exampleblock}{实例}
+            \begin{itemize}
+                \item 原序列：$21,25,22,10,25,18$
+                \item 分成：$(21,25,22)$、$(10,25,18)$
+                \item 递归排序：$(21,22,25)$、$(10,18,25)$
+                \item 合并结果：$10,18,21,22,25,25$
+            \end{itemize}
+        \end{exampleblock}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{合并两个有序序列}
+        \begin{itemize}
+            \item 比较两个序列的当前元素，将较小者依次写入辅助数组
+            \item 键相同时先取左侧元素，可保持相同键的原有相对顺序
+            \item 一个序列耗尽后，复制另一个序列的剩余元素
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{实例：最后一次合并}
+        $(21,22,25_a)$与$(10,18,25_b)$依次取出
+        $10,18,21,22,25_a,25_b$；相等时先取左侧$25_a$。
+    \end{exampleblock}
+    \begin{alertblock}{性能}
+        \begin{itemize}
+            \item 时间：最好、平均和最坏均为$O(n\log n)$
+            \item 常见数组实现的辅助空间为$O(n)$；上述合并规则保证稳定性
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{table}
+        \centering
+        \small
+        \caption{常见数组排序算法比较}
+        \begin{tabular}{lcccc}
+            \toprule
+            算法 & 最好时间 & 最坏时间 & 辅助空间 & 稳定 \\
+            \midrule
+            直接插入 & $O(n)$ & $O(n^2)$ & $O(1)$ & 是 \\
+            直接选择 & $O(n^2)$ & $O(n^2)$ & $O(1)$ & 否 \\
+            快速排序 & $O(n\log n)$ & $O(n^2)$ & $O(n)$ & 否 \\
+            归并排序 & $O(n\log n)$ & $O(n\log n)$ & $O(n)$ & 是 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \small 快速排序表中空间为所示递归实现的最坏情况；稳定性取决于具体实现。
+\end{frame}
+
+\begin{frame}{排序：思考与自测}
+    \begin{itemize}
+        \item 对$(2_a,1,2_b)$使用交换式直接选择排序，相同键的次序是否一定保持？
+        \item 以成绩为主键、姓名为次键升序排列记录，如何利用稳定排序？
+    \end{itemize}
+    \pause
+    \begin{block}<2-|handout:0>{参考答案}
+        第一趟交换后为$(1,2_a,2_b)$；但$(2_a,2_b,1)$会变为
+        $(1,2_b,2_a)$，故不稳定。多键排序先按姓名，再稳定地按成绩排序。
+    \end{block}
+\end{frame}

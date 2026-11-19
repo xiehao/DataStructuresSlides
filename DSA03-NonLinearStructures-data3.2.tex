@@ -67,6 +67,22 @@
     \end{figure}
 \end{fragile}
 
+\begin{frame}{应用：无权图的单源最短路径}
+    \begin{block}{从起点$s$开始的BFS}
+        \begin{enumerate}
+        \item 设置$dist(s)=0$并将$s$入队；其他顶点距离标为未知
+        \item 顶点$u$出队时，对每个尚未发现的邻接顶点$v$：
+              设置$dist(v)=dist(u)+1$、$parent(v)=u$，并将$v$入队
+        \item 从目标顶点沿$parent$回溯，可还原一条最短路径
+        \end{enumerate}
+    \end{block}
+    \begin{exampleblock}{上一图：从$A$到$H$}
+        一条最短路径为$A\rightarrow B\rightarrow D\rightarrow H$，
+        长度为$3$条边；不可达顶点的距离仍为未知。
+    \end{exampleblock}
+    \small BFS逐层发现顶点，首次发现时的边数最少；适用于无权图或各边权重相同的图。
+\end{frame}
+
 \begin{fragile}
     \frametitle{\insertsubsectionhead}
     \begin{block}{广度优先搜索的一种\alert{邻接矩阵}结构非递归实现}

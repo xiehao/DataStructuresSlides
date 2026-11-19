@@ -10,6 +10,14 @@
     % \end{multicols}
 \end{frame}
 
+\begin{frame}{学习目标}
+    \begin{itemize}
+        \item 比较邻接矩阵与邻接表的存储及访问代价
+        \item 能追踪深度优先和广度优先搜索，并解释队列的作用
+        \item 使用广度优先搜索求无权最短路径，比较Prim与Kruskal算法
+    \end{itemize}
+\end{frame}
+
 \begin{fragile}
     \bicolumns[0.6]{
         \begin{exampleblock}{引例：Königsberg七桥问题}
@@ -84,8 +92,19 @@
               \end{itemize}
         \item 图的遍历/搜索可将\alert{非}线性结构转化为\alert{半}线性结构
         \item 深度优先搜索与广度优先搜素的算法思想可被应用于多种算法中
-        \item Prim算法可高效求得带权图的最小生成树
+        \item Prim按顶点扩展、Kruskal按边合并分量，均可求最小生成树
     \end{itemize}
+\end{frame}
+
+\begin{frame}{思考与自测}
+    \begin{itemize}
+        \item 无权图中，从起点求最少边数路径应选DFS还是BFS？为什么？
+        \item 含$n$个顶点、$e$条边的图，邻接表遍历的时间复杂度是多少？
+    \end{itemize}
+    \pause
+    \begin{block}<2-|handout:0>{参考答案}
+        BFS按距离逐层访问，可获得最少边数路径；邻接表遍历为$O(n+e)$。
+    \end{block}
 \end{frame}
 
 \begin{standout}[]

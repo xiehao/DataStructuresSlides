@@ -1,0 +1,90 @@
+\section{查找}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{查找(Search)}
+        \begin{itemize}
+            \item 根据给定键定位记录，或判断记录不存在
+            \item 顺序查找依次比较元素；无需有序，最坏时间为$O(n)$
+            \item 查找算法的选择取决于数据是否有序、存储方式及更新频率
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{二分查找(Binary Search)}
+        \begin{itemize}
+            \item 前提：序列按键有序，且可高效随机访问
+            \item 每次比较中间元素，将候选区间缩小至一半
+            \item 以下使用左闭右开区间$[l,r)$，未找到时返回$-1$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{algorithmx}[alg:binary-search]{二分查找}
+        \Procedure{BinarySearch}{$s,n,key$}
+        \State $l\gets 0,\ r\gets n$
+        \While{$l<r$}
+        \State $m\gets l+\lfloor(r-l)/2\rfloor$
+        \If{$s_m=key$}
+        \State \textbf{return} $m$
+        \ElsIf{$s_m<key$}
+        \State $l\gets m+1$
+        \Else
+        \State $r\gets m$
+        \EndIf
+        \EndWhile
+        \State \textbf{return} $-1$
+        \EndProcedure
+    \end{algorithmx}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{exampleblock}{二分查找实例}
+        在$(10,18,21,25,32)$中查找$25$：
+        \[
+            [0,5)\xrightarrow{21<25}[3,5)
+            \xrightarrow{32>25}[3,4)
+            \xrightarrow{25=25}\text{找到下标}3
+        \]
+    \end{exampleblock}
+    \begin{itemize}
+        \item 最好时间$O(1)$，最坏时间$O(\log n)$；迭代实现辅助空间$O(1)$
+        \item 键重复时，该算法返回任意匹配位置；首末位置需调整边界规则
+        \item 空序列与查找失败时，区间为空，返回$-1$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead}
+    \begin{block}{散列表(Hash Table)}
+        \begin{itemize}
+            \item 散列函数将键映射到表中位置；不同键可能映射到同一位置，称为冲突
+            \item 冲突可用链地址法或开放定址法处理；查找和插入需使用一致的规则
+            \item 在散列分布良好且装载因子受控时，查找平均为$O(1)$；最坏可为$O(n)$
+            \item 普通散列表不保持键的顺序，不适合直接进行范围查询
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{链地址法示例}
+        表长$5$，$h(k)=k\bmod 5$：键$12$与$17$均落在桶$2$，
+        在该桶中依次比较即可区分。
+    \end{exampleblock}
+\end{frame}
+
+\input{DSA04-BasicAlgorithms-data2.1.tex}
+
+\begin{frame}{查找：思考与自测}
+    \begin{itemize}
+        \item 在$(2,4,6,8)$中二分查找$5$，候选区间如何变化？
+        \item 数据经常更新且需范围查询时，散列表是否总是合适？
+    \end{itemize}
+    \pause
+    \begin{block}<2-|handout:0>{参考答案}
+        $[0,4)\rightarrow[0,2)\rightarrow[2,2)$，未找到。
+        普通散列表不维护顺序；范围查询可考虑有序结构并权衡更新成本。
+    \end{block}
+\end{frame}
