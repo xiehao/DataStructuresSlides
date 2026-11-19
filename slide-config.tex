@@ -2,7 +2,26 @@
 \setmintedinline{fontsize=\smaller[1]}
 \AtBeginEnvironment{algorithmic}{\small}
 
+\makeatletter
+\def\DSAblockbodyspacing{%
+    \@ifnextchar\begin{\DSAblockbodyenvironment}{\vspace{0.6ex}}%
+}
+\def\DSAblockbodyenvironment\begin#1{%
+    \ifboolexpr{
+        test {\ifstrequal{#1}{itemize}} or
+        test {\ifstrequal{#1}{enumerate}} or
+        test {\ifstrequal{#1}{description}}
+    }{}{\vspace{0.6ex}}%
+    \begin{#1}%
+}
+\addtobeamertemplate{block begin}{}{\DSAblockbodyspacing}
+\addtobeamertemplate{block alerted begin}{}{\DSAblockbodyspacing}
+\addtobeamertemplate{block example begin}{}{\DSAblockbodyspacing}
 \mode<handout>{
     \usepackage{pgfpages}
     \pgfpagesuselayout{4 on 1}[a4paper, border shrink=5mm, landscape]
+    % Decode presentation overlays in handout mode; explicit handout
+    % specifications still take precedence (for example, hidden answers).
+    \let\beamer@secondmode\beamer@currentmode
 }
+\makeatother

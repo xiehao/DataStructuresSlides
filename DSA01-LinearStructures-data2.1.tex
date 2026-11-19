@@ -17,9 +17,9 @@
                     \centering
                     \begin{bytefield}{2}
                         \bitbox[]{2}{}
-                        \bitboxes[]{3}{{\only<3|handout:0>{\mintinline[fontsize=\smaller]{c}{last}}}
-                            {\only<4|handout:0>{\mintinline[fontsize=\smaller]{c}{last}}}
-                            {\only<5|handout:0>{\mintinline[fontsize=\smaller]{c}{last}}}
+                        \bitboxes[]{3}{{\only<3>{\mintinline[fontsize=\smaller]{c}{last}}}
+                            {\only<4>{\mintinline[fontsize=\smaller]{c}{last}}}
+                            {\only<5>{\mintinline[fontsize=\smaller]{c}{last}}}
                             {\only<6>{\mintinline[fontsize=\smaller]{c}{last}}}} \\
                         \bitbox[]{2}{}
                         \bitboxes[]{3}{{\only<3>{\tikzmark{sba}}}{\only<4>{\tikzmark{sba}}}
@@ -240,12 +240,12 @@
             \bitbox[]{3}{\baselinealign{$s:$}}
             \bitboxes{3}{
                 {$35$}
-                {\only<1-4|handout:0>{$12$}\only<5->{$33$}}
-                {\only<1-3|handout:0>{$24$}\only<4->{$12$}}
-                {\only<1-2|handout:0>{$42$}\only<3->{$24$}}
+                {\only<1-4>{$12$}\only<5->{$33$}}
+                {\only<1-3>{$24$}\only<4->{$12$}}
+                {\only<1-2>{$42$}\only<3->{$24$}}
                 {\only<2->{$42$}}{}{}{}} \\
             \bitboxes[]{3}{{}{}{\tikzmark{sea}}{}{\only<1-5>{\tikzmark{seb}}}{\only<6->{\tikzmark{seb}}}{}{}{}} \\
-            \bitboxes[]{3}{{}{}{\only<1-4>{$33$}}{}{\only<1-5|handout:0>{\mintinline[fontsize=\smaller]{c}{last}}}{\only<6->{\mintinline[fontsize=\smaller]{c}{last}}}{}{}{}}
+            \bitboxes[]{3}{{}{}{\only<1-4>{$33$}}{}{\only<1-5>{\mintinline[fontsize=\smaller]{c}{last}}}{\only<6->{\mintinline[fontsize=\smaller]{c}{last}}}{}{}{}}
         \end{bytefield}
         \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
                 list item/.style={draw=gray, rounded corners, thick} %
@@ -330,12 +330,12 @@
             \bitbox[]{3}{\baselinealign{$s:$}}
             \bitboxes{3}{
                 {$35$}
-                {\only<2->{$12$}\only<1|handout:0>{$33$}}
-                {\only<3->{$24$}\only<1-2|handout:0>{$12$}}
-                {\only<4->{$42$}\only<1-3|handout:0>{$24$}}
+                {\only<2->{$12$}\only<1>{$33$}}
+                {\only<3->{$24$}\only<1-2>{$12$}}
+                {\only<4->{$42$}\only<1-3>{$24$}}
                 {\only<1->{$42$}}{}{}{}} \\
-            \bitboxes[]{3}{{}{}{\tikzmark{sfa}}{}{\only<5->{\tikzmark{sfb}}}{\only<1-4|handout:0>{\tikzmark{sfb}}}{}{}{}} \\
-            \bitboxes[]{3}{{}{}{\only<2->{$33$}}{}{\only<5->{\mintinline[fontsize=\smaller]{c}{last}}}{\only<1-4|handout:0>{\mintinline[fontsize=\smaller]{c}{last}}}{}{}{}}
+            \bitboxes[]{3}{{}{}{\tikzmark{sfa}}{}{\only<5->{\tikzmark{sfb}}}{\only<1-4>{\tikzmark{sfb}}}{}{}{}} \\
+            \bitboxes[]{3}{{}{}{\only<2->{$33$}}{}{\only<5->{\mintinline[fontsize=\smaller]{c}{last}}}{\only<1-4>{\mintinline[fontsize=\smaller]{c}{last}}}{}{}{}}
         \end{bytefield}
         \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
                 list item/.style={draw=gray, rounded corners, thick} %

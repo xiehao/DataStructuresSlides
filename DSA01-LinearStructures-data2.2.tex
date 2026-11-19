@@ -313,8 +313,8 @@
                 \bitbox[]{3}{\only<3>{\tikzmark{sii}}}\bitbox[]{4}{}
                 \bitbox[]{3}{\only<4->{\tikzmark{sii}}} \\
                 \bitbox[]{3}{}
-                \bitbox[]{3}{\only<2|handout:0>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
-                \bitbox[]{3}{\only<3|handout:0>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<2>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<3>{\mintinline[fontsize=\smaller]{c}{p}}}\bitbox[]{4}{}
                 \bitbox[]{3}{\only<4->{\mintinline[fontsize=\smaller]{c}{p}}}
             \end{bytefield}
             \begin{tikzpicture}[ >=stealth, thick, black!50, overlay, remember picture, %
@@ -326,7 +326,7 @@
                 \draw[->] ($({pic cs:{sib}})+(0,-0.03)$) to [out=0,in=180] ($({pic
                     cs:{tib}})+(0.26,-0.03)$);
                 \fill ($({pic cs:{sib}})+(0,-0.03)$) circle [radius=0.05];
-                \only<1-6|handout:0>{
+                \only<1-6>{
                     \draw[->] ($({pic cs:{sic}})+(0,-0.03)$) to [out=0,in=180] ($({pic
                         cs:{tic}})+(0.26,-0.03)$);
                 }
@@ -434,7 +434,7 @@
                 \bitbox[]{3}{$s:$}
                 \bitbox{3}{}\bitbox{2}{\tikzmark{sja}}\bitbox[]{2}{\tikzmark{tja}}
                 \bitbox{3}{$34$}\bitbox{2}{\tikzmark{sjb}}\bitbox[]{2}{\tikzmark{tjb}}
-                \uncover<1-5|handout:0>{\bitbox{3}{$23$}\bitbox{2}{\tikzmark{sjc}}}\bitbox[]{2}{\tikzmark{tjc}}
+                \uncover<1-5>{\bitbox{3}{$23$}\bitbox{2}{\tikzmark{sjc}}}\bitbox[]{2}{\tikzmark{tjc}}
                 \bitbox{3}{$67$}\bitbox{2}{\tikzmark{sjd}}\bitbox[]{2}{\tikzmark{tjd}}
                 \bitbox{3}{$43$}\bitbox{2}{\tikzmark{sje}} \\
                 \bitbox[]{3}{}
@@ -442,7 +442,7 @@
                 \bitbox[]{3}{\only<3->{\tikzmark{sji}}}\bitbox[]{4}{}
                 \bitbox[]{3}{\only<4->{\tikzmark{sjj}}} \\
                 \bitbox[]{3}{}
-                \bitbox[]{3}{\only<2|handout:0>{\mintinline[fontsize=\smaller]{c}{q}}}\bitbox[]{4}{}
+                \bitbox[]{3}{\only<2>{\mintinline[fontsize=\smaller]{c}{q}}}\bitbox[]{4}{}
                 \bitbox[]{3}{\only<3->{\mintinline[fontsize=\smaller]{c}{q}}}\bitbox[]{4}{}
                 \bitbox[]{3}{\only<4->{\mintinline[fontsize=\smaller]{c}{p}}}
             \end{bytefield}
@@ -452,12 +452,12 @@
                 \draw[->] ($({pic cs:{sja}})+(0,-0.03)$) to [out=0,in=180] ($({pic
                     cs:{tja}})+(0.26,-0.03)$);
                 \fill ($({pic cs:{sja}})+(0,-0.03)$) circle [radius=0.05];
-                \only<1-4|handout:0>{
+                \only<1-4>{
                     \draw[->] ($({pic cs:{sjb}})+(0,-0.03)$) to [out=0,in=180] ($({pic
                         cs:{tjb}})+(0.26,-0.03)$);
                 }
                 \fill ($({pic cs:{sjb}})+(0,-0.03)$) circle [radius=0.05];
-                \only<1-5|handout:0>{
+                \only<1-5>{
                     \draw[->] ($({pic cs:{sjc}})+(0,-0.03)$) to [out=0,in=180] ($({pic
                         cs:{tjc}})+(0.26,-0.03)$);
                     \fill ($({pic cs:{sjc}})+(0,-0.03)$) circle [radius=0.05];
@@ -476,7 +476,7 @@
                     \draw[->] ($({pic cs:{sji}})+(0,-0.35)$) to [out=90,in=-90] ($({pic
                         cs:{sji}})+(0,0.25)$);
                 }
-                \only<4-6|handout:0>{
+                \only<4-6>{
                     \draw[->] ($({pic cs:{sjj}})+(0,-0.35)$) to [out=90,in=-90] ($({pic
                         cs:{sjj}})+(0,0.25)$);
                 }

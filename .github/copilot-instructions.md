@@ -31,8 +31,9 @@ deck. `make handouts` builds all handouts.
   `*-data2.tex`, and numbered continuations) own the sections, subsections,
   frames, and animations. Keep this split when extending a chapter.
 - `initialization.tex` is the repository-wide presentation metadata.
-  `slide-config.tex` sets code font sizes and the 2x2 handout layout. Handouts
-  share the corresponding deck content and suppress thinking-question answers.
+  `slide-config.tex` sets code font sizes, block spacing and the 2x2 handout
+  layout. Handouts show animation steps separately; mark thinking-question
+  answers with `handout:0` so they remain hidden.
 - Slide styling and many environments/macros, including `standout`, `fragile`,
   `bicolumns`, and `algorithmx`, come from the external `cuzbeamer` class.
   Preserve the existing package and TikZ-library declarations in the deck
