@@ -13,6 +13,51 @@
     \end{alertblock}
 \end{frame}
 
+\begin{fragile}
+    \frametitle{\insertsectionhead}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[ >=stealth, thick, black!50, %
+                list item/.style={draw=gray, circle, thick}, %
+            ]
+            \node (a) [terminal] at (0,0) {$A$};
+            \node (b) [terminal] at ($(a.center)+(18:2)$) {$B$};
+            \node (c) [terminal] at ($(a.center)+(90:2)$) {$C$};
+            \node (d) [terminal] at ($(a.center)+(162:2)$) {$D$};
+            \node (e) [terminal] at ($(a.center)+(234:2)$) {$E$};
+            \node (f) [terminal] at ($(a.center)+(306:2)$) {$F$};
+            \only<-6>{\draw (a) to node [pos=0.5,] {$26$} (b);}
+            \only<7->{\draw[red,very thick] (a) to node [pos=0.5,] {$26$} (b);}
+            \only<-3>{\draw (a) to node [pos=0.5,] {$19$} (d);}
+            \only<4->{\draw[red,very thick] (a) to node [pos=0.5,] {$19$} (d);}
+            \only<-4>{\draw (a) to node [pos=0.5,] {$25$} (e);}
+            \only<5->{\draw[red,very thick] (a) to node [pos=0.5,] {$25$} (e);}
+            \only<-5,7->{\draw (a) to node [pos=0.5,] {$25$} (f);}
+            \only<6>{\draw[red,dashed] (a) to node [pos=0.5,] {$25$} (f);}
+            \only<1>{\draw (b) to node [pos=0.5,] {$12$} (c);}
+            \only<2->{\draw[red,very thick] (b) to node [pos=0.5,] {$12$} (c);}
+            \draw (c) to node [pos=0.5,] {$34$} (d);
+            \draw (d) to node [pos=0.5,] {$46$} (e);
+            \only<-2>{\draw (e) to node [pos=0.5,] {$17$} (f);}
+            \only<3->{\draw[red,very thick] (e) to node [pos=0.5,] {$17$} (f);}
+            \draw (f) to node [pos=0.5,] {$38$} (b);
+        \end{tikzpicture}
+        \caption{Kruskal算法示例过程}
+        \label{fig:demo_mst_kruskal}
+    \end{figure}
+    \begin{center}
+        \small
+        粗实线：已选边；红色虚线：当前检查但跳过的边。\\
+        \only<1>{初始时各顶点分别为一个分量；按边权递增检查。}
+        \only<2>{选中$BC(12)$，合并$B$与$C$所在分量。}
+        \only<3>{选中$EF(17)$，合并$E$与$F$所在分量。}
+        \only<4>{选中$AD(19)$，合并$A$与$D$所在分量。}
+        \only<5>{$AE$与$AF$同权，先选$AE(25)$，合并两个分量。}
+        \only<6>{跳过$AF(25)$：$A$与$F$已连通，加入会形成环。}
+        \only<7>{选中$AB(26)$；已有$5$条边，总权重为$99$。}
+    \end{center}
+\end{fragile}
+
 \begin{frame}
     \frametitle{\insertsectionhead}
     \begin{exampleblock}{前述网线铺设示例}

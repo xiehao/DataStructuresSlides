@@ -183,6 +183,17 @@
         \caption{Prim算法示例过程}
         \label{fig:demo_mst_prim}
     \end{figure}
+    \begin{center}
+        \small
+        粗实线：已选边；虚线：跨割边；红色虚线：下一条选中的边。\\
+        \only<1>{初始图：任选$A$作为起点。}
+        \only<2>{$V_a=\{A\}$；最小跨割边为$AD(19)$。}
+        \only<3>{选中$AD(19)$；$AE$与$AF$同为最小跨割边，任选$AE(25)$。}
+        \only<4>{选中$AE(25)$；最小跨割边为$EF(17)$。}
+        \only<5>{选中$EF(17)$；最小跨割边为$AB(26)$。}
+        \only<6>{选中$AB(26)$；最小跨割边为$BC(12)$。}
+        \only<7>{选中$BC(12)$；所有顶点已连通，总权重为$99$。}
+    \end{center}
 \end{fragile}
 
 \input{DSA03-NonLinearStructures-data4.1.tex}
