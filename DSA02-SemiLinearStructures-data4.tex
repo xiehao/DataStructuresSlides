@@ -6,6 +6,7 @@
         \begin{block}{二叉搜索树(Binary Search Tree, BST)}
             \begin{itemize}
                 \item 对任一结点，左子树的键均小于该结点的键，右子树的键均大于该结点的键
+                \item 这一约束适用于整棵子树，而不只是左右孩子
                 \item 左右子树也分别是二叉搜索树；这里假设键不重复
                 \item 中序遍历得到键的升序序列
             \end{itemize}
@@ -26,6 +27,23 @@
         \end{figure}
     }
 \end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：性质与查找路径}
+    \begin{block}{有序性}
+        \begin{itemize}
+            \item 示例树的中序序列为$5,10,18,21,22,25,30$
+            \item 最小键：从根不断向左；最大键：从根不断向右
+            \item 比较时可排除一整棵子树，无须逐个遍历所有结点
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{在示例树中查找}
+        \begin{itemize}
+            \item 查找$18$：$21\rightarrow10\rightarrow18$，成功
+            \item 查找$19$：$21\rightarrow10\rightarrow18\rightarrow\mathrm{NULL}$，失败
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
@@ -51,6 +69,77 @@
 \end{fragile}
 
 \begin{frame}
+    \frametitle{\insertsectionhead：插入}
+    \begin{block}{插入思路}
+        沿查找路径找到空指针，在该位置连接新叶结点；若键已存在，则不插入。
+        空树插入时，新结点成为根。
+    \end{block}
+    \begin{exampleblock}{依次在示例树中插入$19$与$23$}
+        \begin{itemize}
+            \item $19$：$21\rightarrow10\rightarrow18\rightarrow\mathrm{NULL}$，
+                  插为$18$的右孩子
+            \item $23$：$21\rightarrow25\rightarrow22\rightarrow\mathrm{NULL}$，
+                  插为$22$的右孩子
+            \item 再插入$18$：查找时发现已存在，树不变
+        \end{itemize}
+    \end{exampleblock}
+    新结点满足路径上各祖先的大小约束，因此插入后仍是二叉搜索树。
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：插入演示}
+    \bicolumns[0.4]{
+        \begin{block}{插入$23$}
+            \only<1>{$23>21$，向右查找。}
+            \only<2>{$23<25$，向左查找。}
+            \only<3>{$23>22$，右指针为空。}
+            \only<4>{创建$23$，接为$22$的右孩子。}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[every node/.style={terminal}]
+                \node (n21) at (0,0) {\alert<1>{$21$}};
+                \node (n10) at (-2,-1) {$10$};
+                \node (n25) at (2,-1) {\alert<2>{$25$}};
+                \node (n5) at (-3,-2) {$5$};
+                \node (n18) at (-1,-2) {$18$};
+                \node (n22) at (1,-2) {\alert<3>{$22$}};
+                \node (n30) at (3,-2) {$30$};
+                \draw (n21) -- (n10) (n21) -- (n25)
+                    (n10) -- (n5) (n10) -- (n18)
+                    (n25) -- (n22) (n25) -- (n30);
+                \only<4>{
+                    \node (n23) at (1.7,-3) {\alert<4>{$23$}};
+                    \draw (n22) -- (n23);
+                }
+            \end{tikzpicture}
+            \caption{插入结点$23$}
+            \label{fig:demo_bst_insert}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：插入算法}
+    \begin{algorithmx}[alg:bst_insert]{递归插入（键不重复）}
+        \Procedure{Insert}{$p,key$}
+        \If{$p=\mathrm{NULL}$}
+        \State \textbf{return} \Call{NewNode}{$key$}
+        \EndIf
+        \If{$key<p.key$}
+        \State $p.left\gets$ \Call{Insert}{$p.left,key$}
+        \ElsIf{$key>p.key$}
+        \State $p.right\gets$ \Call{Insert}{$p.right,key$}
+        \EndIf
+        \State \textbf{return} $p$
+        \EndProcedure
+    \end{algorithmx}
+    \Call{NewNode}{$key$}创建左右指针均为空的新结点。
+    初始调用时令$root\gets$\Call{Insert}{$root,key$}，以处理原树为空的情况。
+\end{fragile}
+
+\begin{frame}
     \frametitle{\insertsectionhead}
     \begin{block}{删除结点}
         \begin{enumerate}
@@ -60,26 +149,187 @@
                   再删除该后继结点；后继至多有一个孩子
         \end{enumerate}
     \end{block}
-    \begin{exampleblock}{例：删除上一图中的$21$}
-        中序后继为$22$；将根键替换为$22$，再删除原位置的叶结点$22$。
-        结果仍满足左小右大的性质。
+    \begin{exampleblock}{为何可以用中序后继替换？}
+        右子树中最小键大于左子树的所有键，也不大于右子树其他键；
+        该后继没有左孩子，因此删除后继转化为前两种情况。
     \end{exampleblock}
 \end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：删除示例}
+    \begin{block}{分别从原始示例树出发}
+        \begin{enumerate}
+            \item 删除叶结点$5$：将$10$的左指针置空
+            \item 先插入$19$，再删除$18$：将$10$的右指针改指向$19$
+            \item 先插入$23$，再删除$21$：后继为$22$
+        \end{enumerate}
+    \end{block}
+    \begin{exampleblock}{第三种情况的两个步骤}
+        \begin{enumerate}
+            \item 将根结点的键$21$替换为$22$
+            \item 删除原位置的$22$，将$25$的左指针改指向$23$
+        \end{enumerate}
+    \end{exampleblock}
+    删除只有至多一个孩子的根结点时，应更新根指针；若结点包含其他数据，
+    替换时需一并处理。
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：删除叶结点}
+    \bicolumns[0.4]{
+        \begin{block}{删除$5$}
+            \only<1>{$5<21$，向左查找。}
+            \only<2>{$5<10$，向左查找。}
+            \only<3>{找到$5$：它是叶结点。}
+            \only<4>{断开$10$的左指针，删除$5$。}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[every node/.style={terminal}]
+                \node (n21) at (0,0) {\alert<1>{$21$}};
+                \node (n10) at (-2,-1) {\alert<2,4>{$10$}};
+                \node (n25) at (2,-1) {$25$};
+                \node (n18) at (-1,-2) {$18$};
+                \node (n22) at (1,-2) {$22$};
+                \node (n30) at (3,-2) {$30$};
+                \draw (n21) -- (n10) (n21) -- (n25)
+                    (n10) -- (n18) (n25) -- (n22) (n25) -- (n30);
+                \only<1-3>{
+                    \node (n5) at (-3,-2) {\alert<3>{$5$}};
+                    \draw (n10) -- (n5);
+                }
+            \end{tikzpicture}
+            \caption{删除叶结点$5$}
+            \label{fig:demo_bst_delete_leaf}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：删除只有一个孩子的结点}
+    \bicolumns[0.4]{
+        \begin{block}{先插入$19$，再删除$18$}
+            \only<1>{$18<21$，向左查找。}
+            \only<2>{$18>10$，向右查找。}
+            \only<3>{找到$18$：它只有右孩子$19$。}
+            \only<4>{将$10$的右指针改指向$19$，删除$18$。}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[every node/.style={terminal}]
+                \node (n21) at (0,0) {\alert<1>{$21$}};
+                \node (n10) at (-2,-1) {\alert<2,4>{$10$}};
+                \node (n25) at (2,-1) {$25$};
+                \node (n5) at (-3,-2) {$5$};
+                \node (n22) at (1,-2) {$22$};
+                \node (n30) at (3,-2) {$30$};
+                \draw (n21) -- (n10) (n21) -- (n25)
+                    (n10) -- (n5) (n25) -- (n22) (n25) -- (n30);
+                \only<1-3>{
+                    \node (n18) at (-1,-2) {\alert<3>{$18$}};
+                    \node (n19) at (-0.3,-3) {$19$};
+                    \draw (n10) -- (n18) (n18) -- (n19);
+                }
+                \only<4>{
+                    \node (n19) at (-1,-2) {\alert<4>{$19$}};
+                    \draw (n10) -- (n19);
+                }
+            \end{tikzpicture}
+            \caption{删除只有一个孩子的$18$}
+            \label{fig:demo_bst_delete_one_child}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：删除有两个孩子的结点}
+    \bicolumns[0.4]{
+        \begin{block}{先插入$23$，再删除$21$}
+            \only<1>{找到$21$：它有两个孩子。}
+            \only<2>{在右子树中寻找最小键：从$25$向左。}
+            \only<3>{找到后继$22$；它有右孩子$23$。}
+            \only<4>{将根键替换为$22$；此时暂有两个$22$。}
+            \only<5>{删除原位置的$22$，将$25$的左指针改指向$23$。}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[every node/.style={terminal}]
+                \node (root) at (0,0) {\alt<4->{\alert<4>{$22$}}{\alert<1>{$21$}}};
+                \node (n10) at (-2,-1) {$10$};
+                \node (n25) at (2,-1) {\alert<2,5>{$25$}};
+                \node (n5) at (-3,-2) {$5$};
+                \node (n18) at (-1,-2) {$18$};
+                \node (n30) at (3,-2) {$30$};
+                \draw (root) -- (n10) (root) -- (n25)
+                    (n10) -- (n5) (n10) -- (n18) (n25) -- (n30);
+                \only<1-4>{
+                    \node (n22) at (1,-2) {\alert<3,4>{$22$}};
+                    \node (n23) at (1.7,-3) {$23$};
+                    \draw (n25) -- (n22) (n22) -- (n23);
+                }
+                \only<5>{
+                    \node (n23) at (1,-2) {\alert<5>{$23$}};
+                    \draw (n25) -- (n23);
+                }
+            \end{tikzpicture}
+            \caption{删除有两个孩子的$21$}
+            \label{fig:demo_bst_delete_two_children}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：删除后的结构}
+    \bicolumns[0.47]{
+        \begin{block}{删除$21$后}
+            \begin{itemize}
+                \item 根键变为$22$
+                \item 原后继的右孩子$23$接到$25$的左侧
+                \item 中序序列仍严格递增
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[level distance=6ex, level/.style={sibling distance=14ex/#1}]
+                \node[terminal] {$22$}
+                    child {node[terminal] {$10$}
+                        child {node[terminal] {$5$}}
+                        child {node[terminal] {$18$}}}
+                    child {node[terminal] {$25$}
+                        child {node[terminal] {$23$}}
+                        child {node[terminal] {$30$}}};
+            \end{tikzpicture}
+            \caption{先插入$23$，再删除$21$}
+        \end{figure}
+    }
+\end{fragile}
 
 \begin{frame}
     \frametitle{\insertsectionhead}
     \begin{block}{性能与取舍}
         \begin{itemize}
-            \item 查找、插入和删除沿树高$h$进行，时间均为$O(h)$
-            \item 高度平衡时$h=O(\log n)$；退化成链时$h=O(n)$
+            \item 对非空树，以最长根到叶路径的结点数计高度$h$；
+                  查找、插入和删除的时间均为$O(h)$
+            \item 树高为$O(\log n)$时操作为$O(\log n)$；退化成链时为$O(n)$
             \item 顺序插入$1,2,\ldots,n$可能产生退化树；平衡搜索树可控制高度
-            \item BST支持按序遍历和范围查询；普通散列表不保持键的顺序
+            \item 中序遍历全部$n$个结点需$O(n)$；BST支持有序遍历和范围查询
+            \item 普通散列表不保持键的顺序；普通BST也不保证树高平衡
         \end{itemize}
     \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：思考与自测}
     \begin{alertblock}{思考}
-        依次插入$21,10,25,18$后，中序遍历结果是什么？
+        从空树依次插入$21,10,25,18,23$。查找$19$经过哪些结点？
+        删除$21$后，新根是什么？中序序列是什么？
     \end{alertblock}
     \begin{block}<2-|handout:0>{参考答案}
-        $10,18,21,25$。
+        查找路径：$21\rightarrow10\rightarrow18\rightarrow\mathrm{NULL}$；
+        新根为$23$；中序序列为$10,18,23,25$。
     \end{block}
 \end{frame}
