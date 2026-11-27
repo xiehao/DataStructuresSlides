@@ -1,0 +1,167 @@
+\section{最短路径}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：问题与算法选择}
+    \begin{block}{最短路径}
+        路径长度为沿途边权之和。单源最短路径求给定起点到各顶点的最短距离；
+        全源最短路径求各顶点对之间的最短距离。
+    \end{block}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lll}
+            \toprule
+            算法 & 问题 & 边权条件 \\
+            \midrule
+            BFS & 单源 & 无权图（按边数）；或各边权相同且非负 \\
+            Dijkstra & 单源 & 非负权 \\
+            Bellman--Ford & 单源 & 可有负权；可检测源点可达负权环 \\
+            Floyd--Warshall & 全源 & 可有负权；可检测负权环 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \small 若从源点可达负权环且该环可到达目标，路径长度可无限降低，
+    不存在有限的最短路径。
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：Dijkstra算法}
+    \begin{block}{贪心思想与松弛(Relaxation)}
+        \begin{itemize}
+            \item $d[v]$是目前发现的从源点$s$到$v$的最短路径长度，
+                  初始$d[s]=0$，其余为$\infty$
+            \item 每次选取未确定顶点中$d$最小者$u$，将其距离确定
+            \item 对$u$的每条出边$(u,v)$，若$d[u]+w(u,v)<d[v]$，
+                  则更新$d[v]$并令$parent[v]=u$，称为松弛
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{为什么要求边权非负？}
+        未确定顶点的距离不小于$d[u]$，后续再经过非负权边无法得到更短的
+        到$u$的路径。负边可能破坏这一结论，不能使用Dijkstra。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：Dijkstra算法}
+    \begin{algorithmx}[alg:dijkstra]{单源最短路径（非负权）}
+        \Procedure{Dijkstra}{$G,s$}
+        \State 对所有顶点$v$：$d[v]\gets\infty$，$parent[v]\gets\mathrm{NULL}$
+        \State $d[s]\gets 0$，$S\gets\emptyset$
+        \While{存在$d[u]<\infty$的未确定顶点}
+        \State 选取未确定顶点中$d[u]$最小的$u$；$S\gets S\cup\{u\}$
+        \For{每条出边$(u,v)$，其中$v\notin S$}
+        \If{$d[u]+w(u,v)<d[v]$}
+        \State $d[v]\gets d[u]+w(u,v)$；$parent[v]\gets u$
+        \EndIf
+        \EndFor
+        \EndWhile
+        \State \textbf{return} $d,parent$
+        \EndProcedure
+    \end{algorithmx}
+    未确定顶点均为$\infty$时结束；它们从源点不可达。
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：Dijkstra逐步演示}
+    \bicolumns[0.48]{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[thick, black!50]
+                \node (a) [terminal] at (0,0) {\alert<2-3>{$A$}};
+                \node (b) [terminal] at (1.7,1) {\alert<6-7>{$B$}};
+                \node (c) [terminal] at (1.7,-1) {\alert<4-5>{$C$}};
+                \node (d) [terminal] at (3.4,1) {\alert<8-9>{$D$}};
+                \node (e) [terminal] at (3.4,-1) {\alert<10-11>{$E$}};
+                \node (f) [terminal] at (5.1,0) {\alert<12>{$F$}};
+                \only<1-2,5->{\draw (a) -- node[above] {$4$} (b);}
+                \only<3-4>{\draw[red,very thick] (a) -- node[above] {$4$} (b);}
+                \only<1-2>{\draw (a) -- node[below] {$2$} (c);}
+                \only<3->{\draw[red,very thick] (a) -- node[below] {$2$} (c);}
+                \only<1-4>{\draw (b) -- node[left] {$1$} (c);}
+                \only<5->{\draw[red,very thick] (b) -- node[left] {$1$} (c);}
+                \only<1-6>{\draw (b) -- node[above] {$5$} (d);}
+                \only<7->{\draw[red,very thick] (b) -- node[above] {$5$} (d);}
+                \only<1-4,7->{\draw (c) -- node[above left] {$8$} (d);}
+                \only<5-6>{\draw[red,very thick] (c) -- node[above left] {$8$} (d);}
+                \only<1-4,9->{\draw (c) -- node[below] {$10$} (e);}
+                \only<5-8>{\draw[red,very thick] (c) -- node[below] {$10$} (e);}
+                \only<1-8>{\draw (d) -- node[left] {$2$} (e);}
+                \only<9->{\draw[red,very thick] (d) -- node[left] {$2$} (e);}
+                \only<1-8,11->{\draw (d) -- node[above] {$6$} (f);}
+                \only<9-10>{\draw[red,very thick] (d) -- node[above] {$6$} (f);}
+                \only<1-10>{\draw (e) -- node[below] {$3$} (f);}
+                \only<11->{\draw[red,very thick] (e) -- node[below] {$3$} (f);}
+            \end{tikzpicture}
+            \caption{从$A$出发的无向带权图}
+            \label{fig:demo_dijkstra}
+        \end{figure}
+    }{
+        \centering
+        \small
+        \begin{tabular}{c|c|c}
+            顶点 & $d$ & 前驱 \\
+            \midrule
+            $A$ & $0$ & $-$ \\
+            $B$ & \only<1-2>{$\infty$}\only<3-4>{$4$}\only<5->{$3$}
+                & \only<1-2>{$-$}\only<3-4>{$A$}\only<5->{$C$} \\
+            $C$ & \only<1-2>{$\infty$}\only<3->{$2$}
+                & \only<1-2>{$-$}\only<3->{$A$} \\
+            $D$ & \only<1-4>{$\infty$}\only<5-6>{$10$}\only<7->{$8$}
+                & \only<1-4>{$-$}\only<5-6>{$C$}\only<7->{$B$} \\
+            $E$ & \only<1-4>{$\infty$}\only<5-8>{$12$}\only<9->{$10$}
+                & \only<1-4>{$-$}\only<5-8>{$C$}\only<9->{$D$} \\
+            $F$ & \only<1-8>{$\infty$}\only<9-10>{$14$}\only<11->{$13$}
+                & \only<1-8>{$-$}\only<9-10>{$D$}\only<11->{$E$} \\
+        \end{tabular}
+    }
+    \begin{center}
+        \small
+        红色粗边：当前前驱边；橙色顶点：当前选中顶点。\\
+        \only<1>{初始化：$d[A]=0$，其余为$\infty$，已确定集合$S=\emptyset$。}
+        \only<2>{选最小距离顶点$A$，确定$d[A]=0$；$S=\{A\}$。}
+        \only<3>{松弛$A$的邻边：$d[B]=4$，$d[C]=2$。}
+        \only<4>{选$C$，确定$d[C]=2$；$S=\{A,C\}$。}
+        \only<5>{松弛$C$的邻边：$d[B]=3$，$d[D]=10$，$d[E]=12$。}
+        \only<6>{选$B$，确定$d[B]=3$；$S=\{A,C,B\}$。}
+        \only<7>{松弛$B$的邻边：$d[D]$由$10$降为$3+5=8$。}
+        \only<8>{选$D$，确定$d[D]=8$；$S=\{A,C,B,D\}$。}
+        \only<9>{松弛$D$的邻边：$d[E]=10$，$d[F]=14$。}
+        \only<10>{选$E$，确定$d[E]=10$；$S=\{A,C,B,D,E\}$。}
+        \only<11>{松弛$E$的邻边：$d[F]$由$14$降为$10+3=13$。}
+        \only<12>{选$F$，确定$d[F]=13$；全部顶点已确定。}
+    \end{center}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：结果与性能}
+    \begin{exampleblock}{从$A$到$F$}
+        沿前驱回溯：$F\leftarrow E\leftarrow D\leftarrow B\leftarrow C\leftarrow A$；
+        反向得到$A\rightarrow C\rightarrow B\rightarrow D\rightarrow E\rightarrow F$，
+        最短距离为$2+1+5+2+3=13$。
+    \end{exampleblock}
+    \begin{block}{时间与空间（$n$个顶点，$e$条边）}
+        \begin{itemize}
+            \item 邻接矩阵加线性选点：$O(n^2)$时间，$O(n^2)$空间
+            \item 邻接表加索引堆：$O((n+e)\log n)$时间，$O(n+e)$空间
+            \item 若有相同距离，可任选最小者；不同前驱可能得到不同最短路径
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：其他算法与自测}
+    \begin{block}{其他算法}
+        \begin{itemize}
+            \item Bellman--Ford：反复松弛所有边至多$n-1$轮；再检查一轮，
+                  若源点可达的边仍可松弛，则存在源点可达负权环；时间$O(ne)$
+            \item Floyd--Warshall：依次允许各顶点作为中间点，更新顶点对距离；
+                  时间$O(n^3)$、空间$O(n^2)$；结束后负的对角距离表示存在负权环
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{思考}
+        若带权图出现负边，应直接使用Dijkstra吗？从$A$到$F$的最短距离是多少？
+    \end{alertblock}
+    \begin{block}<2-|handout:0>{参考答案}
+        不应；可考虑Bellman--Ford并检查负权环。示例中$A$到$F$的距离为$13$。
+    \end{block}
+\end{frame}
