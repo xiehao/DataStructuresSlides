@@ -51,6 +51,9 @@
     \end{alertblock}
 \end{frame}
 
+\input{DSA04-BasicAlgorithms-data1-merge.tex}
+\input{DSA04-BasicAlgorithms-data1-distribution.tex}
+
 \begin{frame}
     \frametitle{\insertsectionhead}
     \begin{table}
@@ -62,13 +65,35 @@
             算法 & 最好时间 & 最坏时间 & 辅助空间 & 稳定 \\
             \midrule
             直接插入 & $O(n)$ & $O(n^2)$ & $O(1)$ & 是 \\
+            希尔（折半增量） & $O(n\log n)$ & $O(n^2)$ & $O(1)$ & 否 \\
             直接选择 & $O(n^2)$ & $O(n^2)$ & $O(1)$ & 否 \\
+            堆排序 & $O(n\log n)$ & $O(n\log n)$ & $O(1)$ & 否 \\
             快速排序 & $O(n\log n)$ & $O(n^2)$ & $O(n)$ & 否 \\
             归并排序 & $O(n\log n)$ & $O(n\log n)$ & $O(n)$ & 是 \\
             \bottomrule
         \end{tabular}
     \end{table}
-    \small 快速排序表中空间为所示递归实现的最坏情况；稳定性取决于具体实现。
+    \small 希尔复杂度依赖增量序列；快速排序空间为所示递归实现的最坏情况。
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：分配类算法比较}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lccc}
+            \toprule
+            算法 & 时间 & 辅助空间 & 稳定 \\
+            \midrule
+            桶排序 & 期望$O(n+k)$；最坏$O(n^2+n+k)$ & $O(n+k)$ & 可稳定 \\
+            计数排序 & $O(n+k)$ & $O(n+k)$ & 可稳定 \\
+            基数排序 & $O(d(n+b))$ & $O(n+b)$ & 可稳定 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \small 桶排序假设独立均匀分布、$k=\Theta(n)$、桶内用插入排序；
+    $k$分别指桶数或键值范围大小，$d$为位数、$b$为基数。
+    稳定性取决于桶内及逐位排序方式。
 \end{frame}
 
 \begin{frame}

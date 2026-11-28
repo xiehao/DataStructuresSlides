@@ -1,0 +1,170 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：桶排序（分配类）}
+    \begin{block}{基本思想}
+        \begin{itemize}
+            \item 将键值范围划分为若干有序且互不重叠的区间，每个区间对应一个桶
+            \item 把记录按键分配到桶内，对每个桶分别排序，再按区间顺序连接
+            \item 若分配保持输入顺序且桶内排序稳定，则整个排序稳定
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{适用条件}
+        适合可按范围分桶且分布较均匀的数据；大量元素集中到同一桶时，
+        桶内排序可能退化。本例假定键为$10$至$29$的整数。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：桶排序算法}
+    \begin{algorithmx}[alg:bucket_sort]{有序区间分桶}
+        \Procedure{BucketSort}{$s,n,k$}
+        \State 按键值范围建立$k$个有序区间及对应空桶，输出序列置空
+        \For{依次取每条记录$x$}
+        \State 将$x$追加到其键所在区间的桶
+        \EndFor
+        \For{各桶$B_i$，按区间从小到大}
+        \State 对$B_i$做稳定插入排序
+        \State 将$B_i$依次追加到输出序列
+        \EndFor
+        \State \textbf{return} 输出序列
+        \EndProcedure
+    \end{algorithmx}
+    \small 分桶规则须覆盖所有输入键，且区间有序、不重叠。
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：桶排序逐步演示}
+    \begin{exampleblock}{统一实例：$21,25_a,22,10,25_b,18$}
+        \centering
+        \begin{tabular}{c|l}
+            桶区间 & 当前桶内容 \\
+            \midrule
+            $[10,19]$ &
+                \only<1-3>{$-$}\only<4-5>{$10$}\only<6->{$10,18$} \\
+            $[20,29]$ &
+                \only<1>{$21$}\only<2>{$21,25_a$}
+                \only<3-4>{$21,25_a,22$}\only<5-6>{$21,25_a,22,25_b$}
+                \only<7->{$21,22,25_a,25_b$} \\
+        \end{tabular}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{将$21$放入$[20,29]$桶。}
+        \only<2>{将$25_a$放入$[20,29]$桶。}
+        \only<3>{将$22$放入$[20,29]$桶。}
+        \only<4>{将$10$放入$[10,19]$桶。}
+        \only<5>{将$25_b$放入$[20,29]$桶。}
+        \only<6>{将$18$放入$[10,19]$桶，分配完成。}
+        \only<7>{桶内用稳定插入排序：$22$移至$25_a$之前。}
+        \only<8>{按桶序连接：$10,18,21,22,25_a,25_b$。}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：计数排序（分配类）}
+    \begin{block}{基本思想：整数键}
+        \begin{itemize}
+            \item 统计每个键的出现次数，计算不大于各键的累计次数
+            \item 按累计次数确定输出位置；从右向左扫描输入可保持同键记录次序
+            \item 键范围$[L,U]$的大小为$k=U-L+1$，数组下标可用$key-L$
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{适用条件}
+        时间与空间均为$O(n+k)$；键的取值范围过大时，计数数组可能不划算。
+        只输出键的简单计数实现不一定能保留关联记录或稳定性。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：计数排序算法}
+    \begin{algorithmx}[alg:counting_sort]{稳定计数排序}
+        \Procedure{CountingSort}{$s,n,L,U$}
+        \State 初始化$C[0\ldots U-L]\gets0$及长度为$n$的输出数组$out$
+        \For{依次取每条记录$x$}
+        \State $C[x.key-L]\gets C[x.key-L]+1$
+        \EndFor
+        \For{$j\gets1$ \textbf{to} $U-L$}
+        \State $C[j]\gets C[j]+C[j-1]$
+        \EndFor
+        \For{$i\gets n-1$ \textbf{downto} $0$}
+        \State $j\gets s_i.key-L$；$C[j]\gets C[j]-1$
+        \State $out_{C[j]}\gets s_i$
+        \EndFor
+        \State \textbf{return} $out$
+        \EndProcedure
+    \end{algorithmx}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：计数排序逐步演示}
+    \begin{exampleblock}{统一实例：范围$[10,25]$，其他计数为零}
+        \centering
+        \begin{tabular}{c|ccccc}
+            键 & $10$ & $18$ & $21$ & $22$ & $25$ \\
+            \midrule
+            次数 & $1$ & $1$ & $1$ & $1$ & $2$ \\
+            剩余累计 & \only<1-3>{$1$}\only<4->{$0$}
+                & \only<1>{$2$}\only<2->{$1$}
+                & \only<1-6>{$3$}\only<7->{$2$}
+                & \only<1-4>{$4$}\only<5->{$3$}
+                & \only<1-2>{$6$}\only<3-5>{$5$}\only<6->{$4$} \\
+        \end{tabular}
+    \end{exampleblock}
+    \begin{block}{从右向左放入输出数组（下标$0$至$5$）}
+        \centering
+        \only<1>{$(-,-,-,-,-,-)$：累计次数为初值，每放一项就将对应值减$1$。}
+        \only<2>{$(-,18,-,-,-,-)$：放入$18$。}
+        \only<3>{$(-,18,-,-,-,25_b)$：放入$25_b$。}
+        \only<4>{$(10,18,-,-,-,25_b)$：放入$10$。}
+        \only<5>{$(10,18,-,22,-,25_b)$：放入$22$。}
+        \only<6>{$(10,18,-,22,25_a,25_b)$：放入$25_a$。}
+        \only<7>{$(10,18,21,22,25_a,25_b)$：放入$21$，完成。}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：基数排序（分配类）}
+    \begin{block}{低位优先(LSD)基数排序}
+        \begin{itemize}
+            \item 将键按固定进制拆成位，从最低位到最高位依次排序
+            \item 每一轮按当前位做\textbf{稳定}排序，保留低位已形成的次序
+            \item 对非负整数可按十进制各位分配；不同长度可在高位补$0$
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{性能与限制}
+        $d$位、基数$b$时，使用稳定计数排序每轮需$O(n+b)$，
+        总时间$O(d(n+b))$，辅助空间$O(n+b)$；负数需额外约定编码或处理方式。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：基数排序算法}
+    \begin{algorithmx}[alg:radix_sort]{非负整数的低位优先基数排序}
+        \Procedure{RadixSort}{$s,n,d,b$}
+        \For{$p\gets0$ \textbf{to} $d-1$}
+        \State $s\gets$按第$p$位对$s$做稳定计数排序的结果
+        \State \Comment{第$p$位为$\lfloor key/b^p\rfloor\bmod b$}
+        \EndFor
+        \State \textbf{return} $s$
+        \EndProcedure
+    \end{algorithmx}
+    \small 位数$d$须覆盖所有键；每一轮排序必须使用上一轮得到的记录顺序。
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：基数排序逐步演示}
+    \begin{exampleblock}{统一实例：按十进制从个位到十位}
+        \centering
+        \only<1>{$21,25_a,22,10,25_b,18$}
+        \only<2>{个位桶：$0:(10)$；$1:(21)$；$2:(22)$；
+                 $5:(25_a,25_b)$；$8:(18)$}
+        \only<3>{$10,21,22,25_a,25_b,18$}
+        \only<4>{十位桶：$1:(10,18)$；$2:(21,22,25_a,25_b)$}
+        \only<5>{$10,18,21,22,25_a,25_b$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{准备按个位分配；每个桶保留输入次序。}
+        \only<2>{按个位分桶，同桶中的$25_a$仍在$25_b$之前。}
+        \only<3>{按桶号连接，完成个位排序。}
+        \only<4>{按十位稳定分桶，保留上一轮的相对次序。}
+        \only<5>{按桶号连接，完成排序。}
+    \end{block}
+\end{frame}

@@ -1,0 +1,18 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：归并排序逐步演示}
+    \begin{exampleblock}{统一实例：拆分与合并}
+        \centering
+        \only<1>{$21,25_a,22,10,25_b,18$}
+        \only<2>{$(21,25_a,22)\quad(10,25_b,18)$}
+        \only<3>{$(21)\ (25_a)\ (22)\quad(10)\ (25_b)\ (18)$}
+        \only<4>{$(21,22,25_a)\quad(10,18,25_b)$}
+        \only<5>{$(10,18,21,22,25_a,25_b)$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{将原序列递归拆成较小区间。}
+        \only<2>{左右两半继续拆分。}
+        \only<3>{单元素区间天然有序，自底向上合并。}
+        \only<4>{两半分别归并完成。}
+        \only<5>{合并两半；相等时先取左侧$25_a$，保持稳定。}
+    \end{block}
+\end{frame}

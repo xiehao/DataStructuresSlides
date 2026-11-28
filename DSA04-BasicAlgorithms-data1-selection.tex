@@ -1,0 +1,102 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：直接选择逐步演示}
+    \begin{exampleblock}{统一实例：$21,25_a,22,10,25_b,18$}
+        \centering
+        \only<1>{$()\mid21,25_a,22,10,25_b,18$}
+        \only<2>{$(10)\mid25_a,22,21,25_b,18$}
+        \only<3>{$(10,18)\mid22,21,25_b,25_a$}
+        \only<4>{$(10,18,21)\mid22,25_b,25_a$}
+        \only<5>{$(10,18,21,22,25_b,25_a)$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{竖线左侧为有序区；从未排序部分选最小值。}
+        \only<2>{选$10$，与首元素$21$交换。}
+        \only<3>{选$18$，与$25_a$交换；两条$25$记录的先后次序改变。}
+        \only<4>{选$21$，与$22$交换。}
+        \only<5>{其余位置无需改变，得到有序序列；此实现不稳定。}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：堆排序（选择类）}
+    \begin{block}{最大堆与排序}
+        \begin{itemize}
+            \item 最大堆中每个父结点的键不小于其孩子，根是当前最大值
+            \item 将数组原地建成最大堆；交换堆顶与末尾，将最大值移入有序区
+            \item 缩小堆并向下调整堆顶，重复至堆中只剩一个元素
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{性能与稳定性}
+        建堆$O(n)$，排序时间$O(n\log n)$，辅助空间$O(1)$；
+        跨位置交换可能改变同键次序，因此不稳定。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：最大堆的数组与树}
+    \bicolumns[0.48]{
+        \begin{block}{建堆后的数组}
+            $25_a,25_b,22,10,21,18$
+            \begin{itemize}
+                \item 下标从$0$开始；下标$i$的孩子为$2i+1,2i+2$
+                \item 本例调整时若孩子同键，优先选择左孩子
+            \end{itemize}
+        \end{block}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[level distance=6ex, level/.style={sibling distance=14ex/#1}]
+                \node[terminal] {$25_a$}
+                    child {node[terminal] {$25_b$}
+                        child {node[terminal] {$10$}}
+                        child {node[terminal] {$21$}}}
+                    child {node[terminal] {$22$}
+                        child {node[terminal] {$18$}}
+                        child [missing]};
+            \end{tikzpicture}
+            \caption{统一实例的最大堆}
+            \label{fig:demo_sort_max_heap}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：堆排序算法}
+    \begin{algorithmx}[alg:heap_sort]{原地最大堆排序}
+        \Procedure{HeapSort}{$s,n$}
+        \For{$i\gets\lfloor n/2\rfloor-1$ \textbf{downto} $0$}
+        \State \Call{SiftDown}{$s,i,n$}
+        \EndFor
+        \For{$end\gets n-1$ \textbf{downto} $1$}
+        \State 交换$s_0,s_{end}$
+        \State \Call{SiftDown}{$s,0,end$}
+        \EndFor
+        \EndProcedure
+    \end{algorithmx}
+    \small \Call{SiftDown}{$s,i,m$}在下标$[0,m)$中向下调整：
+    比较两个孩子并选较大者（同键选左）；若其键大于当前结点则交换并继续，
+    否则结束。孩子不存在时直接结束。
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：堆排序逐步演示}
+    \begin{exampleblock}{统一实例：数组形式的最大堆}
+        \centering
+        \only<1>{$21,25_a,22,10,25_b,18$}
+        \only<2>{$25_a,25_b,22,10,21,18\mid()$}
+        \only<3>{$25_b,21,22,10,18\mid25_a$}
+        \only<4>{$22,21,18,10\mid25_b,25_a$}
+        \only<5>{$21,10,18\mid22,25_b,25_a$}
+        \only<6>{$18,10\mid21,22,25_b,25_a$}
+        \only<7>{$10\mid18,21,22,25_b,25_a$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{从最后一个非叶结点向前调整，构建最大堆。}
+        \only<2>{建堆完成；下标$i$的孩子为$2i+1,2i+2$。竖线右侧为有序区。}
+        \only<3>{移出堆顶$25_a$，调整剩余堆。}
+        \only<4>{移出堆顶$25_b$，调整剩余堆。}
+        \only<5>{移出堆顶$22$，调整剩余堆。}
+        \only<6>{移出堆顶$21$；剩余堆已满足最大堆性质。}
+        \only<7>{移出堆顶$18$，排序结束；$25_b$排在$25_a$之前。}
+    \end{block}
+\end{frame}

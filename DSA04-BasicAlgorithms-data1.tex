@@ -93,12 +93,11 @@
                 \toprule
                 \textbf{算法}                   & \textbf{特点}              \\
                 \midrule
-                插入类：\alert{直接插入}              & \multirow{2}{*}{顺序比较、简单} \\
-                选择类：\alert{直接选择}、\alert{冒泡}、堆 &                          \\
-                \midrule
-                \alert{快速}、归并                 & 分治策略                     \\
-                \midrule
-                希尔、桶、基数                       & 其他                       \\
+                插入类：直接插入、希尔             & 有序区间或分组插入 \\
+                选择类：直接选择、堆               & 反复选取极值 \\
+                交换类：快速                      & 划分并递归处理 \\
+                归并类：归并                      & 合并有序子序列 \\
+                分配类：桶、计数、基数             & 按键值范围或位数分配 \\
                 \bottomrule
             \end{tabular}
         \end{table}
@@ -199,6 +198,8 @@
     \end{block}
 \end{frame}
 
+\input{DSA04-BasicAlgorithms-data1-insertion.tex}
+
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \small
@@ -250,8 +251,6 @@
     \end{block}
     \begin{block}{可选思路}
         \begin{itemize}
-            \item \textbf{冒泡排序}：通过逐个交换相邻元素的方式\alert{选出}键最
-                  小元素
             \item \textbf{直接选择排序}：按前驱后继顺序依次遍历子序列元
                   素，\alert{找出}键最小元素
             \item \textbf{堆排序}：采用\alert{优先队列}组织无序子序列
@@ -272,6 +271,8 @@
         \end{itemize}
     \end{block}
 \end{frame}
+
+\input{DSA04-BasicAlgorithms-data1-selection.tex}
 
 \begin{fragile}
     \frametitle{\insertsectionhead}
@@ -375,16 +376,5 @@
     \end{block}
 \end{frame}
 
-\begin{frame}
-    \frametitle{\insertsectionhead}
-    \begin{alertblock}{各种排序算法的取舍}
-        \begin{itemize}
-            \item 问题规模较小：直接选择排序、直接插入排序等；具体阈值取决于
-                  数据、实现与运行环境
-            \item 问题规模略大：快速排序、归并排序、堆排序等
-            \item 当需要多键排序时，宜选用稳定算法：直接插入排序、归并排序等
-        \end{itemize}
-    \end{alertblock}
-\end{frame}
-
+\input{DSA04-BasicAlgorithms-data1-quick.tex}
 \input{DSA04-BasicAlgorithms-data1.1.tex}

@@ -1,0 +1,18 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：快速排序逐步演示}
+    \begin{exampleblock}{统一实例：每次划分后}
+        \centering
+        \only<1>{$21,25_a,22,10,25_b,18$}
+        \only<2>{$18,10,\alert{21},22,25_b,25_a$}
+        \only<3>{$10,\alert{18},21,22,25_b,25_a$}
+        \only<4>{$10,18,21,\alert{22},25_b,25_a$}
+        \only<5>{$10,18,21,22,25_a,\alert{25_b}$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{每次选当前区间首元素为支点；先处理左区间。}
+        \only<2>{以$21$划分，支点归位；左右区间分别为$18,10$与$22,25_b,25_a$。}
+        \only<3>{以$18$划分左区间，支点归位。}
+        \only<4>{以$22$划分右区间，支点归位。}
+        \only<5>{以$25_b$划分剩余区间，排序结束；此实现不保证稳定。}
+    \end{block}
+\end{frame}

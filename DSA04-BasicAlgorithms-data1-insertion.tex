@@ -1,0 +1,75 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：直接插入逐步演示}
+    \begin{exampleblock}{统一实例：$21,25_a,22,10,25_b,18$}
+        \centering
+        \only<1>{$(21)\mid25_a,22,10,25_b,18$}
+        \only<2>{$(21,25_a)\mid22,10,25_b,18$}
+        \only<3>{$(21,22,25_a)\mid10,25_b,18$}
+        \only<4>{$(10,21,22,25_a)\mid25_b,18$}
+        \only<5>{$(10,21,22,25_a,25_b)\mid18$}
+        \only<6>{$(10,18,21,22,25_a,25_b)$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{首元素构成有序区间；竖线左侧为已排序部分。}
+        \only<2>{插入$25_a$；原序不变。}
+        \only<3>{插入$22$，将$25_a$后移。}
+        \only<4>{插入$10$，将较大元素后移。}
+        \only<5>{插入$25_b$；相等时放在$25_a$之后。}
+        \only<6>{插入$18$，排序结束；$25_a$仍在$25_b$之前。}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：希尔排序（插入类）}
+    \begin{block}{基本思想}
+        \begin{itemize}
+            \item 先按增量$g$将相距$g$的元素分组，各组分别做直接插入排序
+            \item 逐步缩小增量，最后令$g=1$，对全序列做直接插入排序
+            \item 示例采用折半增量$3,1$；不同增量序列的性能可能不同
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{性能与稳定性}
+        折半增量的最坏时间为$O(n^2)$、辅助空间$O(1)$；
+        跨组移动可能改变相等键的次序，故不稳定。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：希尔排序算法}
+    \begin{algorithmx}[alg:shell_sort]{折半增量希尔排序}
+        \Procedure{ShellSort}{$s,n$}
+        \State $g\gets\lfloor n/2\rfloor$
+        \While{$g>0$}
+        \For{$i\gets g$ \textbf{to} $n-1$}
+        \State $x\gets s_i$；$j\gets i$
+        \While{$j\geq g$ \textbf{and} $s_{j-g}.key>x.key$}
+        \State $s_j\gets s_{j-g}$；$j\gets j-g$
+        \EndWhile
+        \State $s_j\gets x$
+        \EndFor
+        \State $g\gets\lfloor g/2\rfloor$
+        \EndWhile
+        \EndProcedure
+    \end{algorithmx}
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：希尔排序逐步演示}
+    \begin{exampleblock}{统一实例：$21,25_a,22,10,25_b,18$}
+        \centering
+        \only<1>{$21,25_a,22,10,25_b,18$}
+        \only<2>{$10,25_a,22,21,25_b,18$}
+        \only<3>{$10,25_a,18,21,25_b,22$}
+        \only<4>{$10,18,25_a,21,25_b,22$}
+        \only<5>{$10,18,21,25_a,25_b,22$}
+        \only<6>{$10,18,21,22,25_a,25_b$}
+    \end{exampleblock}
+    \begin{block}{当前操作}
+        \only<1>{$g=3$；分组下标为$(0,3),(1,4),(2,5)$。}
+        \only<2>{第$(0,3)$组插入$10$；第$(1,4)$组无需移动。}
+        \only<3>{第$(2,5)$组插入$18$；$g=3$的各组均已排好。}
+        \only<4>{$g=1$；从左到右插入，$18$移至$25_a$之前。}
+        \only<5>{插入$21$；插入$25_b$时无需移动。}
+        \only<6>{插入$22$，全序列有序；本例未改变同键顺序，不代表算法稳定。}
+    \end{block}
+\end{frame}
