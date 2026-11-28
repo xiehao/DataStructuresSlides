@@ -1,0 +1,133 @@
+\begin{frame}
+    \frametitle{\insertsectionhead：平均查找长度}
+    \begin{block}{平均查找长度(Average Search Length, ASL)}
+        \begin{itemize}
+            \item 衡量一次查找所需的\textbf{关键字比较次数的期望}
+            \item 本节将与一个非空结点的键作一次三路比较计为$1$次；
+                  根结点深度为$0$，不把空指针检查计入
+            \item 成功查找结点$i$的概率为$p_i$，深度为$d_i$：
+                  \[
+                      ASL_{\mathrm{成功}}=\sum_{i=1}^{n}p_i(d_i+1),
+                      \qquad \sum_{i=1}^{n}p_i=1
+                  \]
+        \end{itemize}
+    \end{block}
+    \small 若各键等概率被查找，则$p_i=1/n$；不同概率可能改变平均代价。
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：成功查找长度实例}
+    \begin{exampleblock}{原图书目录示例：七个编号等概率查找}
+        \begin{itemize}
+            \item 根$21$：比较$1$次；$10,25$：各比较$2$次
+            \item $5,18,22,30$：各比较$3$次
+        \end{itemize}
+        \[
+            ASL_{\mathrm{成功}}
+            =\frac{1+2\times2+4\times3}{7}
+            =\frac{17}{7}\approx2.43
+        \]
+    \end{exampleblock}
+    \begin{block}{对比退化树}
+        相同七个键按升序插入会形成链；等概率成功查找时
+        $ASL=(1+2+\cdots+7)/7=4$，最坏需比较$7$次。
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：失败查找长度}
+    \begin{block}{按查找失败的位置计算}
+        \begin{itemize}
+            \item 排序后的$n$个键将键域划分为$n+1$个失败区间，
+                  对应搜索到的空指针
+            \item 若在\textbf{已知查找失败}的条件下，落入第$j$个区间的概率为
+                  $q_j$，到该空指针之前比较$c_j$个非空结点：
+                  \[
+                      ASL_{\mathrm{失败}}=\sum_{j=0}^{n}q_jc_j,\qquad
+                      \sum_{j=0}^{n}q_j=1
+                  \]
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{原七结点示例}
+        八个空指针前都经过$3$个结点；无论失败区间的概率如何分布，
+        $ASL_{\mathrm{失败}}=3$。若混合成功和失败查询，需按两类概率再加权。
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：如何改善平衡性？}
+    \begin{block}{AVL树}
+        \begin{itemize}
+            \item 对每个结点定义平衡因子$BF=h_{\mathrm{左}}-h_{\mathrm{右}}$；
+                  AVL树要求每个结点的$BF\in\{-1,0,1\}$
+            \item 插入或删除后，沿受影响路径检查高度，通过单旋转或双旋转恢复平衡
+            \item 高度为$O(\log n)$，查找、插入、删除的最坏时间均为$O(\log n)$
+        \end{itemize}
+    \end{block}
+    \begin{alertblock}{旋转的作用}
+        局部调整父子关系以降低过高子树的高度，保持中序键序不变；
+        不能仅在建树时平衡一次就保证后续更新仍平衡。
+    \end{alertblock}
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsectionhead：AVL单旋转示例}
+    \bicolumns[0.45]{
+        \begin{block}{依次插入$10,18,21$}
+            \only<1>{普通BST沿右侧增长，根$10$的平衡因子为$-2$。}
+            \only<2>{右子树的右侧过高：以$10$为支点左旋，提升$18$。}
+            \only<3>{$18$成为根，$10$与$21$分别为左右孩子。}
+        \end{block}
+        \begin{exampleblock}{等概率成功查找}
+            \only<1-2>{旋转前：$ASL=(1+2+3)/3=2$。}
+            \only<3>{旋转后：$ASL=(1+2+2)/3=5/3$。}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[every node/.style={terminal}]
+                \only<1-2>{
+                    \node (n10) at (0,0) {\alert<2>{$10$}};
+                    \node (n18) at (1,-1) {\alert<2>{$18$}};
+                    \node (n21) at (2,-2) {$21$};
+                    \draw (n10) -- (n18) (n18) -- (n21);
+                }
+                \only<3>{
+                    \node (n18) at (1,0) {\alert<3>{$18$}};
+                    \node (n10) at (0,-1) {$10$};
+                    \node (n21) at (2,-1) {$21$};
+                    \draw (n18) -- (n10) (n18) -- (n21);
+                }
+            \end{tikzpicture}
+            \caption{左旋前后的搜索树}
+            \label{fig:demo_avl_rotation}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：其他平衡方案}
+    \begin{block}{红黑树(Red--Black Tree)}
+        通过结点着色约束路径高度；插入、删除时用变色和旋转维护约束。
+        高度为$O(\log n)$，查找与更新最坏均为$O(\log n)$；
+        平衡条件比AVL树宽松。
+    \end{block}
+    \begin{block}{B树与B$+$树}
+        允许一个结点保存多个键和多个孩子，通过分裂、合并等操作维持平衡；
+        常用于磁盘或数据库索引，利用高分支数减少树高与磁盘访问。
+        它们不是二叉树。
+    \end{block}
+    \small 平衡方案控制最坏树高，但并不保证任意访问概率下的ASL最小。
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：平均查找长度自测}
+    \begin{alertblock}{思考}
+        一棵搜索树根为$10$，右孩子为$18$，$18$的右孩子为$21$。
+        若成功查找三个键的概率分别为$1/2,1/4,1/4$，成功ASL是多少？
+    \end{alertblock}
+    \begin{block}<2-|handout:0>{参考答案}
+        $ASL_{\mathrm{成功}}=\frac12\times1+\frac14\times2+
+        \frac14\times3=\frac74=1.75$次。
+    \end{block}
+\end{frame}

@@ -1,0 +1,81 @@
+\begin{frame}
+    \frametitle{\insertsubsectionhead：解码方法}
+    \begin{block}{沿编码树逐位解码}
+        \begin{enumerate}
+            \item 发送方和接收方使用同一棵编码树，指针从根开始
+            \item 依次读入一位：$0$走左子树，$1$走右子树
+            \item 到达叶结点时输出对应符号，指针回到根，继续读取
+            \item 完整码流结束时应回到根；若路径不存在或停在内部结点，需报错
+        \end{enumerate}
+    \end{block}
+    \begin{exampleblock}{为何不用分隔符？}
+        符号只位于叶结点，因此任何编码都不是另一个编码的前缀；
+        到达叶结点即可确定一个符号。
+    \end{exampleblock}
+    \small 若实际字节末尾有填充位，须另行记录有效位数或符号数。
+\end{frame}
+
+\begin{fragile}
+    \frametitle{\insertsubsectionhead：逐位解码示例}
+    \bicolumns[0.45]{
+        \begin{block}{码流：\texttt{\alert<2>{0}\alert<3>{0}\alert<4>{1}\alert<5>{1}%
+                    \alert<6>{0}\alert<7>{1}\alert<8>{1}\alert<9>{0}}}
+            \only<1>{从根开始，尚未读位。}
+            \only<2>{读$0$，到结点$38$。}
+            \only<3>{读$0$，到叶$A$；输出$A$，回到根。}
+            \only<4>{读$1$，到结点$62$。}
+            \only<5>{读$1$，到叶$B$；输出$B$，回到根。}
+            \only<6>{读$0$，到结点$38$。}
+            \only<7>{读$1$，到结点$20$。}
+            \only<8>{读$1$，到结点$10$。}
+            \only<9>{读$0$，到叶$F$；输出$F$，回到根。}
+        \end{block}
+        \begin{exampleblock}{已输出}
+            \only<1-2>{空}
+            \only<3-4>{$A$}
+            \only<5-8>{$A,B$}
+            \only<9>{$A,B,F$}
+        \end{exampleblock}
+    }{
+        \begin{figure}
+            \centering
+            \begin{tikzpicture}[level distance=4ex, level/.style={sibling distance=23ex/#1}]
+                \node[nonterminal] {\alert<1>{$100$}}
+                    child[dotted] {node[nonterminal,solid] {\alert<2,6>{$38$}}
+                        child[dotted] {node[terminal,solid] {\alert<3>{$A$}}}
+                        child[solid] {node[nonterminal] {\alert<7>{$20$}}
+                            child[dotted] {node[terminal,solid] {$C$}}
+                            child[solid] {node[nonterminal] {\alert<8>{$10$}}
+                                child[dotted] {node[terminal,solid] {\alert<9>{$F$}}}
+                                child[solid] {node[terminal] {$G$}}
+                            }
+                        }
+                    }
+                    child[solid] {node[nonterminal] {\alert<4>{$62$}}
+                        child[dotted] {node[nonterminal,solid] {$30$}
+                            child[dotted] {node[terminal,solid] {$D$}}
+                            child[solid] {node[terminal] {$E$}}
+                        }
+                        child[solid] {node[terminal] {\alert<5>{$B$}}}
+                    };
+            \end{tikzpicture}
+            \caption{原示例编码树：虚线为$0$，实线为$1$}
+            \label{fig:demo_huffman_decode}
+        \end{figure}
+    }
+\end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead：解码结果与边界}
+    \begin{exampleblock}{与编码引例对应}
+        $\texttt{00110110}=\texttt{00}\mid\texttt{11}\mid\texttt{0110}$
+        解码为$A,B,F$；各段分别走到叶结点后才确定分界。
+    \end{exampleblock}
+    \begin{block}{实际使用时}
+        \begin{itemize}
+            \item 收发双方须共享或传输一致的码树或码表
+            \item 未到叶结点就结束的有效码流是不完整的；不能把填充位当作有效数据
+            \item 若字母表只有一个符号，需约定非空码字或另存符号数量
+        \end{itemize}
+    \end{block}
+\end{frame}
