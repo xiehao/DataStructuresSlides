@@ -1,7 +1,48 @@
 \section{常用的线性结构}
 
+\begin{frame}
+    \frametitle{\insertsectionhead：引例一}
+    \begin{exampleblock}{编辑器撤销}
+        用户依次输入$A$、$B$、$C$，随后连续执行两次撤销。
+        应先撤销哪次操作？如何保存尚未撤销的操作？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        撤销总是处理最近的一次操作，需要后进先出的记录方式。
+    \end{block}
+\end{frame}
+
 \input{DSA01-LinearStructures-data3.1.tex}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：回到编辑器撤销}
+    \begin{exampleblock}{用栈保存操作}
+        从栈底到栈顶依次压入$A,B,C$；两次出栈得到$C,B$，
+        分别撤销对应操作，栈中剩下$A$。
+    \end{exampleblock}
+    实际编辑器还需保存足以恢复状态的信息；空栈时不能再撤销。
+\end{frame}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：引例二}
+    \begin{exampleblock}{打印任务排队}
+        任务$A,B,C$依次到达一台打印机，打印机一次处理一个任务。
+        如何让先到的任务先被处理？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        新任务在末尾等待，处理时取最早的等待任务，需要先进先出。
+    \end{block}
+\end{frame}
+
 \input{DSA01-LinearStructures-data3.2.tex}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：回到打印任务}
+    \begin{exampleblock}{用队列安排任务}
+        $A,B,C$依次入队，随后出队$A$开始打印；此时$D$到达并入队。
+        余下任务从队首到队尾为$B,C,D$，继续依次处理。
+    \end{exampleblock}
+    队列为空时没有等待任务；任务取消、优先级等需求需要额外规则。
+\end{frame}
 
 \begin{frame}
     \frametitle{\insertsectionhead}

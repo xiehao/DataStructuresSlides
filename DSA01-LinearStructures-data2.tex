@@ -152,3 +152,18 @@
 
 \input{DSA01-LinearStructures-data2.1.tex}
 \input{DSA01-LinearStructures-data2.2.tex}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：回到多项式引例}
+    \begin{exampleblock}{如何表示稀疏多项式并相加？}
+        \begin{itemize}
+            \item 对$f(x)=1-3x^{100}+2x^{1000000}$，按指数存系数的数组
+                  需覆盖$0$至$1000000$，大多数位置为$0$
+            \item 改用按指数排序的非零项：$(1,0),(-3,100),(2,1000000)$；
+                  顺序表或链表都可表示这三个项
+            \item 与$g(x)=4x^{100}+x^2$相加：依次比较指数并合并同类项，
+                  得$1+x^2+x^{100}+2x^{1000000}$
+        \end{itemize}
+    \end{exampleblock}
+    顺序表便于按位置访问；链表在已定位位置后增删结点方便，但需额外指针。
+\end{frame}

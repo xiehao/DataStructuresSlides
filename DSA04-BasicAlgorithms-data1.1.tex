@@ -71,6 +71,18 @@
     \small 快速排序表中空间为所示递归实现的最坏情况；稳定性取决于具体实现。
 \end{frame}
 
+\begin{frame}
+    \frametitle{\insertsectionhead：回到成绩记录}
+    \begin{exampleblock}{选择稳定排序}
+        对$21,25_a,22,10,25_b,18$采用示例中的稳定归并规则，
+        得$10,18,21,22,25_a,25_b$；两位同分学生的原有次序得以保留。
+    \end{exampleblock}
+    \begin{block}{实际取舍}
+        每次移动的是整条学生记录；归并排序提供$O(n\log n)$最坏时间，
+        但常见数组实现需要$O(n)$辅助空间。
+    \end{block}
+\end{frame}
+
 \begin{frame}{排序：思考与自测}
     \begin{itemize}
         \item 对$(2_a,1,2_b)$使用交换式直接选择排序，相同键的次序是否一定保持？

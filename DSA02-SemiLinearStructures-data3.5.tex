@@ -1,6 +1,18 @@
 \subsection{二叉树的遍历}
 
 \begin{frame}
+    \frametitle{\insertsubsectionhead：引例}
+    \begin{exampleblock}{计算表达式}
+        编译器将表达式$(A-B/C)+D\cdot E$组织成表达式树。
+        如何让计算机先计算操作数，再计算依赖它们的运算？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        每个运算符都要在其子表达式的值已知后执行，
+        因而需要按合适的顺序访问树中的结点。
+    \end{block}
+\end{frame}
+
+\begin{frame}
     \frametitle{\insertsubsectionhead}
     \begin{block}{遍历(traversal)}
         \begin{itemize}
@@ -427,3 +439,13 @@
         \end{figure}
     }
 \end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsubsectionhead：回到表达式计算}
+    \begin{exampleblock}{后序遍历先处理子表达式}
+        表达式树的后序序列为$A\ B\ C\ /\ -\ D\ E\ *\ +$。
+        若$A=8,B=6,C=3,D=2,E=4$，依次计算
+        $6/3=2$、$8-2=6$、$2\cdot4=8$、$6+8=14$。
+    \end{exampleblock}
+    后序遍历先处理左右子树，再处理运算符；可用栈保存中间结果。
+\end{frame}

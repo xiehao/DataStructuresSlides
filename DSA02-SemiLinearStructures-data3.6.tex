@@ -603,6 +603,21 @@
 \end{fragile}
 
 \begin{frame}
+    \frametitle{\insertsubsectionhead：回到图像编码}
+    \begin{exampleblock}{按构造出的树编码}
+        \begin{itemize}
+            \item 如$A$沿左、左得到$00$，$B$沿右、右得到$11$；
+                  $F$沿左、右、右、左得到$0110$
+            \item 编码序列$A,B,F$得到$00\,11\,0110$；
+                  解码时从根沿位走到叶结点，再回根继续
+            \item 按引例中的颜色频率，平均每个像素$2.6$位，
+                  比定长$3$位节省约$13.3\%$
+        \end{itemize}
+    \end{exampleblock}
+    这里比较的是编码数据本身；实际文件还需要保存码表等附加信息。
+\end{frame}
+
+\begin{frame}
     \frametitle{\insertsubsectionhead}
     \begin{block}{Huffman编码树的特点}
         \begin{itemize}

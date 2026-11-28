@@ -1,6 +1,18 @@
 \section{最短路径}
 
 \begin{frame}
+    \frametitle{\insertsectionhead：引例}
+    \begin{exampleblock}{配送路线规划}
+        配送站$A$要前往地点$F$，道路的非负权重表示通行距离。
+        只按经过的道路条数选择路线，能否保证总距离最短？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        需比较路径上各段距离之和；还希望得到实际路线，而不只是距离。
+        后面的示例图给出各地点及道路距离。
+    \end{block}
+\end{frame}
+
+\begin{frame}
     \frametitle{\insertsectionhead：问题与算法选择}
     \begin{block}{最短路径}
         路径长度为沿途边权之和。单源最短路径求给定起点到各顶点的最短距离；
@@ -134,10 +146,11 @@
 
 \begin{frame}
     \frametitle{\insertsectionhead：结果与性能}
-    \begin{exampleblock}{从$A$到$F$}
+    \begin{exampleblock}{回到配送路线：从$A$到$F$}
         沿前驱回溯：$F\leftarrow E\leftarrow D\leftarrow B\leftarrow C\leftarrow A$；
         反向得到$A\rightarrow C\rightarrow B\rightarrow D\rightarrow E\rightarrow F$，
-        最短距离为$2+1+5+2+3=13$。
+        最短距离为$2+1+5+2+3=13$。例如道路更少的
+        $A\rightarrow B\rightarrow D\rightarrow F$距离为$15$。
     \end{exampleblock}
     \begin{block}{时间与空间（$n$个顶点，$e$条边）}
         \begin{itemize}

@@ -75,6 +75,21 @@
 
 \input{DSA03-NonLinearStructures-data1.tex}
 \input{DSA03-NonLinearStructures-data2.tex}
+
+\begin{frame}
+    \frametitle{图的存储结构：回到校园道路}
+    \begin{exampleblock}{比较两种表示}
+        \begin{itemize}
+            \item 邻接矩阵：$B$行$D$列为$0$，所以$B,D$不直连；
+                  查看$A$行可找出邻居$B,C$。四个顶点需$4\times4$个矩阵位置
+            \item 邻接表：$A$的表为$B\rightarrow C$，$B$的表中没有$D$；
+                  列出$A$的邻居只需遍历其表
+            \item 三条双向道路在邻接表中各记两次，共六个邻接项；
+                  矩阵则便于直接检查任意一对顶点是否相邻
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
 \input{DSA03-NonLinearStructures-data3.tex}
 \input{DSA03-NonLinearStructures-data5.tex}
 \input{DSA03-NonLinearStructures-data4.tex}

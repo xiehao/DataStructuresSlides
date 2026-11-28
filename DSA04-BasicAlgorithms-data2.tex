@@ -1,6 +1,18 @@
 \section{查找}
 
 \begin{frame}
+    \frametitle{\insertsectionhead：引例}
+    \begin{exampleblock}{查询图书编号}
+        一批图书编号为$10,18,21,25,32$。需要判断编号$25$是否存在，
+        有时还要列出编号在$18$至$25$之间的图书。
+        如果查询频繁，应如何组织和查找这些记录？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        精确查找与范围查询的要求不同，还要考虑数据是否有序以及更新代价。
+    \end{block}
+\end{frame}
+
+\begin{frame}
     \frametitle{\insertsectionhead}
     \begin{block}{查找(Search)}
         \begin{itemize}
@@ -76,6 +88,20 @@
 \end{frame}
 
 \input{DSA04-BasicAlgorithms-data2.1.tex}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：回到图书编号查询}
+    \begin{exampleblock}{选择查找方式}
+        \begin{itemize}
+            \item 有序数组中二分查找$25$：先比较$21$，再比较$32$，最后找到$25$
+            \item 表长为$5$、$h(k)=k\bmod5$的链地址散列表中，
+                  $10$和$25$同在桶$0$；查找$25$须在该桶中比较
+            \item 范围$[18,25]$：在有序数组中找到起点并顺序扫描，
+                  输出$18,21,25$；普通散列表不保持顺序
+        \end{itemize}
+    \end{exampleblock}
+    有序数组适合随机访问，但插入删除可能移动元素；散列表适合精确查找。
+\end{frame}
 
 \begin{frame}{查找：思考与自测}
     \begin{itemize}

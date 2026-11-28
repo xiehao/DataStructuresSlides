@@ -1,6 +1,18 @@
 \subsection{广度优先搜索}
 
 \begin{frame}
+    \frametitle{\insertsubsectionhead：引例}
+    \begin{exampleblock}{最少换乘次数}
+        地图中各站点为顶点，直接相连的站点间有边。
+        若每经过一条边都算一步，从$A$到$H$如何找到经过边数最少的路线？
+        后面的示例图给出了站点连接关系。
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        应按距离逐层探索，并记录到达每个站点的前驱，以还原路线。
+    \end{block}
+\end{frame}
+
+\begin{frame}
     \frametitle{\insertsubsectionhead}
     \begin{block}{广度优先搜索(Breadth-First Search, BFS)}
         \begin{itemize}
@@ -76,9 +88,10 @@
         \item 从目标顶点沿$parent$回溯，可还原一条最短路径
         \end{enumerate}
     \end{block}
-    \begin{exampleblock}{上一图：从$A$到$H$}
+    \begin{exampleblock}{回到站点引例：从$A$到$H$}
         一条最短路径为$A\rightarrow B\rightarrow D\rightarrow H$，
-        长度为$3$条边；不可达顶点的距离仍为未知。
+        长度为$3$条边；不可达顶点的距离仍为未知。若每条边代表一次乘车，
+        此路线乘车$3$次、换乘$2$次。
     \end{exampleblock}
     \small BFS逐层发现顶点，首次发现时的边数最少；适用于无权图或各边权重相同的图。
 \end{frame}

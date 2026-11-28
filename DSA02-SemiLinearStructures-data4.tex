@@ -1,5 +1,17 @@
 \section{二叉搜索树}
 
+\begin{frame}
+    \frametitle{\insertsectionhead：引例}
+    \begin{exampleblock}{维护按编号组织的图书目录}
+        已有编号$5,10,18,21,22,25,30$的图书，目录需要查找编号、
+        增加新书、删除旧书，还要按编号顺序列出。
+        怎样组织数据，才能利用编号的大小关系？
+    \end{exampleblock}
+    \begin{block}{建模}
+        将互不重复的图书编号作为键，结点保存编号及其对应的图书记录。
+    \end{block}
+\end{frame}
+
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \bicolumns[0.55]{
@@ -307,6 +319,19 @@
         \end{figure}
     }
 \end{fragile}
+
+\begin{frame}
+    \frametitle{\insertsectionhead：回到图书目录}
+    \begin{exampleblock}{按示例树维护目录}
+        \begin{itemize}
+            \item 查找$19$：经过$21,10,18$后到空指针，目录中没有该编号
+            \item 从原目录插入$23$，再删除$21$：$23$接在$25$的左侧，
+                  新根编号为$22$
+            \item 中序列出编号：$5,10,18,22,23,25,30$
+        \end{itemize}
+    \end{exampleblock}
+    结点还需保存图书记录；替换键时应同步处理对应记录。树退化时查找可能变慢。
+\end{frame}
 
 \begin{frame}
     \frametitle{\insertsectionhead}

@@ -1,5 +1,17 @@
 \section{图的存储结构}
 
+\begin{frame}
+    \frametitle{\insertsectionhead：引例}
+    \begin{exampleblock}{保存校园道路}
+        四个地点$A,B,C,D$之间有双向道路$AB,AC,CD$。
+        如何保存道路，以便判断$B$与$D$是否直连，
+        或列出从$A$出发的所有直接邻居？
+    \end{exampleblock}
+    \begin{block}{关键需求}
+        顶点表示地点，边表示道路；需要在空间占用与邻接查询速度之间取舍。
+    \end{block}
+\end{frame}
+
 \begin{fragile}
     \frametitle{\insertsectionhead}
     \begin{block}{图的抽象数据类型}
